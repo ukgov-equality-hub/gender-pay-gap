@@ -10,6 +10,8 @@ jobs:
   build:
     name: 'Build'
     runs-on: ubuntu-latest
+    outputs:
+      github_action_run_attempt: ${{ steps.save_github_action_run_attempt.outputs.test }}
     steps:
       - name: 'Checkout Code'
         uses: actions/checkout@v4
@@ -93,28 +95,11 @@ jobs:
         with:
           name: build-zip
           path: GenderPayGap.WebUI/bin/Release/net8.0/publish/build.zip
-  
-  pause_workflow:
-    # For the subsequent jobs, we want to the use 2 GitHub features:
-    # - environments: to ensure deployments are manually kicked off (builds can happen automatically, but not deploys)
-    # - concurrency: to prevent 2 jobs deploying or terraforming at the same time
-    # But the way GitHub has implemented this combination of features means that:
-    # - the first workflow/job to get to the manual approval gate waits for approval
-    # - any parallel workflows/jobs to get to the manyal approval gate cannot be run until the first job has completed
-    #   i.e. we can't start a deployment on workflow run 11 until the same deployment on wofklow run 10 has completed (even if we don't want to deploy workflow run 10 at all!)
-    # Cancelling the workflow allows us to run-run any jobs as we like, and takes them all out of the approval queue
-    name: 'Pause the workflow here'
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - name: 'Cancel workflow'
+
+      - id: save_github_action_run_attempt
+        name: 'Save the GitHub Action run attempt as an output'
         run: |
-          curl -L \
-          -X POST \
-          -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer ${{ github.token }}" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/cancel
+          echo "test=${{ github.run_attempt }}" >> $GITHUB_OUTPUT
   
   start_dev:
     # This "Start" task is to work around a bug in GitHub
@@ -122,7 +107,8 @@ jobs:
     # It only started doing this once we moved the Terraform shared functionality into a sub-workflow
     name: 'Start (dev)'
     runs-on: ubuntu-latest
-    needs: [pause_workflow]
+    if: ${{ needs.build.outputs.github_action_run_attempt != github.run_attempt }}
+    needs: [build]
     steps:
       - name: 'No-op'
         run: echo "Hello"
@@ -173,7 +159,8 @@ jobs:
     # It only started doing this once we moved the Terraform shared functionality into a sub-workflow
     name: 'Start (prod)'
     runs-on: ubuntu-latest
-    needs: [pause_workflow]
+    if: ${{ needs.build.outputs.github_action_run_attempt != github.run_attempt }}
+    needs: [build]
     steps:
       - name: 'No-op'
         run: echo "Hello"
