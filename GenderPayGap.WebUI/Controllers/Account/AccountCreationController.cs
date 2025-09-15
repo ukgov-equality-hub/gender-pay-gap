@@ -31,11 +31,28 @@ namespace GenderPayGap.WebUI.Controllers.Account
         // The 'Start Now' page (Global.StartUrl https://www.gov.uk/report-gender-pay-gap-data)
         // links to this action as the starting point for the reporting journey
         [HttpGet("/already-created-an-account-question")]
-        public IActionResult AlreadyCreatedAnAccountQuestionGet(AlreadyCreatedAnAccountViewModel viewModel)
+        public IActionResult AlreadyCreatedAnAccountQuestionGet()
         {
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("ManageOrganisationsGet", "ManageOrganisations");
+            }
+
+            var model = new AlreadyCreatedAnAccountViewModel();
+            return View("AlreadyCreatedAnAccountQuestion", model);
+        }
+
+        [HttpPost("/already-created-an-account-question")]
+        public IActionResult AlreadyCreatedAnAccountQuestionPost(AlreadyCreatedAnAccountViewModel viewModel)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("ManageOrganisationsGet", "ManageOrganisations");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View("AlreadyCreatedAnAccountQuestion", viewModel);
             }
 
             switch (viewModel.HaveYouAlreadyCreatedYourUserAccount)
@@ -47,14 +64,10 @@ namespace GenderPayGap.WebUI.Controllers.Account
                 case HaveYouAlreadyCreatedYourUserAccount.NotSure:
                     return RedirectToAction("CreateUserAccountGet", new { isPartOfGovUkReportingJourney = true });
 
-                case HaveYouAlreadyCreatedYourUserAccount.Unspecified:
-                    ModelState.AddModelError(nameof(viewModel.HaveYouAlreadyCreatedYourUserAccount), "You must select whether you have already created your user account");
-                    return View("AlreadyCreatedAnAccountQuestion", viewModel);
-
                 default:
-                    // This serves as the initial GET case
-                    var model = new AlreadyCreatedAnAccountViewModel();
-                    return View("AlreadyCreatedAnAccountQuestion", model);
+                    // This (valid model, but no matching Enum value) shouldn't be possible.
+                    // If this happens, just start again
+                    return View("AlreadyCreatedAnAccountQuestion", new AlreadyCreatedAnAccountViewModel());
             }
         }
 

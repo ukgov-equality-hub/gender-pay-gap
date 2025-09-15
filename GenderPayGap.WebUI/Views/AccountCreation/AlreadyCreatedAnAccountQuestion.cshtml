@@ -1,9 +1,5 @@
 ﻿@using GenderPayGap.Core
-@using GenderPayGap.WebUI.Helpers
-@using GenderPayGap.WebUI.Models.AccountCreation
-@using GovUkDesignSystem
-@using GovUkDesignSystem.Attributes
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.AccountCreation.AlreadyCreatedAnAccountViewModel
 @{
     ViewBag.Title = "Have you already created your user account - Gender pay gap service";
@@ -11,78 +7,45 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-xl">Have you previously created a user account?</h1>
-    </div>
-</div>
+        
+        @(await Html.GovUkErrorSummaryIfNeeded())
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <form method="GET" action="@Url.Action("AlreadyCreatedAnAccountQuestionGet", "AccountCreation")">
+        <form method="POST" action="@Url.Action("AlreadyCreatedAnAccountQuestionPost", "AccountCreation")">
 
-            <div class="govuk-form-group">
-
-                @(await Html.GovUkErrorSummary(ViewData.ModelState))
-
-                @{
-                    var errorMessage = ModelErrorHelper.GetErrorMessage(ViewData.ModelState, nameof(Model.HaveYouAlreadyCreatedYourUserAccount));
-                    ErrorMessageViewModel errorMessageViewModel = errorMessage != null
-                        ? new ErrorMessageViewModel {Text = errorMessage}
-                        : null;
-                }
-
-                @if (Model.HaveYouAlreadyCreatedYourUserAccount == null
-                   || Model.HaveYouAlreadyCreatedYourUserAccount == HaveYouAlreadyCreatedYourUserAccount.Unspecified)
+            @await Html.GovUkRadiosFor(
+                m => m.HaveYouAlreadyCreatedYourUserAccount,
+                new RadiosViewModel
                 {
-                    <input type="radio"
-                           name="HaveYouAlreadyCreatedYourUserAccount"
-                           value="Unspecified"
-                           checked
-                           style="display: none" />
-                }
-
-                @await Html.GovUkRadios(new RadiosViewModel
-                {
-                    Name = nameof(AlreadyCreatedAnAccountViewModel.HaveYouAlreadyCreatedYourUserAccount),
-                    Items = Enum.GetValues(typeof(HaveYouAlreadyCreatedYourUserAccount))
-                        .Cast<HaveYouAlreadyCreatedYourUserAccount>()
-                        .Where(item => item != HaveYouAlreadyCreatedYourUserAccount.Unspecified)
-                        .Select(answer =>
+                    Fieldset = new FieldsetViewModel
+                    {
+                        Legend = new FieldsetLegendViewModel
                         {
-                            string fieldName = nameof(AlreadyCreatedAnAccountViewModel.HaveYouAlreadyCreatedYourUserAccount);
-                            string fieldValue = answer.ToString();
-                            string fieldId = $"{fieldName}_{fieldValue}";
+                            HtmlOrText = new HtmlOrText("Have you previously created a user account?"),
+                            Classes = ["govuk-fieldset__legend--xl", "govuk-!-margin-bottom-6"],
+                            IsPageHeading = true
+                        }
+                    }
+                }
+            )
 
-                            return (ItemViewModel)new RadioItemViewModel
-                            {
-                                Name = fieldName,
-                                Value = fieldValue,
-                                Id = fieldId,
-                                Label = new LabelViewModel
-                                {
-                                    Text = GovUkRadioCheckboxLabelTextAttribute.GetLabelText(answer),
-                                    For = fieldId
-                                }
-                            };
-                        })
-                        .ToList(),
-                    ErrorMessage = errorMessageViewModel
-                })
-
-                <div class="govuk-inset-text">
-                    You will need to create your own user account even if someone else has
-                    previously reported your employer's gender pay gap.
-                </div>
-
-                @(await Html.GovUkButton(new ButtonViewModel
-                {
-                    Text = "Continue"
-                }))
-                @{ var reportingUrl = Url.Action("ManageOrganisationsGet", "ManageOrganisations"); }
-                <p class="govuk-body">
-                    <a href="@(Global.StartUrl ?? reportingUrl)" class="govuk-link">Cancel</a>
-                </p>
+            <div class="govuk-inset-text">
+                You will need to create your own user account even if someone else has
+                previously reported your employer's gender pay gap.
             </div>
+
+            @(await Html.GovUkButton(new()
+            {
+                HtmlOrText = new HtmlOrText("Continue")
+            }))
             
+            <p class="govuk-body">
+                <a href="@(Global.StartUrl ?? Url.Action("ManageOrganisationsGet", "ManageOrganisations"))"
+                   class="govuk-link">
+                    Cancel
+                </a>
+            </p>
+
         </form>
+        
     </div>
 </div>

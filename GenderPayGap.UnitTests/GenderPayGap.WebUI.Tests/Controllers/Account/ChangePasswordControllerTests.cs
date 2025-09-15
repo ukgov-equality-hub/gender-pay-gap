@@ -6,6 +6,7 @@ using GenderPayGap.Database.Models;
 using GenderPayGap.WebUI.Controllers.Account;
 using GenderPayGap.WebUI.ExternalServices;
 using GenderPayGap.WebUI.Models.Account;
+using GenderPayGap.WebUI.Models.ValidationAttributes;
 using GenderPayGap.WebUI.Repositories;
 using GenderPayGap.WebUI.Services;
 using GenderPayGap.WebUI.Tests.Builders;
