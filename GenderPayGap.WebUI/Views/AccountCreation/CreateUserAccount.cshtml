@@ -1,31 +1,36 @@
 @using GenderPayGap.Core
 @using GenderPayGap.WebUI.Models.AccountCreation
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.AccountCreation.CreateUserAccountViewModel
 @{
     ViewBag.Title = "Create my account - Gender pay gap reporting service";
 }
 
-@if (Model.IsPartOfGovUkReportingJourney)
-{
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        @if (Model.IsPartOfGovUkReportingJourney)
+        {
             <p class="govuk-body">
                 <a class="govuk-link" href="@Url.Action("AlreadyCreatedAnAccountQuestionGet", "AccountCreation")">Back</a>
             </p>
-        </div>
-    </div>
-}
+        }
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-xl">Create my account</h1>
-    </div>
-</div>
+        @(await Html.GovUkErrorSummaryIfNeeded(
+        [
+            nameof(CreateUserAccountViewModel.EmailAddress),
+            nameof(CreateUserAccountViewModel.ConfirmEmailAddress),
+            nameof(CreateUserAccountViewModel.FirstName),
+            nameof(CreateUserAccountViewModel.LastName),
+            nameof(CreateUserAccountViewModel.JobTitle),
+            nameof(CreateUserAccountViewModel.Password),
+            nameof(CreateUserAccountViewModel.ConfirmPassword)
+        ]))
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">
+            Create my account
+        </h1>
+
         <div class="govuk-inset-text">
             You will need to create your own user account even if someone else has
             previously reported your employer's gender pay gap.
@@ -44,65 +49,68 @@
             @Html.AntiForgeryToken()
             <div class="govuk-form-group">
 
-                @(await Html.GovUkErrorSummary(ViewData.ModelState, new[]
-                {
-                    nameof(CreateUserAccountViewModel.EmailAddress),
-                    nameof(CreateUserAccountViewModel.ConfirmEmailAddress),
-                    nameof(CreateUserAccountViewModel.FirstName),
-                    nameof(CreateUserAccountViewModel.LastName),
-                    nameof(CreateUserAccountViewModel.JobTitle),
-                    nameof(CreateUserAccountViewModel.Password),
-                    nameof(CreateUserAccountViewModel.ConfirmPassword)
-                }))
-
                 <fieldset class="govuk-fieldset govuk-!-margin-bottom-9">
                     <legend class="govuk-fieldset__legend">
-                        <h2 class="govuk-heading-m">Email address</h2>
+                        <h2 class="govuk-heading-m">
+                            Email address
+                        </h2>
                     </legend>
 
                     @(await Html.GovUkTextInputFor(
                         m => m.EmailAddress,
-                        new LabelViewModel {Text = "Enter an email address that you can access"},
-                        new HintViewModel {Text = "The service will send you an email to verify your identity"},
-                        type: "email",
-                        classes: "govuk-input--width-20",
-                        autocomplete: "email",
-                        spellcheck: false
-                        ))
+                        new TextInputViewModel
+                        {
+                            Label = new() { HtmlOrText = new("Enter an email address that you can access") },
+                            Hint = new() { HtmlOrText = new("The service will send you an email to verify your identity") },
+                            Type = "email",
+                            Classes = ["govuk-input--width-20"],
+                            Autocomplete = "email",
+                            Spellcheck = false
+                        }))
                     @(await Html.GovUkTextInputFor(
                         m => m.ConfirmEmailAddress,
-                        new LabelViewModel {Text = "Confirm your email address"},
-                        type: "email",
-                        classes: "govuk-input--width-20",
-                        autocomplete: "email",
-                        spellcheck: false
-                        ))
+                        new TextInputViewModel
+                        {
+                            Label = new() { HtmlOrText = new("Confirm your email address") },
+                            Type = "email",
+                            Classes = ["govuk-input--width-20"],
+                            Autocomplete = "email",
+                            Spellcheck = false
+                        }))
 
                 </fieldset>
 
                 <fieldset class="govuk-fieldset govuk-!-margin-bottom-9">
                     <legend class="govuk-fieldset__legend">
-                        <h2 class="govuk-heading-m">Your details</h2>
+                        <h2 class="govuk-heading-m">
+                            Your details
+                        </h2>
                     </legend>
 
                     @(await Html.GovUkTextInputFor(
                         m => m.FirstName,
-                        new LabelViewModel {Text = "First name"},
-                        classes: "govuk-input--width-20",
-                        autocomplete: "given-name"
-                        ))
+                        new TextInputViewModel
+                        {
+                            Label = new() { HtmlOrText = new("First name") },
+                            Classes = ["govuk-input--width-20"],
+                            Autocomplete = "given-name"
+                        }))
                     @(await Html.GovUkTextInputFor(
                         m => m.LastName,
-                        new LabelViewModel {Text = "Last name"},
-                        classes: "govuk-input--width-20",
-                        autocomplete: "family-name"
-                        ))
+                        new TextInputViewModel
+                        {
+                            Label = new() { HtmlOrText = new("Last name") },
+                            Classes = ["govuk-input--width-20"],
+                            Autocomplete = "family-name"
+                        }))
                     @(await Html.GovUkTextInputFor(
                         m => m.JobTitle,
-                        new LabelViewModel {Text = "Job title"},
-                        classes: "govuk-input--width-20",
-                        autocomplete: "organization-title"
-                        ))
+                        new TextInputViewModel
+                        {
+                            Label = new() { HtmlOrText = new("Job title") },
+                            Classes = ["govuk-input--width-20"],
+                            Autocomplete = "organization-title"
+                        }))
                 </fieldset>
 
                 <fieldset class="govuk-fieldset govuk-!-margin-bottom-9">
@@ -115,34 +123,31 @@
                     </p>
                     <p class="govuk-body">
                         It must also have at least one of each of the following:
-                        <ul class="govuk-list govuk-list--bullet">
-                            <li>
-                                lower-case letter
-                            </li>
-                            <li>
-                                capital letter and
-                            </li>
-                            <li>
-                                number
-                            </li>
-
-                        </ul>
                     </p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>lower-case letter</li>
+                        <li>capital letter and</li>
+                        <li>number</li>
+                    </ul>
 
                     @(await Html.GovUkTextInputFor(
                         m => m.Password,
-                        new LabelViewModel {Text = "Password"},
-                        type: "password",
-                        classes: "govuk-input--width-20",
-                        autocomplete: "new-password"
-                        ))
+                        new TextInputViewModel
+                        {
+                            Label = new() { HtmlOrText = new("Password") },
+                            Type = "password",
+                            Classes = ["govuk-input--width-20"],
+                            Autocomplete = "new-password"
+                        }))
                     @(await Html.GovUkTextInputFor(
                         m => m.ConfirmPassword,
-                        new LabelViewModel {Text = "Confirm your password"},
-                        type: "password",
-                        classes: "govuk-input--width-20",
-                        autocomplete: "new-password"
-                        ))
+                        new TextInputViewModel
+                        {
+                            Label = new() { HtmlOrText = new("Confirm your password") },
+                            Type = "password",
+                            Classes = ["govuk-input--width-20"],
+                            Autocomplete = "new-password"
+                        }))
                 </fieldset>
 
                 <p class="govuk-body">
@@ -150,20 +155,31 @@
                     to gender pay gap reporting and, with your consent, for the following purpose:
                 </p>
 
-                @(await Html.GovUkCheckboxItemFor(m => m.SendUpdates,
-                    new LabelViewModel {Text = "I would like to receive information about webinars, events, and new guidance"}))
+                @(await Html.GovUkCheckboxItemFor(
+                    m => m.SendUpdates,
+                    new CheckboxItemViewModel
+                    {
+                        Label = new() { HtmlOrText = new("I would like to receive information about webinars, events, and new guidance") }
+                    }))
                 @(await Html.GovUkCheckboxItemFor(m => m.AllowContact,
-                    new LabelViewModel {Text = "I'm happy to be contacted for feedback on this service and take part in gender pay gap surveys"}))
+                    new CheckboxItemViewModel
+                    {
+                        Label = new() { HtmlOrText = new("I'm happy to be contacted for feedback on this service and take part in gender pay gap surveys") }
+                    }))
+                
                 @(await Html.GovUkButton(new ButtonViewModel
                 {
-                    Text = "Save and Continue",
-                    Classes = "govuk-!-margin-top-9",
+                    HtmlOrText = new ("Save and Continue"),
+                    Classes = ["govuk-!-margin-top-9"],
                     PreventDoubleClick = true,
-                    PreventDoubleClickTimeout = 3
                 }))
+                
                 @{ var reportingUrl = Url.Action("ManageOrganisationsGet", "ManageOrganisations"); }
                 <p class="govuk-body">
-                    <a href="@(Model.IsPartOfGovUkReportingJourney ? Global.StartUrl ?? reportingUrl : reportingUrl)" class="govuk-link govuk-!-margin-top-9">Cancel</a>
+                    <a href="@(Model.IsPartOfGovUkReportingJourney ? Global.StartUrl ?? reportingUrl : reportingUrl)"
+                       class="govuk-link govuk-!-margin-top-9">
+                        Cancel
+                    </a>
                 </p>
             </div>
             
