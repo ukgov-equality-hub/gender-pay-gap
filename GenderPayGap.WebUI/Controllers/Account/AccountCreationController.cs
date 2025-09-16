@@ -43,6 +43,7 @@ namespace GenderPayGap.WebUI.Controllers.Account
         }
 
         [HttpPost("/already-created-an-account-question")]
+        [ValidateAntiForgeryToken]
         public IActionResult AlreadyCreatedAnAccountQuestionPost(AlreadyCreatedAnAccountViewModel viewModel)
         {
             if (User.Identity.IsAuthenticated)
