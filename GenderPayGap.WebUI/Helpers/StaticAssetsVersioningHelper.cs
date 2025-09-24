@@ -10,14 +10,12 @@ namespace GenderPayGap.WebUI.Helpers
         private const string PathFromExecutableToWwwRoot = "wwwroot";
         private const string CompiledDirectory = "compiled";
 
-        private const string AppCssRegex = "app-[^-]*.css";
-        private const string AppIe8CssRegex = "app-ie8-[^-]*.css";
+        private const string AppCssRegex = "app-.*.css";
         private const string AppJsRegex = "app-.*.js";
 
         private static ConcurrentDictionary<string, string> cachedFilenames = new();
 
         public static string GetAppCssFilename() => GetStaticFile(CompiledDirectory, AppCssRegex);
-        public static string GetAppIe8CssFilename() => GetStaticFile(CompiledDirectory, AppIe8CssRegex);
         public static string GetAppJsFilename() => GetStaticFile(CompiledDirectory, AppJsRegex);
 
         private static string GetStaticFile(string directory, string fileRegex)
