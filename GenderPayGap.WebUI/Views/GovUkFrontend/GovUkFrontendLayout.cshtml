@@ -1,10 +1,6 @@
-@using GenderPayGap.WebUI.Cookies
+﻿@using GenderPayGap.WebUI.Cookies
 @using GenderPayGap.WebUI.Helpers
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
-@{
-    string assetsPath = "/assets/images";
-}
+@using GovUkDesignSystemDotNet
 <!DOCTYPE html>
 
 <!-- Build number: @(BuildNumberHelper.GetBuildNumber()) -->
@@ -12,32 +8,27 @@
 <!-- Environment: @(Config.EnvironmentName) -->
 <!-- Server name: @(Environment.MachineName) -->
 
-<html lang="en" class="govuk-template app-html-class">
+<html lang="en" class="govuk-template govuk-template--rebranded">
 <head>
     <meta charset="utf-8" />
     <title>@(ViewBag.Title ?? "Gender pay gap service")</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="blue" />
-
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-    <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="@(assetsPath)/favicon.ico" type="image/x-icon" />
-    <link rel="mask-icon" href="@(assetsPath)/govuk-mask-icon.svg" color="blue">
-    <link rel="apple-touch-icon" sizes="180x180" href="@(assetsPath)/govuk-apple-touch-icon-180x180.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="@(assetsPath)/govuk-apple-touch-icon-167x167.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="@(assetsPath)/govuk-apple-touch-icon-152x152.png">
-    <link rel="apple-touch-icon" href="@(assetsPath)/govuk-apple-touch-icon.png">
-
+    <meta name="theme-color" content="#1d70b8">
+    <link rel="icon" sizes="48x48" href="/assets/rebrand/images/favicon.ico">
+    <link rel="icon" sizes="any" href="/assets/rebrand/images/favicon.svg" type="image/svg+xml">
+    <link rel="mask-icon" href="/assets/rebrand/images/govuk-icon-mask.svg" color="#1d70b8">
+    <link rel="apple-touch-icon" href="/assets/rebrand/images/govuk-icon-180.png">
+    <link rel="manifest" href="/assets/rebrand/manifest.json">
+    <meta property="og:image" content="/assets/rebrand/images/govuk-opengraph-image.png">
+    
     <link href="@(StaticAssetsVersioningHelper.GetAppCssFilename())" rel="stylesheet" />
-
-    <meta property="og:image" content="@(assetsPath)/govuk-opengraph-image.png">
 
     @{ await Html.RenderPartialAsync("_Tracking"); }
 </head>
 
 <body class="govuk-template__body app-body-class">
     <script>
-        document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
+        document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
     </script>
 
     @if (!CookieHelper.HasSeenLatestCookieMessage(Context.Request) && !ViewContext.RouteData.Values["action"].Equals("CookieSettingsGet"))
@@ -47,64 +38,68 @@
 
     <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
 
+    @await Html.GovUkHeader(new HeaderViewModel
+    {
+        HomepageUrl = "https://gov.uk"
+    })
+
     @{
-        List<HeaderNavigationViewModel> headerNavigationLinks = new List<HeaderNavigationViewModel>();
+        List<ServiceNavigationItemViewModel> headerNavigationLinks = [];
         if (ViewBag.ServiceUnavailable != true)
         {
-            headerNavigationLinks.Add(new HeaderNavigationViewModel
+            headerNavigationLinks.Add(new ServiceNavigationItemViewModel
             {
-                Text = "Search and compare",
+                HtmlOrText = new HtmlOrText("Search and compare"),
                 Href = Url.Action("SearchPage", "Search")
             });
-            headerNavigationLinks.Add(new HeaderNavigationViewModel
+            headerNavigationLinks.Add(new ServiceNavigationItemViewModel
             {
-                Text = "Download",
+                HtmlOrText = new HtmlOrText("Download"),
                 Href = Url.Action("Download", "Download")
             });
-            headerNavigationLinks.Add(new HeaderNavigationViewModel
+            headerNavigationLinks.Add(new ServiceNavigationItemViewModel
             {
-                Text = "Guidance for employers",
+                HtmlOrText = new HtmlOrText("Guidance for employers"),
                 Href = "https://www.gov.uk/government/publications/gender-pay-gap-reporting-guidance-for-employers"
             });
 
             if (User.IsInRole(LoginRoles.GpgAdmin))
             {
-                headerNavigationLinks.Add(new HeaderNavigationViewModel
+                headerNavigationLinks.Add(new ServiceNavigationItemViewModel
                 {
-                    Text = "Admin",
+                    HtmlOrText = new HtmlOrText("Admin"),
                     Href = Url.Action("AdminHomePage", "AdminHomepage")
                 });
             }
 
             if (User.Identity.IsAuthenticated)
             {
-                headerNavigationLinks.Add(new HeaderNavigationViewModel
+                headerNavigationLinks.Add(new ServiceNavigationItemViewModel
                 {
-                    Text = "Sign out",
+                    HtmlOrText = new HtmlOrText("Sign out"),
                     Href = Url.Action("Logout", "Login"),
-                    Classes = "sign-out-link"
+                    Attributes = new() {{ "class", "sign-out-link" }}
                 });
             }
             else
             {
-                headerNavigationLinks.Add(new HeaderNavigationViewModel
+                headerNavigationLinks.Add(new ServiceNavigationItemViewModel
                 {
-                    Text = "Sign in",
+                    HtmlOrText = new HtmlOrText("Sign in"),
                     Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations"),
-                    Classes = "sign-out-link"
+                    Attributes = new() {{ "class", "sign-out-link" }}
                 });
             }
         }
-
-        @(await Html.GovUkHeader(new HeaderViewModel
-        {
-            ServiceName = "Gender pay gap service",
-            AssetsPath = assetsPath,
-            HomepageUrl = "https://www.gov.uk",
-            ServiceUrl = "/",
-            Navigation = headerNavigationLinks
-        }))
-
+        
+        @await Html.GovUkServiceNavigation(
+            new ServiceNavigationViewModel
+            {
+                ServiceName = "Gender pay gap service",
+                ServiceUrl = Url.Action("Index", "Homepage"),
+                NavigationItems = headerNavigationLinks
+            })
+        
     }
 
     <div class="govuk-width-container">
@@ -113,8 +108,17 @@
         {
             @(await Html.GovUkPhaseBanner(new PhaseBannerViewModel
             {
-                Phase = "Beta",
-                Html = @<text>This is a new service – your <a class="govuk-link" href="@Url.Action("SendFeedbackGet", "Feedback")">feedback</a> will help us to improve it.</text>
+                Tag = new TagViewModel
+                {
+                    HtmlOrText = new HtmlOrText("Beta")
+                },
+                HtmlOrText = new HtmlOrText(
+                    @<text>
+                         This is a new service – your
+                         <a class="govuk-link" href="@Url.Action("SendFeedbackGet", "Feedback")">
+                             feedback</a>
+                         will help us to improve it.
+                     </text>)
             }))
         }
 
@@ -127,41 +131,44 @@
 
     @(await Html.GovUkFooter(new FooterViewModel
     {
-        MetaNavigation = new FooterMetaNavigationViewModel
+        Meta = new FooterMetaViewModel
         {
-            Links = new[]
-            {
-                new FooterLinksViewModel
+            Items = [
+                new FooterItemViewModel
                 {
                     Text = "Contact Us",
                     Href = Url.Action("ContactUs", "StaticPages")
                 },
-                new FooterLinksViewModel
+                new FooterItemViewModel
                 {
                     Text = "Cookies",
                     Href = Url.Action("CookieSettingsGet", "Cookie")
                 },
-                new FooterLinksViewModel
+                new FooterItemViewModel
                 {
                     Text = "Privacy Policy",
                     Href = Url.Action("PrivacyPolicyGet", "PrivacyPolicy")
                 },
-                new FooterLinksViewModel
+                new FooterItemViewModel
                 {
                     Text = "Report Concerns",
                     Href = Url.Action("ReportConcerns", "StaticPages")
                 },
-                new FooterLinksViewModel
+                new FooterItemViewModel
                 {
                     Text = "Accessibility Statement",
                     Href = Url.Action("AccessibilityStatement", "StaticPages")
                 }
-            }
+            ]
         }
     }))
 
     <script src="@(StaticAssetsVersioningHelper.GetAppJsFilename())"></script>
-    <script>window.GOVUKFrontend.initAll()</script>
+    <script type="module" src="/assets/scripts/govuk-frontend-5.10.2.min.js"></script>
+    <script type="module">
+        import { initAll } from '/assets/scripts/govuk-frontend-5.10.2.min.js'
+        initAll()
+    </script>
     @RenderSection("AfterLoadedCompiledScripts", false)
 </body>
 </html>
