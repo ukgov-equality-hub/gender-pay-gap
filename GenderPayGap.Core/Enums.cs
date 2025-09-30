@@ -67,6 +67,26 @@ namespace GenderPayGap.Core
 
     }
 
+    public enum ActionPlanStatus : byte
+    {
+
+        Draft = 1,
+        DeletedDraft = 2,
+        Submitted = 3,
+        Retired = 4,
+        Deleted = 5
+
+    }
+
+    public enum ActionPlanType : byte
+    {
+
+        Original = 1,
+        OneYearReview = 2,
+        ThreeYearReview = 3
+
+    }
+
     public enum ScopeRowStatuses : byte
     {
 
