@@ -270,9 +270,9 @@ namespace GenderPayGap.Database
 
                     entity.HasIndex(e => e.Status);
 
-                    entity.HasOne(d => d.Organisation)
-                        .WithMany(p => p.ActionPlans)
-                        .HasForeignKey(d => d.OrganisationId)
+                    entity.HasOne(actionPlan => actionPlan.Organisation)
+                        .WithMany(organisation => organisation.ActionPlans)
+                        .HasForeignKey(actionPlan => actionPlan.OrganisationId)
                         .HasConstraintName("FK_dbo.ActionPlans_dbo.Organisations_OrganisationId");
                 });
 
