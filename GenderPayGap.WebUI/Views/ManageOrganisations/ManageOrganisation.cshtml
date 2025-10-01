@@ -137,6 +137,11 @@
                                    @Model.GetReportLinkText(reportingYear)
                                </a>
                             }
+                            <br>
+                            <br />
+                            <a href="@Url.Action("ActionPlansProgressMadeGet", "ActionPlansProgressMade", new {encryptedOrganisationId, reportingYear = reportingYear})">
+                                Edit action plan
+                            </a>
                         </td>
                     </tr>
                 }

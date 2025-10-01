@@ -48,9 +48,9 @@ namespace GenderPayGap.WebUI.Controllers.ActionPlans
 
             return View("ActionPlansProgressMade", viewModel);
         }
-        
-        
-        [HttpPost("{encryptedOrganisationId}/reporting-year-{reportingYear}/report/responsible-person")]
+
+
+        [HttpPost("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/progress-made")]
         [ValidateAntiForgeryToken]
         public IActionResult ActionPlansProgressMadePost(string encryptedOrganisationId, int reportingYear, ActionPlansProgressMadeViewModel viewModel)
         {
@@ -60,38 +60,33 @@ namespace GenderPayGap.WebUI.Controllers.ActionPlans
             ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
 
             Organisation organisation = dataRepository.Get<Organisation>(organisationId);
-            if (organisation.SectorType == SectorTypes.Public)
-            {
-                string nextPagePublicSectorUrl = Url.Action("ReportOverview", "ReportOverview", new { encryptedOrganisationId, reportingYear });
-                StatusMessageHelper.SetStatusMessage(Response, "Public authority employers are not required to provide a person responsible", nextPagePublicSectorUrl);
-                return LocalRedirect(nextPagePublicSectorUrl);
-            }
 
+            // checking if the view model is not valid
             if (!ModelState.IsValid)
             {
-                PopulateViewModel(viewModel, organisationId, reportingYear, viewModel.IsEditingForTheFirstTime);
-                return View("ReportResponsiblePerson", viewModel);
+                viewModel.Organisation = organisation;
+                viewModel.ReportingYear = reportingYear;
+                return View("ActionPlansProgressMade", viewModel);
             }
-            SaveChangesToDraftReturn(viewModel, organisationId, reportingYear);
 
-            var actionValues = new { encryptedOrganisationId, reportingYear, initialSubmission = viewModel.IsEditingForTheFirstTime };
-            string nextPageUrl = viewModel.IsEditingForTheFirstTime
-                ? Url.Action("ReportSizeOfOrganisationGet", "ReportSizeOfOrganisation", actionValues)
-                : Url.Action("ReportOverview", "ReportOverview", actionValues);
+            ActionPlan actionPlan = organisation.ActionPlans.Where(a => a.ReportingYear == reportingYear).FirstOrDefault();
+            if (actionPlan == null)
+            {
+                actionPlan = new ActionPlan
+                {
+                    Organisation = organisation,
+                    ReportingYear = reportingYear,
+                    Status = ActionPlanStatus.Draft
+                };
+                dataRepository.Insert(actionPlan);
+            }
 
-            StatusMessageHelper.SetStatusMessage(Response, "Saved changes to draft", nextPageUrl);
-            return LocalRedirect(nextPageUrl);
-        }
+            actionPlan.ProgressMade = viewModel.ProgressMade;
+            dataRepository.SaveChanges();
 
-        private void SaveChangesToDraftReturn(ReportResponsiblePersonViewModel viewModel, long organisationId, int reportingYear)
-        {
-            DraftReturn draftReturn = draftReturnService.GetOrCreateDraftReturn(organisationId, reportingYear);
 
-            draftReturn.FirstName = viewModel.ResponsiblePersonFirstName;
-            draftReturn.LastName = viewModel.ResponsiblePersonLastName;
-            draftReturn.JobTitle = viewModel.ResponsiblePersonJobTitle;
+            return RedirectToAction("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId});
 
-            draftReturnService.SaveDraftReturnOrDeleteIfNotRelevant(draftReturn);
         }
 
     }
