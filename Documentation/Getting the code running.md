@@ -37,7 +37,7 @@ https://learn.microsoft.com/en-us/azure/postgresql/extensions/vs-code-extension/
 
 Build the code:
 * Build the project - this should install all the necessary packages from nuget
-* In Visual Studio code, use the [C# Dev Kit extension](https://code.visualstudio.com/docs/csharp/build-tools) and the `.NET build` on the `GenderPayGap.sln` Solution
+* In Visual Studio code, use the [C# Dev Kit extension](https://code.visualstudio.com/docs/csharp/build-tools) and `.NET build` on the `GenderPayGap.sln` Solution (can use Cmd + shift + p shortcut)
 
 * Open a Bash terminal and navigate into the
   `gender-pay-gap/GenderPayGap.WebUI` folder
@@ -56,10 +56,11 @@ Run the code:
 * Run the `GenderPayGap.WebUI` project from your IDE  
   This should automatically be set as the default Startup Project
   so you should just be able to click the "Play" button
+  * for Visual Studio code you can do `dotnet run` from the `gender-pay-gap/GenderPayGap.WebUI` folder
 
 * The code should build and run successfully
 
-* The website should be visible at https://localhost:44371/  - maybe https://localhost:5001/ ?
+* The website should be visible at https://localhost:44371/  - maybe https://localhost:5000/ or https://localhost:5001/ ?
   The homepage / static pages should all work, but things like Search
   won't return any entries (because there's no data in your database)
 
