@@ -28,7 +28,7 @@ https://learn.microsoft.com/en-us/azure/postgresql/extensions/vs-code-extension/
     And in Advanced:
     Port: 5432
     ```
-* Create a database called `GpgDatabase`, you can use the commant `CREATE DATABASE "GpgDatabase";`
+* Create a database called `GpgDatabase`, you can use the command `CREATE DATABASE "GpgDatabase";`
 * (Optionally) create a user which has access to this new database  
   If not, you can use the credentials of the root Postgres user
 * Edit the `VCAP_SERVICES`
@@ -60,7 +60,7 @@ Run the code:
 
 * The code should build and run successfully
 
-* The website should be visible at https://localhost:44371/  - maybe https://localhost:5000/ or https://localhost:5001/ ?
+* The website should be visible at https://localhost:44371/  - maybe https://localhost:5001/ ?
   The homepage / static pages should all work, but things like Search
   won't return any entries (because there's no data in your database)
 

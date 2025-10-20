@@ -87,6 +87,23 @@ namespace GenderPayGap.Core
 
     }
 
+    public enum Actions : byte
+    {
+        FlexibleWorkingByDefaultInJobAdverts = 1,
+        PayTransparency = 2,
+        RestAreasQuietRoomsCoolingSystems = 3,
+    }
+
+    public enum ActionStatus : byte
+    {
+        Embedded = 1,
+        InProgress = 2,
+        AddToPlan = 3,
+        NotPursuing = 4
+
+    }
+
+
     public enum ScopeRowStatuses : byte
     {
 

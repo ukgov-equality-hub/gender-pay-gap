@@ -92,6 +92,8 @@ namespace GenderPayGap.Database
         public virtual DbSet<ReminderEmail> ReminderEmails { get; set; }
         public virtual DbSet<DraftReturn> DraftReturns { get; set; }
         public virtual DbSet<ActionPlan> ActionPlans { get; set; }
+        public virtual DbSet<ActionInActionPlan> ActionsinActionPlans { get; set; }
+
 
         public DbSet<DataProtectionKey> DataProtectionKeys { get; } // This is used to store "data protection" keys - used in anti-forgery tokens
 

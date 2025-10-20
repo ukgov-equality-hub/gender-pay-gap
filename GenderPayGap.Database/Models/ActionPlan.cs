@@ -7,6 +7,11 @@ namespace GenderPayGap.Database
     [JsonObject(MemberSerialization.OptIn)]
     public class ActionPlan
     {
+        public ActionPlan()
+        {
+            ActionsinActionPlans = new HashSet<ActionInActionPlan>();
+        }
+
 
         [JsonProperty]
         public long ActionPlanId { get; set; }
@@ -19,10 +24,10 @@ namespace GenderPayGap.Database
 
         // nullable type  e.g. https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-value-types
         [JsonProperty]
-        public DateTime? SubmittedDate { get; set; } 
+        public DateTime? SubmittedDate { get; set; }
         [JsonProperty]
         public DateTime? DeletedDate { get; set; }
-        
+
         [JsonProperty]
         public ActionPlanStatus Status { get; set; }
         [JsonProperty]
@@ -31,12 +36,14 @@ namespace GenderPayGap.Database
         public string ProgressMade { get; set; }
         [JsonProperty]
         public string MeasuringProgress { get; set; }
-       
+
         [JsonProperty]
         public bool IsLateSubmission { get; set; }
         [JsonProperty]
         public string LateReason { get; set; }
 
         public virtual Organisation Organisation { get; set; }
+        
+        public virtual ICollection<ActionInActionPlan> ActionsinActionPlans { get; set; }
     }
 }
