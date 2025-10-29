@@ -1,0 +1,88 @@
+@using GenderPayGap.Core.Helpers
+@using GenderPayGap.WebUI.Views.Components.StatusMessages
+
+@using GovUkDesignSystemDotNet;
+
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Numerics
+@model ActionInActionPlanStatusViewModel
+
+@{
+    string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+
+    ViewBag.Title = $"Action plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @{
+        var crumbs = new List<CrumbViewModel>
+        {
+            new CrumbViewModel
+            {
+                HtmlOrText = new HtmlOrText("Manage Employers"),
+                Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
+            },
+            new CrumbViewModel
+            {
+                HtmlOrText = new HtmlOrText(Model.Organisation.OrganisationName),
+                Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
+            },
+            new CrumbViewModel
+            {
+                HtmlOrText = new HtmlOrText($"{formattedReportingYears} Reporting year"),
+                Href = Url.Action("ReportOverview", "ReportOverview", new { encryptedOrganisationId, reportingYear = Model.ReportingYear})
+            },
+            new CrumbViewModel
+            {
+                HtmlOrText = new HtmlOrText("Action plan")
+            },
+            new CrumbViewModel
+            {
+                HtmlOrText = new HtmlOrText("Progress made")
+            }
+        };
+    }
+
+    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
+    {
+        Crumbs = crumbs
+    }))
+}
+
+
+
+<form method="post">
+    @await Html.GovUkRadiosFor(
+        m => m.ActionStatus,
+        new RadiosViewModel
+        {
+            Fieldset = new FieldsetViewModel
+            {
+                Legend = new FieldsetLegendViewModel
+                {
+                    HtmlOrText = new HtmlOrText("How is your organisation progressing with this practice?"),
+                    IsPageHeading = false,
+                    Classes = ["govuk-fieldset__legend--l"]
+                }
+            },
+        },
+        radioItemViewModels: new Dictionary<ActionStatusesLabels, RadioItemViewModel>()
+        {
+            {
+                ActionStatusesLabels.InProgress, new RadioItemViewModel
+                {
+                    Hint = new HintViewModel
+                    {
+                        HtmlOrText = new HtmlOrText("Continuing work on this will count as an action on your action plan.")
+                    },
+                }
+            }
+        }
+    )
+
+    @await Html.GovUkButton(new ButtonViewModel
+    {
+        HtmlOrText = new HtmlOrText("Validate")
+    })
+</form>
