@@ -37,11 +37,6 @@ namespace GenderPayGap.WebUI.Controllers.ActionPlans
 
             Organisation organisation = dataRepository.Get<Organisation>(organisationId);
 
-            // var viewModel = new ActionInActionPlanStatusViewModel
-            // {
-            //     Organisation = organisation,
-            //     ReportingYear = reportingYear
-            // };
 
             var viewModel = new ActionInActionPlanStatusViewModel
             {
@@ -60,8 +55,10 @@ namespace GenderPayGap.WebUI.Controllers.ActionPlans
                     { viewModel.ActionPlanActionStatus = ActionPlanActionStatuses.Embedded; }
                     else if (actionInActionPlan.NewStatus == ActionStatus.InProgress)
                     { viewModel.ActionPlanActionStatus = ActionPlanActionStatuses.InProgress; }
-
-                    // viewModel.NewSector = viewModel.Organisation.SectorType == SectorTypes.Private ? NewSectorTypes.Private : NewSectorTypes.Public;
+                    else if (actionInActionPlan.NewStatus == ActionStatus.AddToPlan)
+                    { viewModel.ActionPlanActionStatus = ActionPlanActionStatuses.AddToPlan; }
+                    else if (actionInActionPlan.NewStatus == ActionStatus.NotPursuing)
+                    { viewModel.ActionPlanActionStatus = ActionPlanActionStatuses.NotPursuing; }
 
                 }
             }
@@ -70,44 +67,60 @@ namespace GenderPayGap.WebUI.Controllers.ActionPlans
         }
 
 
-        // [HttpPost("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/progress-made")]
-        // [ValidateAntiForgeryToken]
-        // public IActionResult ActionPlansProgressMadePost(string encryptedOrganisationId, int reportingYear, ActionPlansProgressMadeViewModel viewModel)
-        // {
-        //     long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
-        //     ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
-        //     ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
-        //     ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        [HttpPost("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/action-status/{actionId}/")]
+        [ValidateAntiForgeryToken]
+        public IActionResult ActionPlansActionStatusPost(string encryptedOrganisationId, int reportingYear, Actions actionId, ActionInActionPlanStatusViewModel viewModel)
+        {
+            long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+            ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+            ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+            ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
 
-        //     Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+            Organisation organisation = dataRepository.Get<Organisation>(organisationId);
 
-        //     // checking if the view model is not valid
-        //     if (!ModelState.IsValid)
-        //     {
-        //         viewModel.Organisation = organisation;
-        //         viewModel.ReportingYear = reportingYear;
-        //         return View("ActionPlansProgressMade", viewModel);
-        //     }
+            // checking if the view model is not valid
+            if (!ModelState.IsValid)
+            {
+                viewModel.Organisation = organisation;
+                viewModel.ReportingYear = reportingYear;
+                return View("ActionInActionPlanStatus", viewModel);
+            }
 
-        //     ActionPlan actionPlan = organisation.ActionPlans.Where(a => a.ReportingYear == reportingYear).FirstOrDefault();
-        //     if (actionPlan == null)
-        //     {
-        //         actionPlan = new ActionPlan
-        //         {
-        //             Organisation = organisation,
-        //             ReportingYear = reportingYear,
-        //             Status = ActionPlanStatus.Draft
-        //         };
-        //         dataRepository.Insert(actionPlan);
-        //     }
+            ActionPlan actionPlan = organisation.ActionPlans.Where(a => a.ReportingYear == reportingYear).FirstOrDefault();
+            if (actionPlan == null)
+            {
+                actionPlan = new ActionPlan
+                {
+                    Organisation = organisation,
+                    ReportingYear = reportingYear,
+                    Status = ActionPlanStatus.Draft
+                };
+                dataRepository.Insert(actionPlan);
+            }
+            ActionInActionPlan actionInActionPlan = actionPlan.ActionsinActionPlans.Where(a => a.ActionId == actionId).FirstOrDefault();
+            if (actionInActionPlan == null)
+            {
+                actionInActionPlan = new ActionInActionPlan
+                {
+                    ActionPlanId = actionPlan.ActionPlanId,
+                    ActionId = actionId
+                };
+                dataRepository.Insert(actionInActionPlan);
+            }
 
-        //     actionPlan.ProgressMade = viewModel.ProgressMade;
-        //     dataRepository.SaveChanges();
+            Console.Write("Hello World!");
+            Console.Write(viewModel.ActionPlanActionStatus);
+            Console.Write(viewModel.GetDBActionStatus());
 
 
-        //     return RedirectToAction("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId});
+            actionInActionPlan.NewStatus = viewModel.GetDBActionStatus();
+            dataRepository.SaveChanges();
+            
 
-        // }
+
+            return RedirectToAction("ManageOrganisationGet", "ManageOrganisations", new { encryptedOrganisationId });
+
+        }
 
     }
 }

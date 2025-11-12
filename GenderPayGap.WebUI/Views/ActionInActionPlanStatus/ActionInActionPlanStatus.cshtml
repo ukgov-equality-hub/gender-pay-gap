@@ -59,41 +59,6 @@
         [
             nameof(ActionInActionPlanStatusViewModel.ActionPlanActionStatus),
         ]))
-@* 
-    <form method="post" action="@Url.Action("ActionPlansActionStatusPost", "ActionInActionPlanController")">
-        @(await Html.GovUkRadiosFor(
-            m => m.ActionStatus,
-            new RadiosViewModel
-            {
-                Fieldset = new FieldsetViewModel
-                {
-                    Legend = new FieldsetLegendViewModel
-                    {
-                        HtmlOrText = new HtmlOrText("How is your organisation progressing with this practice?"),
-                        IsPageHeading = false,
-                        Classes = ["govuk-fieldset__legend--l"]
-                    }
-                },
-            },
-            radioItemViewModels: new Dictionary<ActionStatusesLabels, RadioItemViewModel>()
-            {
-                {
-                    ActionStatusesLabels.Embedded, new RadioItemViewModel
-                    {
-                        Label = new LabelViewModel
-                        {
-                            HtmlOrText = new HtmlOrText("England")
-                        }
-                    }
-                }
-            }
-        )) *@
-
-        @* @await Html.GovUkButton(new ButtonViewModel
-        {
-            HtmlOrText = new HtmlOrText("Validate")
-        }) *@
-    @* </form> *@
 
     <form method="post" action="@Url.Action("ActionPlansActionStatusPost", "ActionInActionPlanController")">
     @await Html.GovUkRadiosFor(
@@ -111,6 +76,26 @@
             },
         },
         radioItemViewModels: new Dictionary<ActionPlanActionStatuses, RadioItemViewModel>()
+        {
+            {
+                ActionPlanActionStatuses.InProgress, new RadioItemViewModel
+                {
+                    Hint = new HintViewModel
+                    {
+                        HtmlOrText = new HtmlOrText("Continuing work on this will count as an action on your action plan.")
+                    }
+                }
+            },
+            {
+                ActionPlanActionStatuses.AddToPlan, new RadioItemViewModel
+                {
+                    Hint = new HintViewModel
+                    {
+                        HtmlOrText = new HtmlOrText("You will be able to review your plan and change this choice before submitting it.")
+                    }
+                }
+            }
+        }
     )
 
     @await Html.GovUkButton(new ButtonViewModel
