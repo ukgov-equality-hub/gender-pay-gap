@@ -1,12 +1,14 @@
 @using GenderPayGap.Core.Helpers
 @using GenderPayGap.WebUI.Views.Components.StatusMessages
 
-@using GovUkDesignSystemDotNet;
+@using GovUkDesignSystemDotNet
 
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using System.Numerics
-@model ActionInActionPlanStatusViewModel
 
+@using GenderPayGap.WebUI.Models.ActionPlans
+@model ActionInActionPlanStatusViewModel
+@* 
 @{
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
     string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
@@ -48,13 +50,54 @@
     {
         Crumbs = crumbs
     }))
-}
+} *@
 
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
+    @(await Html.GovUkErrorSummaryIfNeeded(
+        [
+            nameof(ActionInActionPlanStatusViewModel.ActionPlanActionStatus),
+        ]))
+@* 
+    <form method="post" action="@Url.Action("ActionPlansActionStatusPost", "ActionInActionPlanController")">
+        @(await Html.GovUkRadiosFor(
+            m => m.ActionStatus,
+            new RadiosViewModel
+            {
+                Fieldset = new FieldsetViewModel
+                {
+                    Legend = new FieldsetLegendViewModel
+                    {
+                        HtmlOrText = new HtmlOrText("How is your organisation progressing with this practice?"),
+                        IsPageHeading = false,
+                        Classes = ["govuk-fieldset__legend--l"]
+                    }
+                },
+            },
+            radioItemViewModels: new Dictionary<ActionStatusesLabels, RadioItemViewModel>()
+            {
+                {
+                    ActionStatusesLabels.Embedded, new RadioItemViewModel
+                    {
+                        Label = new LabelViewModel
+                        {
+                            HtmlOrText = new HtmlOrText("England")
+                        }
+                    }
+                }
+            }
+        )) *@
 
-<form method="post">
+        @* @await Html.GovUkButton(new ButtonViewModel
+        {
+            HtmlOrText = new HtmlOrText("Validate")
+        }) *@
+    @* </form> *@
+
+    <form method="post" action="@Url.Action("ActionPlansActionStatusPost", "ActionInActionPlanController")">
     @await Html.GovUkRadiosFor(
-        m => m.ActionStatus,
+        m => m.ActionPlanActionStatus,
         new RadiosViewModel
         {
             Fieldset = new FieldsetViewModel
@@ -62,23 +105,12 @@
                 Legend = new FieldsetLegendViewModel
                 {
                     HtmlOrText = new HtmlOrText("How is your organisation progressing with this practice?"),
-                    IsPageHeading = false,
+                    IsPageHeading = true,
                     Classes = ["govuk-fieldset__legend--l"]
                 }
             },
         },
-        radioItemViewModels: new Dictionary<ActionStatusesLabels, RadioItemViewModel>()
-        {
-            {
-                ActionStatusesLabels.InProgress, new RadioItemViewModel
-                {
-                    Hint = new HintViewModel
-                    {
-                        HtmlOrText = new HtmlOrText("Continuing work on this will count as an action on your action plan.")
-                    },
-                }
-            }
-        }
+        radioItemViewModels: new Dictionary<ActionPlanActionStatuses, RadioItemViewModel>()
     )
 
     @await Html.GovUkButton(new ButtonViewModel

@@ -12,19 +12,22 @@ namespace GenderPayGap.WebUI.Controllers.ActionPlans
 {
     [Authorize(Roles = LoginRoles.GpgEmployer)]
     [Route("account/organisations")]
-    public class ActionAddStatusController : Controller
+    public class ActionInActionPlanStatusController : Controller
     {
 
         private readonly IDataRepository dataRepository;
 
 // constructor method, specifies how you construct this method, specifies that you need a dataRepository
-        public ActionAddStatusController(
+        public ActionInActionPlanStatusController(
             IDataRepository dataRepository)
         {
             this.dataRepository = dataRepository;
         }
+
         
-        [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/action-status/action-{actionId}/")]
+
+        
+        [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/action-status/{actionId}/")]
         public IActionResult ActionPlansActionStatusGet(string encryptedOrganisationId, int reportingYear, Actions actionId)
         {
             long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
@@ -34,11 +37,18 @@ namespace GenderPayGap.WebUI.Controllers.ActionPlans
 
             Organisation organisation = dataRepository.Get<Organisation>(organisationId);
 
+            // var viewModel = new ActionInActionPlanStatusViewModel
+            // {
+            //     Organisation = organisation,
+            //     ReportingYear = reportingYear
+            // };
+
             var viewModel = new ActionInActionPlanStatusViewModel
             {
                 Organisation = organisation,
                 ReportingYear = reportingYear
             };
+            
 
             ActionPlan actionPlan = organisation.ActionPlans.Where(a => a.ReportingYear == reportingYear).FirstOrDefault();
             if (actionPlan != null)
@@ -46,9 +56,14 @@ namespace GenderPayGap.WebUI.Controllers.ActionPlans
                 ActionInActionPlan actionInActionPlan = actionPlan.ActionsinActionPlans.Where(a => a.ActionId == actionId).FirstOrDefault();
                 if (actionInActionPlan != null)
                 {
-                    viewModel.ActionStatus = actionInActionPlan.NewStatus;
-                }
+                    if (actionInActionPlan.NewStatus == ActionStatus.Embedded)
+                    { viewModel.ActionPlanActionStatus = ActionPlanActionStatuses.Embedded; }
+                    else if (actionInActionPlan.NewStatus == ActionStatus.InProgress)
+                    { viewModel.ActionPlanActionStatus = ActionPlanActionStatuses.InProgress; }
 
+                    // viewModel.NewSector = viewModel.Organisation.SectorType == SectorTypes.Private ? NewSectorTypes.Private : NewSectorTypes.Public;
+
+                }
             }
 
             return View("ActionInActionPlanStatus", viewModel);
