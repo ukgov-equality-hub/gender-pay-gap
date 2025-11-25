@@ -10,6 +10,10 @@ namespace GenderPayGap.BusinessLogic.Tests.Services
         public void SomeEnumsMustHaveUniqueNumericValues()
         {
             EnumMustHaveUniqueValues<AuditedAction, int>();
+            EnumMustHaveUniqueValues<ActionPlanStatus, byte>();
+            EnumMustHaveUniqueValues<ActionPlanType, byte>();
+            EnumMustHaveUniqueValues<ActionStatus, byte>();
+            EnumMustHaveUniqueValues<Actions, int>();
         }
 
         private static void EnumMustHaveUniqueValues<TEnum, TNumeric>()
