@@ -258,6 +258,44 @@ namespace GenderPayGap.Database
 
             #endregion
 
+            #region ActionPlan
+
+            modelBuilder.Entity<ActionPlan>(
+                entity => {
+                    entity.HasKey(e => e.ActionPlanId).HasName("PK_dbo.ActionPlans");
+
+                    entity.HasIndex(e => e.OrganisationId);
+
+                    entity.HasIndex(e => new {e.OrganisationId, e.ReportingYear});
+
+                    entity.HasIndex(e => e.Status);
+
+                    entity.HasOne(actionPlan => actionPlan.Organisation)
+                        .WithMany(organisation => organisation.ActionPlans)
+                        .HasForeignKey(actionPlan => actionPlan.OrganisationId)
+                        .HasConstraintName("FK_dbo.ActionPlans_dbo.Organisations_OrganisationId");
+                });
+
+            #endregion
+
+            #region ActionInActionPlan
+
+            modelBuilder.Entity<ActionInActionPlan>(
+                entity => {
+                    entity.HasKey(e => e.ActionInActionPlanId).HasName("PK_dbo.ActionsInActionPlans");
+
+                    entity.HasIndex(e => e.ActionPlanId);
+
+                    entity.HasIndex(e => e.NewStatus);
+
+                    entity.HasOne(actionInActionPlan => actionInActionPlan.ActionPlan)
+                        .WithMany(ActionPlan => ActionPlan.ActionsInActionPlans)
+                        .HasForeignKey(actionInActionPlan => actionInActionPlan.ActionPlanId)
+                        .HasConstraintName("FK_dbo.ActionsInActionPlans_dbo.ActionPlans_ActionPlanId");
+                });
+
+            #endregion
+
             #region SicCode
 
             modelBuilder.Entity<SicCode>(
