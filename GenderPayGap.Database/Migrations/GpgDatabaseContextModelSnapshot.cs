@@ -25,6 +25,86 @@ namespace GenderPayGap.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("GenderPayGap.Database.ActionInActionPlan", b =>
+                {
+                    b.Property<long>("ActionInActionPlanId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("ActionInActionPlanId"));
+
+                    b.Property<int>("Action")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("ActionPlanId")
+                        .HasColumnType("bigint");
+
+                    b.Property<byte>("NewStatus")
+                        .HasColumnType("smallint");
+
+                    b.Property<byte?>("OldStatus")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("SupportingText")
+                        .HasColumnType("text");
+
+                    b.HasKey("ActionInActionPlanId")
+                        .HasName("PK_dbo.ActionsInActionPlans");
+
+                    b.HasIndex("ActionPlanId");
+
+                    b.HasIndex("NewStatus");
+
+                    b.ToTable("ActionsInActionPlans");
+                });
+
+            modelBuilder.Entity("GenderPayGap.Database.ActionPlan", b =>
+                {
+                    b.Property<long>("ActionPlanId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("ActionPlanId"));
+
+                    b.Property<byte>("ActionPlanType")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("DraftCreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LinkToReport")
+                        .HasColumnType("text");
+
+                    b.Property<long>("OrganisationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("ReportingYear")
+                        .HasColumnType("integer");
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateTime?>("SubmittedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("SupportingNarrative")
+                        .HasColumnType("text");
+
+                    b.HasKey("ActionPlanId")
+                        .HasName("PK_dbo.ActionPlans");
+
+                    b.HasIndex("OrganisationId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("OrganisationId", "ReportingYear");
+
+                    b.ToTable("ActionPlans");
+                });
+
             modelBuilder.Entity("GenderPayGap.Database.InactiveUserOrganisation", b =>
                 {
                     b.Property<long>("UserId")
@@ -1089,6 +1169,30 @@ namespace GenderPayGap.Database.Migrations
                     b.ToTable("UserStatus", (string)null);
                 });
 
+            modelBuilder.Entity("GenderPayGap.Database.ActionInActionPlan", b =>
+                {
+                    b.HasOne("GenderPayGap.Database.ActionPlan", "ActionPlan")
+                        .WithMany("ActionsInActionPlans")
+                        .HasForeignKey("ActionPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ActionsInActionPlans_dbo.ActionPlans_ActionPlanId");
+
+                    b.Navigation("ActionPlan");
+                });
+
+            modelBuilder.Entity("GenderPayGap.Database.ActionPlan", b =>
+                {
+                    b.HasOne("GenderPayGap.Database.Organisation", "Organisation")
+                        .WithMany("ActionPlans")
+                        .HasForeignKey("OrganisationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ActionPlans_dbo.Organisations_OrganisationId");
+
+                    b.Navigation("Organisation");
+                });
+
             modelBuilder.Entity("GenderPayGap.Database.InactiveUserOrganisation", b =>
                 {
                     b.HasOne("GenderPayGap.Database.Organisation", "Organisation")
@@ -1301,8 +1405,15 @@ namespace GenderPayGap.Database.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("GenderPayGap.Database.ActionPlan", b =>
+                {
+                    b.Navigation("ActionsInActionPlans");
+                });
+
             modelBuilder.Entity("GenderPayGap.Database.Organisation", b =>
                 {
+                    b.Navigation("ActionPlans");
+
                     b.Navigation("OrganisationAddresses");
 
                     b.Navigation("OrganisationNames");
