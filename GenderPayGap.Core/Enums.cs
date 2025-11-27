@@ -384,7 +384,10 @@ namespace GenderPayGap.Core
         [Display(Name = "Admin changed user status")]
         AdminChangeUserStatus = 44,
         [Display(Name = "Admin add admin user")]
-        AdminAddAdminUser = 45
+        AdminAddAdminUser = 45,
+        
+        [Display(Name = "Admin deleted action plan")]
+        AdminDeleteActionPlan = 46,
     }
 
     public enum HashingAlgorithm

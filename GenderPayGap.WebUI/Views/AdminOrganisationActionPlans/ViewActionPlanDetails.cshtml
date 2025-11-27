@@ -1,0 +1,308 @@
+﻿@using GenderPayGap.Core
+@using GenderPayGap.Core.Helpers
+@using GenderPayGap.Database
+@using GenderPayGap.WebUI.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.Admin.AdminOrganisationActionPlanDetailsViewModel
+
+@{
+    ViewBag.Title = $"Action Plan details - {Model.Organisation.OrganisationName} - Administration - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Admin"),
+                Href = Url.Action("AdminHomePage", "AdminHomepage")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("Action plans"),
+                Href = Url.Action("ViewActionPlans", "AdminOrganisationActionPlans", new {id = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("Action Plan details")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        <span class="govuk-caption-xl">Administration</span>
+        <h1 class="govuk-heading-xl">
+            Action Plan details
+            <br />
+            <span class="govuk-!-font-size-27" style="display: inline-block; margin-top: 15px;">
+                for @(Model.Organisation.OrganisationName)
+                <br />
+                for reporting year @ReportingYearsHelper.FormatYearAsReportingPeriod(Model.Year)
+            </span>
+        </h1>
+
+        <table class="govuk-table admin-return-details-table">
+            <tbody class="govuk-table__body">
+                @{
+                    List<ActionPlan> actionPlanVersions = Model.Organisation.ActionPlans
+                        .Where(ap => ap.ReportingYear == Model.Year)
+                        .OrderByDescending(ap => ap.DraftCreatedDate)
+                        .ToList();
+
+                    int numberOfVersions = actionPlanVersions.Count;
+
+                    Func<int, ActionPlan> GetVersion = (i => actionPlanVersions[i]);
+                    Func<int, ActionPlan> GetPreviousVersion = (i => i < numberOfVersions - 1 ? actionPlanVersions[i + 1] : null);
+                    Func<int, int> GetVersionNumber = (i => actionPlanVersions.Count - i);
+                }
+
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Revision number</th>
+
+                    @for (int i = 0; i < numberOfVersions; i++)
+                    {
+                        int versionNumber = GetVersionNumber(i);
+
+                        <th scope="col" class="govuk-table__header">
+                            version @versionNumber
+                        </th>
+                    }
+                </tr>
+
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Status</th>
+                    @for (int i = 0; i < numberOfVersions; i++)
+                    {
+                        ActionPlan thisVersion = GetVersion(i);
+
+                        <td class="govuk-table__cell">@(thisVersion.Status)</td>
+                    }
+                </tr>
+
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">
+                        <span class="govuk-visually-hidden">Date</span>
+                        Draft Created
+                    </th>
+                    @for (int i = 0; i < numberOfVersions; i++)
+                    {
+                        ActionPlan thisVersion = GetVersion(i);
+
+                        <td class="govuk-table__cell">
+                            <span style="white-space: nowrap">
+                                @(thisVersion.DraftCreatedDate.ToString("d MMM yyyy"))
+                            </span>
+                            <span style="white-space: nowrap">
+                                @(thisVersion.DraftCreatedDate.ToString("HH:mm"))
+                            </span>
+                        </td>
+                    }
+                </tr>
+
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">
+                        <span class="govuk-visually-hidden">Date</span>
+                        Submitted
+                    </th>
+                    @for (int i = 0; i < numberOfVersions; i++)
+                    {
+                        ActionPlan thisVersion = GetVersion(i);
+
+                        <td class="govuk-table__cell">
+                            @if (thisVersion.SubmittedDate.HasValue)
+                            {
+                                <span style="white-space: nowrap">
+                                    @(thisVersion.SubmittedDate.Value.ToString("d MMM yyyy"))
+                                </span>
+                                <span style="white-space: nowrap">
+                                    @(thisVersion.SubmittedDate.Value.ToString("HH:mm"))
+                                </span>
+                            }
+                        </td>
+                    }
+                </tr>
+
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">
+                        <span class="govuk-visually-hidden">Date</span>
+                        Deleted
+                    </th>
+                    @for (int i = 0; i < numberOfVersions; i++)
+                    {
+                        ActionPlan thisVersion = GetVersion(i);
+
+                        <td class="govuk-table__cell">
+                            @if (thisVersion.DeletedDate.HasValue)
+                            {
+                                <span style="white-space: nowrap">
+                                    @(thisVersion.DeletedDate.Value.ToString("d MMM yyyy"))
+                                </span>
+                                <span style="white-space: nowrap">
+                                    @(thisVersion.DeletedDate.Value.ToString("HH:mm"))
+                                </span>
+                            }
+                        </td>
+                    }
+                </tr>
+
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Action Plan Type</th>
+                    @for (int i = 0; i < numberOfVersions; i++)
+                    {
+                        ActionPlan thisVersion = GetVersion(i);
+                        ActionPlan previousVersion = GetPreviousVersion(i);
+
+                        bool isChanged = previousVersion != null &&
+                                         (thisVersion.ActionPlanType != previousVersion.ActionPlanType);
+
+                        <td class="govuk-table__cell @(isChanged ? "value-changed-from-previous-return" : null)">
+                            @(thisVersion.ActionPlanType)
+                        </td>
+                    }
+                </tr>
+                
+                @foreach (ActionCategories actionCategory in Enum.GetValues<ActionCategories>())
+                {
+                    <tr class="govuk-table__row">
+                        <th scope="row"
+                            class="govuk-table__header govuk-!-padding-top-5"
+                            style="background-color: #f3f2f1;"
+                            colspan="@(numberOfVersions + 1)">
+                            @(actionCategory.GetDisplayName())
+                        </th>
+                    </tr>
+                    
+                    @foreach (ActionDetails actionDetails in ActionsHelper.ListOfAllActions.Where(a => a.Category == actionCategory))
+                    {
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header govuk-!-padding-left-3">
+                                @(actionDetails.Name)
+                            </th>
+                            @for (int i = 0; i < numberOfVersions; i++)
+                            {
+                                ActionPlan thisVersion = GetVersion(i);
+                                ActionPlan previousVersion = GetPreviousVersion(i);
+
+                                ActionInActionPlan thisActionInPlan = thisVersion.ActionsInActionPlans.SingleOrDefault(a => a.Action == actionDetails.Action);
+                                ActionInActionPlan previousActionInPlan = previousVersion?.ActionsInActionPlans?.SingleOrDefault(a => a.Action == actionDetails.Action);
+                                
+                                bool isChanged = previousVersion != null &&
+                                                 (thisActionInPlan?.NewStatus != previousActionInPlan?.NewStatus) &&
+                                                 (thisActionInPlan?.SupportingText != previousActionInPlan?.SupportingText);
+                                
+                                <td class="govuk-table__cell @(isChanged ? "value-changed-from-previous-return" : null)">
+                                    @if (thisActionInPlan != null)
+                                    {
+                                        @await Html.GovUkTag(new()
+                                        {
+                                            HtmlOrText = new(thisActionInPlan.NewStatus.GetDisplayName()),
+                                            Classes = [thisActionInPlan.NewStatus.GetTagColour()]
+                                        })
+                                        
+                                        @if (!string.IsNullOrWhiteSpace(thisActionInPlan.SupportingText))
+                                        {
+                                            <div class="govuk-inset-text govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+                                                @(thisActionInPlan.SupportingText)
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @await Html.GovUkTag(new()
+                                        {
+                                            HtmlOrText = new(ActionStatus.DoNotAddToPlan.GetDisplayName()),
+                                            Classes = [ActionStatus.DoNotAddToPlan.GetTagColour()]
+                                        })
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header govuk-!-padding-top-5">
+                        Supporting Narrative
+                    </th>
+                    @for (int i = 0; i < numberOfVersions; i++)
+                    {
+                        ActionPlan thisVersion = GetVersion(i);
+                        ActionPlan previousVersion = GetPreviousVersion(i);
+
+                        bool isChanged = previousVersion != null &&
+                        (thisVersion.SupportingNarrative != previousVersion.SupportingNarrative);
+
+                        <td class="govuk-table__cell govuk-!-padding-top-5 @(isChanged ? "value-changed-from-previous-return" : null)">
+                            @(thisVersion.SupportingNarrative)
+                        </td>
+                    }
+                </tr>
+
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Link to company website</th>
+                    @for (int i = 0; i < numberOfVersions; i++)
+                    {
+                        ActionPlan thisVersion = GetVersion(i);
+                        ActionPlan previousVersion = GetPreviousVersion(i);
+
+                        bool isChanged = previousVersion != null &&
+                        (thisVersion.LinkToReport != previousVersion.LinkToReport);
+
+                        <td class="govuk-table__cell @(isChanged ? "value-changed-from-previous-return" : null)">
+                            @if (!string.IsNullOrWhiteSpace(thisVersion.LinkToReport))
+                            {
+                                try
+                                {
+                                    <a href="@(thisVersion.LinkToReport)"
+                                       rel="noopener"
+                                       class="govuk-link">
+                                        Link
+                                    </a>
+                                }
+                                catch
+                                {
+                                    @(thisVersion.LinkToReport)
+                                }
+                            }
+                            else
+                            {
+                                @:No link
+                            }
+                        </td>
+                    }
+                </tr>
+
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Action</th>
+                    @for (int i = 0; i < numberOfVersions; i++)
+                    {
+                        ActionPlan thisVersion = GetVersion(i);
+                        <td class="govuk-table__cell">
+                            @if (thisVersion.Status != ActionPlanStatus.Deleted && thisVersion.Status != ActionPlanStatus.DeletedDraft)
+                            {
+                                @if (User.IsInRole(LoginRoles.GpgAdmin))
+                                {
+                                    <a href="@Url.Action("DeleteActionPlanGet", "AdminOrganisationActionPlans", new {id = Model.Organisation.OrganisationId, year = thisVersion.ReportingYear, actionPlanId = thisVersion.ActionPlanId})"
+                                       class="govuk-link">
+                                        Delete
+                                    </a>
+                                }
+                            }
+                        </td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
