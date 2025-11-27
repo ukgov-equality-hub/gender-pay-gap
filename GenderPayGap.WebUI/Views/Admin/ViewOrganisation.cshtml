@@ -2,8 +2,7 @@
 @using GenderPayGap.Core.Helpers
 @using GenderPayGap.Database
 @using GenderPayGap.WebUI.Helpers
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminViewOrganisationViewModel
 
 @{
@@ -15,7 +14,7 @@
         var crumbs = new List<CrumbViewModel>();
         crumbs.Add(new CrumbViewModel
         {
-            Text = "Admin",
+            HtmlOrText = new("Admin"),
             Href = Url.Action("AdminHomePage", "AdminHomepage")
         });
 
@@ -26,14 +25,14 @@
         {
             crumbs.Add(new CrumbViewModel
             {
-                Text = "Search results",
+                HtmlOrText = new("Search results"),
                 Href = "javascript:window.history.back();"
             });
         }
 
         crumbs.Add(new CrumbViewModel
         {
-            Text = Model.Organisation.OrganisationName
+            HtmlOrText = new(Model.Organisation.OrganisationName)
         });
     }
 
@@ -295,6 +294,47 @@
                 </a>
             </td>
         </tr>
+        <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header">Action Plans</th>
+            <td class="govuk-table__cell">
+                @foreach (int year in Model.ReportingYears)
+                {
+                    ActionPlan latestNonDraftActionPlanForCurrentYear = Model.Organisation.ActionPlans
+                        .Where(ap => ap.ReportingYear == year)
+                        .Where(ap => ap.Status != ActionPlanStatus.Draft && ap.Status != ActionPlanStatus.DeletedDraft)
+                        .OrderByDescending(ap => ap.DraftCreatedDate)
+                        .FirstOrDefault();
+                    
+                    ActionPlan latestActionPlanForCurrentYear = Model.Organisation.ActionPlans
+                        .Where(ap => ap.ReportingYear == year)
+                        .OrderByDescending(ap => ap.DraftCreatedDate)
+                        .FirstOrDefault();
+
+                    <b>
+                        @(ReportingYearsHelper.FormatYearAsReportingPeriod(year)):
+                    </b>
+                    @if (latestNonDraftActionPlanForCurrentYear != null)
+                    {
+                        @(latestNonDraftActionPlanForCurrentYear.Status)
+                    }
+                    else if (latestActionPlanForCurrentYear != null)
+                    {
+                        @(latestActionPlanForCurrentYear.Status)
+                    }
+                    else
+                    {
+                        <span>No action plan for this reporting year</span>
+                    }
+                    <br/>
+                }
+            </td>
+            <td class="govuk-table__cell">
+                <a href="@Url.Action("ViewActionPlans", "AdminOrganisationActionPlans", new {id = Model.Organisation.OrganisationId})"
+                   class="govuk-link">
+                    Details <span class="govuk-visually-hidden"> of action plans</span>
+                </a>
+            </td>
+        </tr>
         @if (User.IsInRole(LoginRoles.GpgAdmin))
         {
             <tr class="govuk-table__row">
@@ -422,10 +462,10 @@ else
                                     @Html.AntiForgeryToken()
                                     @(await Html.GovUkButton(new ButtonViewModel
                                     {
-                                        Html = @<text>
-                                                   Impersonate user <span class="govuk-visually-hidden">@(user.Fullname)</span>
-                                                </text>,
-                                        Classes = "govuk-button--secondary govuk-!-margin-bottom-0",
+                                        HtmlOrText = new(@<text>
+                                                              Impersonate user <span class="govuk-visually-hidden">@(user.Fullname)</span>
+                                                          </text>),
+                                        Classes = ["govuk-button--secondary", "govuk-!-margin-bottom-0"],
                                         PreventDoubleClick = true
                                     }))
                                     <a href="#"

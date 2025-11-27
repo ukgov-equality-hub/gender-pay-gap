@@ -16,6 +16,7 @@ namespace GenderPayGap.Database
             OrganisationSicCodes = new HashSet<OrganisationSicCode>();
             OrganisationStatuses = new HashSet<OrganisationStatus>();
             Returns = new HashSet<Return>();
+            ActionPlans = new HashSet<ActionPlan>();
             UserOrganisations = new HashSet<UserOrganisation>();
         }
 
@@ -50,6 +51,7 @@ namespace GenderPayGap.Database
         public virtual ICollection<OrganisationSicCode> OrganisationSicCodes { get; set; }
         public virtual ICollection<OrganisationStatus> OrganisationStatuses { get; set; }
         public virtual ICollection<Return> Returns { get; set; }
+        public virtual ICollection<ActionPlan> ActionPlans { get; set; }
         public virtual ICollection<UserOrganisation> UserOrganisations { get; set; }
 
     }

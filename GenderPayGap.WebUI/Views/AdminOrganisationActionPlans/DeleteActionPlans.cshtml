@@ -1,0 +1,101 @@
+@using GenderPayGap.Core.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.Admin.AdminDeleteActionPlanViewModel
+
+@{
+    ViewBag.Title = "Delete action plans - Administration - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Admin"),
+                Href = Url.Action("AdminHomePage", "AdminHomepage")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("Action Plans"),
+                Href = Url.Action("ViewActionPlans", "AdminOrganisationActionPlans", new {id = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("Delete action plans")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-xl">Administration</span>
+        <h1 class="govuk-heading-xl">
+            Delete action plans
+            <br />
+            <span class="govuk-!-font-size-27">
+                for @(Model.Organisation.OrganisationName)
+            </span>
+        </h1>
+
+        <h2 class="govuk-body-m">
+            You are about to delete <b>@(Model.ActionPlanIds.Count)</b> action plan@(Model.ActionPlanIds.Count != 1 ? "s" : null)
+            <br />
+            for @(Model.Organisation.OrganisationName)
+            <br />
+            for reporting year @ReportingYearsHelper.FormatYearAsReportingPeriod(Model.Year)
+        </h2>
+
+        @(await Html.GovUkErrorSummaryIfNeeded())
+
+        <form method="POST" action="@Url.Action("DeleteActionPlansPost", "AdminOrganisationActionPlans", new {id = Model.Organisation.OrganisationId, year = Model.Year})">
+            @(Html.AntiForgeryToken())
+            @for(int i = 0; i < Model.ActionPlanIds.Count; i++)
+            {
+                @Html.HiddenFor(model => Model.ActionPlanIds[i])
+            }
+            <div class="govuk-form-group">
+
+                @{
+                    CharacterCountViewModel characterCountViewModel = new()
+                    {
+                        Label = new()
+                        {
+                            HtmlOrText = new("What is the reason for this change?"),
+                            Classes = ["govuk-label--m"]
+                        },
+                        FormGroup = new()
+                        {
+                            Classes = ["govuk-!-margin-top-6"]
+                        }
+                    };
+                }
+                @await Html.GovUkCharacterCountFor(
+                    m => m.Reason,
+                    characterCountViewModel)
+                
+                @(await Html.GovUkButton(new ButtonViewModel
+                {
+                    HtmlOrText = new("Confirm"),
+                    Classes = ["govuk-!-margin-top-4", "govuk-!-margin-bottom-4"],
+                    PreventDoubleClick = true
+                }))
+
+                <p class="govuk-body">
+                    <a href="@Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})"
+                       class="govuk-link">
+                        Cancel and return to organisation page
+                    </a>
+                </p>
+
+            </div>
+        </form>
+    </div>
+</div>

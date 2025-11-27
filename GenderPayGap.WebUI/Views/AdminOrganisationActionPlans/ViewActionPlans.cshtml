@@ -1,0 +1,166 @@
+﻿@using GenderPayGap.Core
+@using GenderPayGap.Core.Helpers
+@using GenderPayGap.Database
+@using GenderPayGap.WebUI.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.Database.Organisation
+
+@{
+    ViewBag.Title = $"Action Plans - {Model.OrganisationName} - Administration - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Admin"),
+                Href = Url.Action("AdminHomePage", "AdminHomepage")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.OrganisationName),
+                Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("Action Plans")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        <span class="govuk-caption-xl">Administration</span>
+        <h1 class="govuk-heading-xl">
+            Action Plans
+            <br/>
+            <span class="govuk-!-font-size-27">
+                for @(Model.OrganisationName)
+            </span>
+        </h1>
+
+        @if (!Model.ActionPlans.Any())
+        {
+            <div class="govuk-body">
+                No action plans
+            </div>
+        }
+        else
+        {
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">Reporting year</th>
+                        <th scope="col" class="govuk-table__header">
+                            <span class="govuk-visually-hidden">Actions that apply to all Action Plans for this reporting year</span>
+                        </th>
+                        <th scope="col" class="govuk-table__header">Dates</th>
+                        <th scope="col" class="govuk-table__header">Type</th>
+                        <th scope="col" class="govuk-table__header">Actions in plan</th>
+                        <th scope="col" class="govuk-table__header">Status</th>
+                        <th scope="col" class="govuk-table__header">Action <span class="govuk-visually-hidden">that apply to individual versions of a Action Plans</span></th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    @{ int previousReportingYear = 0; }
+                    @foreach (ActionPlan actionPlanForYear in Model.ActionPlans.OrderByDescending(ap => ap.ReportingYear).ThenByDescending(ap => ap.DraftCreatedDate))
+                    {
+                        <tr class="govuk-table__row">
+                            @if (actionPlanForYear.ReportingYear == previousReportingYear)
+                            {
+                                @* Omit this TD, a TD above has a rowspan that covers this row *@
+                            }
+                            else
+                            {
+                                int versionsForThisReportingYear = Model.ActionPlans.Count(ap => ap.ReportingYear == actionPlanForYear.ReportingYear);
+                                string reportingYear = ReportingYearsHelper.FormatYearAsReportingPeriod(actionPlanForYear.ReportingYear);
+
+                                <th scope="row" class="govuk-table__cell" style="white-space: nowrap" rowspan="@(versionsForThisReportingYear)">
+                                    @reportingYear
+                                </th>
+                                <td class="govuk-table__cell" rowspan="@(versionsForThisReportingYear)">
+                                    <span style="line-height: 1.7;">
+                                        <a href="@Url.Action("ViewActionPlanDetailsForYear", "AdminOrganisationActionPlans",
+                                                     new {id = Model.OrganisationId, year = actionPlanForYear.ReportingYear})"
+                                           class="govuk-link" style="font-weight: normal">
+                                            <span style="white-space: nowrap">Full history</span>
+                                            <span class="govuk-visually-hidden">of action plans for reporting year @reportingYear</span>
+                                        </a>
+                                        <br/>
+                                        <a href="@Url.Action("ReportForYear", "ViewReports", new {organisationId = Model.OrganisationId, reportingYear = actionPlanForYear.ReportingYear})"
+                                           class="govuk-link" style="font-weight: normal">
+                                            <span style="white-space: nowrap">Public page</span>
+                                            <span class="govuk-visually-hidden">for reporting year @reportingYear</span>
+                                        </a>
+                                        @if (Model.ActionPlans.Any(ap => ap.Status != ActionPlanStatus.Deleted && ap.Status != ActionPlanStatus.DeletedDraft))
+                                        {
+                                            @if (User.IsInRole(LoginRoles.GpgAdmin))
+                                            {
+                                                <br/>
+                                                <a href="@Url.Action("DeleteActionPlansOfAYearGet", "AdminOrganisationActionPlans", new {id = Model.OrganisationId, year = actionPlanForYear.ReportingYear})"
+                                                   class="govuk-link" style="font-weight: normal">
+                                                    <span style="white-space: nowrap">Delete action plans</span>
+                                                    <span class="govuk-visually-hidden">for reporting year @reportingYear</span>
+                                                </a>
+                                            }
+                                        }
+                                    </span>
+                                </td>
+                            }
+                            <td class="govuk-table__cell">
+                                <span style="white-space: nowrap">
+                                    <b>Created ✏️:</b> @(actionPlanForYear.DraftCreatedDate.ToString("d MMM yyyy HH:mm"))
+                                </span>
+                                @if (actionPlanForYear.SubmittedDate.HasValue)
+                                {
+                                    <br/>
+                                    <span style="white-space: nowrap">
+                                        <b>Submitted ✅:</b> @(actionPlanForYear.SubmittedDate.Value.ToString("d MMM yyyy HH:mm"))
+                                    </span>
+                                }
+                                @if (actionPlanForYear.DeletedDate.HasValue)
+                                {
+                                    <br/>
+                                    <span style="white-space: nowrap">
+                                        <b>Deleted ❌:</b> @(actionPlanForYear.DeletedDate.Value.ToString("d MMM yyyy HH:mm"))
+                                    </span>
+                                }
+                            </td>
+                            <td class="govuk-table__cell">
+                                @(actionPlanForYear.ActionPlanType)
+                            </td>
+                            <td class="govuk-table__cell">
+                                <span style="white-space: nowrap">
+                                    <b>New or In Progress:</b> @(actionPlanForYear.ActionsInActionPlans.Count(a => a.NewStatus == ActionStatus.NewOrInProgress))
+                                </span>
+                                <br/>
+                                <span style="white-space: nowrap">
+                                    <b>Completed:</b> @(actionPlanForYear.ActionsInActionPlans.Count(a => a.NewStatus == ActionStatus.Completed))
+                                </span>
+                            </td>
+                            <td class="govuk-table__cell">@(actionPlanForYear.Status)</td>
+                            <td class="govuk-table__cell">
+                                @if (actionPlanForYear.Status != ActionPlanStatus.Deleted && actionPlanForYear.Status != ActionPlanStatus.DeletedDraft)
+                                {
+                                    @if (User.IsInRole(LoginRoles.GpgAdmin))
+                                    {
+                                        <a href="@Url.Action("DeleteActionPlanGet", "AdminOrganisationActionPlans", new {id = Model.OrganisationId, year = actionPlanForYear.ReportingYear, actionPlanId = actionPlanForYear.ActionPlanId})"
+                                           class="govuk-link">
+                                            Delete
+                                            <span class="govuk-visually-hidden"> the action plan for @(ReportingYearsHelper.FormatYearAsReportingPeriod(actionPlanForYear.ReportingYear)) created on @(actionPlanForYear.DraftCreatedDate.ToString("d MMM yyyy HH:mm"))</span>
+                                        </a>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                        previousReportingYear = actionPlanForYear.ReportingYear;
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
