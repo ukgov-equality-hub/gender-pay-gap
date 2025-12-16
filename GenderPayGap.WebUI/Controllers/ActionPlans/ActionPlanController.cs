@@ -325,6 +325,25 @@ public class ActionPlanController: Controller
         }
     }
 
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/submitted-confirmation")]
+    public IActionResult ActionPlanSubmittedConfirmationGet(string encryptedOrganisationId, int reportingYear)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        ActionPlan actionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
+
+        if (actionPlan?.Status != ActionPlanStatus.Submitted)
+        {
+            throw new PageNotFoundException();
+        }
+        
+        return View("ActionPlanSubmittedConfirmation", actionPlan);
+    }
+
 
     private ActionPlan GetOrCreateDraftActionPlan(Organisation organisation, int reportingYear, ActionPlanType actionPlanType)
     {
