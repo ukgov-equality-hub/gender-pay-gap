@@ -1,0 +1,103 @@
+@using GenderPayGap.Core.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.ActionPlans.ActionPlanIntroViewModel
+
+@{
+    string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+
+    ViewBag.Title = $"Equality action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs =
+        [
+            new()
+            {
+                HtmlOrText = new("Manage Employers"),
+                Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new($"Equality action plan {formattedReportingYears}")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <h1 class="govuk-heading-xl">
+            Equality action plan
+            <br/>
+            <span class="govuk-!-font-size-27 govuk-!-margin-top-3" style="display: inline-block; line-height: 1.3 !important;">
+                Reporting as @(Model.Organisation.OrganisationName)
+                <br/>
+                for reporting year @(formattedReportingYears)
+            </span>
+        </h1>
+
+        <p class="govuk-body">
+            From April 2027, organisations with over 250 employees must submit an action
+            plan with their gender pay gap report. This plan must show how you will:
+        </p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>reduce your gender pay gap</li>
+            <li>improve gender equality in your organisation</li>
+        </ul>
+        <div class="govuk-inset-text">
+            <a href="#" class="govuk-link">
+                Read more about creating an equality action plan on GOV.UK
+            </a>
+        </div>
+
+        <h2 class="govuk-heading-m">
+            Before you start
+        </h2>
+        <p class="govuk-body">
+            You should make sure you:
+        </p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>know which actions you will be selecting</li>
+            <li>have prepared your supporting text</li>
+        </ul>
+        <p class="govuk-body">
+            You need to select at least 2 new actions in your first action plan.
+        </p>
+        <p class="govuk-body">
+            You can also add:
+        </p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+                supporting text for each action – this should explain what your organisation is doing or plans to do
+                in this area
+            </li>
+            <li>
+                a supporting narrative for your overall action plan – this should give any background information
+                including your organisation’s objectives for equality, diversity and inclusion
+            </li>
+        </ul>
+
+        <p class="govuk-body">
+            @(await Html.GovUkButton(new()
+            {
+                HtmlOrText = new HtmlOrText("Continue"),
+                Href = Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}),
+                Classes = ["govuk-!-margin-bottom-0", "govuk-!-margin-top-4"]
+            }))
+        </p>
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})">
+               Cancel and return to @(Model.Organisation.OrganisationName)
+            </a>
+        </p>
+    </div>
+</div>
