@@ -37,4 +37,25 @@ public class ActionPlanController: Controller
         return View("ActionPlanIntro", viewModel);
     }
 
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/actions-list")]
+    public IActionResult ActionPlanListGet(string encryptedOrganisationId, int reportingYear)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        ActionPlan actionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
+        
+        ActionPlanListViewModel viewModel = new ActionPlanListViewModel
+        {
+            Organisation = organisation,
+            ReportingYear = reportingYear,
+            ActionPlan = actionPlan
+        };
+        
+        return View("ActionPlanList", viewModel);
+    }
+
 }
