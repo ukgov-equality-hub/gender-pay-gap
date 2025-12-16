@@ -1,6 +1,7 @@
 ﻿using GenderPayGap.Core;
 using GenderPayGap.Core.Interfaces;
 using GenderPayGap.Database;
+using GenderPayGap.WebUI.ErrorHandling;
 using GenderPayGap.WebUI.Helpers;
 using GenderPayGap.WebUI.Models.ActionPlans;
 using Microsoft.AspNetCore.Authorization;
@@ -221,6 +222,48 @@ public class ActionPlanController: Controller
     {
         return actionPlan?.SupportingNarrative != viewModel.SupportingNarrative ||
                actionPlan?.LinkToReport != viewModel.LinkToReport;
+    }
+
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/discard-draft")]
+    public IActionResult ActionPlanDiscardDraftGet(string encryptedOrganisationId, int reportingYear)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        ActionPlan actionPlan = organisation.GetLatestDraftActionPlan(reportingYear);
+
+        if (actionPlan == null)
+        {
+            throw new PageNotFoundException();
+        }
+        
+        return View("ActionPlanDiscardDraft", actionPlan);
+    }
+
+    [ValidateAntiForgeryToken]
+    [HttpPost("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/discard-draft")]
+    public IActionResult ActionPlanDiscardDraftPost(string encryptedOrganisationId, int reportingYear)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        ActionPlan actionPlan = organisation.GetLatestDraftActionPlan(reportingYear);
+        
+        if (actionPlan == null)
+        {
+            throw new PageNotFoundException();
+        }
+
+        actionPlan.DeleteActionPlan();
+        dataRepository.SaveChanges();
+
+        return View("ActionPlanDraftDiscarded", actionPlan);
     }
 
 

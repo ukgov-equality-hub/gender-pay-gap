@@ -1,0 +1,66 @@
+@using GenderPayGap.Core.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.Database.ActionPlan
+
+@{
+    string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+
+    ViewBag.Title = $"Equality action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs =
+        [
+            new()
+            {
+                HtmlOrText = new("Manage Employers"),
+                Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new($"Equality action plan {formattedReportingYears}"),
+            },
+            new()
+            {
+                HtmlOrText = new("Draft action plan discarded")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        @(await Html.GovUkErrorSummaryIfNeeded())
+
+        <h1 class="govuk-heading-xl">
+            Equality action plan
+            <br/>
+            <span class="govuk-!-font-size-27 govuk-!-margin-top-3" style="display: inline-block; line-height: 1.3 !important;">
+                Reporting as @(Model.Organisation.OrganisationName)
+                <br/>
+                for reporting year @(formattedReportingYears)
+            </span>
+        </h1>
+
+        <div class="govuk-panel govuk-panel--confirmation govuk-!-margin-bottom-6">
+            <h2 class="govuk-panel__title">
+                Draft action plan discarded
+            </h2>
+        </div>
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})">
+                Return to @(Model.Organisation.OrganisationName)
+            </a>
+        </p>
+    </div>
+</div>
