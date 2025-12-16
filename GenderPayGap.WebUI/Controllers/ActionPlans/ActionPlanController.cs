@@ -1,4 +1,5 @@
 ﻿using GenderPayGap.Core;
+using GenderPayGap.Core.Helpers;
 using GenderPayGap.Core.Interfaces;
 using GenderPayGap.Database;
 using GenderPayGap.WebUI.ErrorHandling;
@@ -264,6 +265,64 @@ public class ActionPlanController: Controller
         dataRepository.SaveChanges();
 
         return View("ActionPlanDraftDiscarded", actionPlan);
+    }
+
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/provisional-plan")]
+    public IActionResult ActionPlanProvisionalPlanGet(string encryptedOrganisationId, int reportingYear)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        ActionPlan actionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
+        
+        return View("ActionPlanProvisionalPlan", actionPlan);
+    }
+
+    [ValidateAntiForgeryToken]
+    [HttpPost("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/provisional-plan")]
+    public IActionResult ActionPlanProvisionalPlanPost(string encryptedOrganisationId, int reportingYear)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        ActionPlan actionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
+
+        if (actionPlan == null)
+        {
+            throw new PageNotFoundException();
+        }
+        else if (actionPlan.Status == ActionPlanStatus.Submitted)
+        {
+            ModelState.AddModelError(
+                "edit-action-plan-link",
+                "This equality action plan has already been published. Please make some changes before trying to publish it again"
+            );
+            return View("ActionPlanProvisionalPlan", actionPlan);
+        }
+        else if (!actionPlan.HasFulfilledRequirementsToPublish())
+        {
+            ModelState.AddModelError(
+                "edit-action-plan-link",
+                $"You must select at least one action from the \"{ActionCategories.SupportingStaffDuringMenopause.GetDisplayName()}\" category "
+                + "and at least one action from any other category. "
+                + "Actions that are already fully embedded do not count for this purpose. "
+                + "Your plan must have actions with which you can make further progress."
+            );
+            return View("ActionPlanProvisionalPlan", actionPlan);
+        }
+        else
+        {
+            actionPlan.SubmitActionPlan();
+            dataRepository.SaveChanges();
+
+            return RedirectToAction("ActionPlanSubmittedConfirmationGet", new {encryptedOrganisationId, reportingYear = reportingYear});
+        }
     }
 
 
