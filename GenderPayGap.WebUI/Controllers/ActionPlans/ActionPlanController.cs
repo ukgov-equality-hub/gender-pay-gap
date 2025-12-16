@@ -1,4 +1,5 @@
-﻿using GenderPayGap.Core.Interfaces;
+﻿using GenderPayGap.Core;
+using GenderPayGap.Core.Interfaces;
 using GenderPayGap.Database;
 using GenderPayGap.WebUI.Helpers;
 using GenderPayGap.WebUI.Models.ActionPlans;
@@ -56,6 +57,160 @@ public class ActionPlanController: Controller
         };
         
         return View("ActionPlanList", viewModel);
+    }
+
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/actions/{whichAction}")]
+    public IActionResult ActionPlanActionGet(string encryptedOrganisationId, int reportingYear, Actions whichAction)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        ActionPlan actionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
+        ActionInActionPlan actionInActionPlan = actionPlan?.ActionsInActionPlans.FirstOrDefault(a => a.Action == whichAction);
+        
+        ActionPlanEditActionViewModel viewModel = new()
+        {
+            Organisation = organisation,
+            ReportingYear = reportingYear,
+            Action = whichAction,
+            Status = actionInActionPlan?.NewStatus,
+            SupportingText = actionInActionPlan?.SupportingText,
+        };
+        
+        return View("ActionPlanAction", viewModel);
+    }
+
+    [ValidateAntiForgeryToken]
+    [HttpPost("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/actions/{whichAction}")]
+    public IActionResult ActionPlanActionPost(string encryptedOrganisationId, int reportingYear, Actions whichAction, ActionPlanEditActionViewModel viewModel)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+
+        if (!ModelState.IsValid)
+        {
+            viewModel.Organisation = organisation;
+            viewModel.ReportingYear = reportingYear;
+            viewModel.Action = whichAction;
+            return View("ActionPlanAction", viewModel);
+        }
+        
+        ActionPlan submittedOrDraftActionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
+        ActionInActionPlan actionInSubmittedOrDraftActionPlan = submittedOrDraftActionPlan?.ActionsInActionPlans.FirstOrDefault(a => a.Action == whichAction);
+        
+        if (UserHasMadeChangesToActionInActionPlan(actionInSubmittedOrDraftActionPlan, viewModel))
+        {
+            ActionPlan draftActionPlan = GetOrCreateDraftActionPlan(organisation, reportingYear, ActionPlanType.Original);
+            ActionInActionPlan actionInDraftActionPlan = draftActionPlan?.ActionsInActionPlans.FirstOrDefault(a => a.Action == whichAction);
+            
+            switch (viewModel.Status)
+            {
+                case ActionStatus.DoNotAddToPlan:
+                case null:
+                    // Status is empty or DoNotAddToPlan
+                    if (actionInDraftActionPlan != null)
+                    {
+                        dataRepository.Delete(actionInDraftActionPlan);
+                    }
+                    break;
+
+                case ActionStatus.NewOrInProgress:
+                case ActionStatus.Completed:
+                    if (actionInDraftActionPlan == null)
+                    {
+                        actionInDraftActionPlan = new ActionInActionPlan
+                        {
+                            ActionPlan = draftActionPlan,
+                            Action = whichAction,
+                            NewStatus = viewModel.Status.Value,
+                            SupportingText = viewModel.SupportingText,
+                        };
+                        dataRepository.Insert(actionInDraftActionPlan);
+                    }
+                    else
+                    {
+                        actionInDraftActionPlan.NewStatus = viewModel.Status.Value;
+                        actionInDraftActionPlan.SupportingText = viewModel.SupportingText;
+                    }
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            dataRepository.SaveChanges();
+        } 
+         
+        return RedirectToAction("ActionPlanListGet", new {encryptedOrganisationId, reportingYear = reportingYear}); 
+    }
+
+    private bool UserHasMadeChangesToActionInActionPlan(ActionInActionPlan actionInActionPlan, ActionPlanEditActionViewModel viewModel)
+    {
+        return actionInActionPlan?.NewStatus != viewModel.Status ||
+               actionInActionPlan?.SupportingText != viewModel.SupportingText;
+    }
+
+
+    private ActionPlan GetOrCreateDraftActionPlan(Organisation organisation, int reportingYear, ActionPlanType actionPlanType)
+    {
+        ActionPlan submittedOrDraftActionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
+
+        switch (submittedOrDraftActionPlan?.Status)
+        {
+            case ActionPlanStatus.Draft:
+                // This is the Draft Action Plan - let's use it
+                return submittedOrDraftActionPlan;
+
+            case ActionPlanStatus.Submitted:
+                // This is a Submitted Action Plan - take a clone of it and make that the new Draft Action Plan 
+                ActionPlan newDraftActionPlan = new()
+                {
+                    Organisation = organisation,
+                    ReportingYear = reportingYear,
+                    Status = ActionPlanStatus.Draft,
+                        
+                    ActionPlanType = actionPlanType,
+                };
+                dataRepository.Insert(newDraftActionPlan);
+
+                foreach (ActionInActionPlan actionInSubmittedActionPlan in submittedOrDraftActionPlan.ActionsInActionPlans)
+                {
+                    ActionInActionPlan actionInDraftActionPlan = new ActionInActionPlan
+                    {
+                        ActionPlan = newDraftActionPlan,
+                        Action = actionInSubmittedActionPlan.Action,
+                        NewStatus = actionInSubmittedActionPlan.NewStatus,
+                        SupportingText = actionInSubmittedActionPlan.SupportingText,
+                    };
+                    newDraftActionPlan.ActionsInActionPlans.Add(actionInDraftActionPlan);
+                    dataRepository.Insert(actionInDraftActionPlan);
+                }
+                dataRepository.SaveChanges();
+                return newDraftActionPlan;
+
+            case null:
+                // There is no Submitted or Draft Action Plan - create a new Draft Action Plan
+                ActionPlan draftActionPlan = new()
+                {
+                    Organisation = organisation,
+                    ReportingYear = reportingYear,
+                    Status = ActionPlanStatus.Draft,
+                        
+                    ActionPlanType = actionPlanType,
+                };
+                dataRepository.Insert(draftActionPlan);
+                dataRepository.SaveChanges();
+                return draftActionPlan;
+
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
 }

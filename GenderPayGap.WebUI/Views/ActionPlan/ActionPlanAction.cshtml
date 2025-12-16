@@ -1,0 +1,195 @@
+@using GenderPayGap.Core
+@using GenderPayGap.Core.Helpers
+@using GenderPayGap.WebUI.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.ActionPlans.ActionPlanEditActionViewModel
+
+@{
+    string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+
+    ViewBag.Title = $"Equality action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs =
+        [
+            new()
+            {
+                HtmlOrText = new("Manage Employers"),
+                Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new($"Equality action plan {formattedReportingYears}"),
+                Href = Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})
+            },
+            new()
+            {
+                HtmlOrText = new(ActionsHelper.DictionaryOfAllActions[Model.Action].Name)
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        @(await Html.GovUkErrorSummaryIfNeeded())
+
+        <h1 class="govuk-heading-xl">
+            Equality action plan
+            <br/>
+            <span class="govuk-!-font-size-27 govuk-!-margin-top-3" style="display: inline-block; line-height: 1.3 !important;">
+                Reporting as @(Model.Organisation.OrganisationName)
+                <br/>
+                for reporting year @(formattedReportingYears)
+            </span>
+        </h1>
+
+        <h2 class="govuk-heading-l">
+            @(ActionsHelper.DictionaryOfAllActions[Model.Action].Name)
+        </h2>
+        <p class="govuk-body">
+            @(ActionsHelper.DictionaryOfAllActions[Model.Action].Summary)
+        </p>
+        <p class="govuk-body govuk-!-margin-bottom-8">
+            For more information,
+            <a href="#"
+               class="govuk-link">
+                see the full guidance for this action</a>.
+        </p>
+
+        <form method="post"
+              action="@(Url.Action("ActionPlanActionPost", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear, action = Model.Action}))">
+            @Html.AntiForgeryToken()
+            
+            @(await Html.GovUkRadiosFor(
+                m => m.Status,
+                new()
+                {
+                    Fieldset = new()
+                    {
+                        Legend = new()
+                        {
+                            HtmlOrText = new HtmlOrText("Choose a status for this action"),
+                            Classes = ["govuk-fieldset__legend--m"]
+                        }
+                    },
+                },
+                radioItemViewModels: new()
+                {
+                    {ActionStatus.NewOrInProgress, new() {Label = new() {HtmlOrText = new("New or in progress")}}},
+                    {ActionStatus.Completed, new() {Label = new() {HtmlOrText = new("Completed")}}},
+                    {ActionStatus.DoNotAddToPlan, new() {Label = new() {HtmlOrText = new("Do not add to action plan")}}},
+                },
+                dividersBefore: new()
+                {
+                    {ActionStatus.DoNotAddToPlan, "or"}
+                },
+                overrideEnumValues: [ActionStatus.NewOrInProgress, ActionStatus.Completed, ActionStatus.DoNotAddToPlan]
+            ))
+
+            <div id="@(nameof(Model.SupportingText))--wrapper">
+                @(
+                await Html.GovUkTextareaFor(
+                    m => m.SupportingText,
+                    new()
+                    {
+                        Label = new LabelViewModel {HtmlOrText = new HtmlOrText("Supporting text"), Classes = ["govuk-label--s"]},
+                        Hint = new HintViewModel
+                        {
+                            HtmlOrText = new HtmlOrText(
+                                @<text>
+                                     <div id="@(nameof(Model.SupportingText))--@(nameof(ActionStatus.NewOrInProgress))" style="display: none;">
+                                         <div class="govuk-hint govuk-!-margin-bottom-2">
+                                             Use this section to add further details about:
+                                         </div>
+                                         <ul class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
+                                             <li>why your organisation has chosen this action</li>
+                                             <li>how you plan to implement this action or build on what you are doing</li>
+                                             <li>some of the challenges involved</li>
+                                             <li>how you plan to track progress</li>
+                                         </ul>
+                                     </div>
+
+                                     <div id="@(nameof(Model.SupportingText))--@(nameof(ActionStatus.Completed))" style="display: none;">
+                                         <div class="govuk-hint govuk-!-margin-bottom-2">
+                                             Use this section to add further details about:
+                                         </div>
+                                         <ul class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
+                                             <li>how your organisation implemented this action</li>
+                                             <li>some of the challenges you faced</li>
+                                             <li>how you tracked progress</li>
+                                             <li>what the results were</li>
+                                         </ul>
+                                     </div>
+
+                                     <div class="govuk-hint">
+                                         This section is optional.
+                                         The information you write here will be published alongside the data you report on the gender pay gap service.
+                                     </div>
+                                 </text>)
+                        }
+                    }))
+            </div>
+
+            <p class="govuk-body">
+                @(await Html.GovUkButton(new()
+                {
+                    HtmlOrText = new HtmlOrText("Save and continue"),
+                    Classes = ["govuk-!-margin-bottom-0", "govuk-!-margin-top-4"],
+                }))
+            </p>
+        </form>
+
+        <script>
+            (function(){
+                function updateSupportingTextHint() {
+                    const statusRadios = document.getElementsByName("@(nameof(Model.Status))");
+                    let selectedValue = null;
+                    for (const radio of statusRadios) {
+                        if (radio.checked) {
+                            selectedValue = radio.value;
+                            break;
+                        }
+                    }
+
+                    document.getElementById("@(nameof(Model.SupportingText))--@(nameof(ActionStatus.NewOrInProgress))")
+                        .style.display = (selectedValue === "@(nameof(ActionStatus.NewOrInProgress))" ? "block" : "none");
+
+                    document.getElementById("@(nameof(Model.SupportingText))--@(nameof(ActionStatus.Completed))")
+                        .style.display = (selectedValue === "@(nameof(ActionStatus.Completed))" ? "block" : "none");
+
+                    document.getElementById("@(nameof(Model.SupportingText))--wrapper")
+                        .style.display = (selectedValue === "@(nameof(ActionStatus.DoNotAddToPlan))" ? "none" : "block");
+                }
+
+                const statusRadios = document.getElementsByName("@(nameof(Model.Status))");
+                for (const radio of statusRadios) {
+                    radio.addEventListener("change", updateSupportingTextHint);
+                }
+
+                updateSupportingTextHint();
+            })();
+        </script>
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})">
+                Cancel and return to action plan for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear))
+            </a>
+        </p>
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})">
+                Cancel and return to @(Model.Organisation.OrganisationName)
+            </a>
+        </p>
+    </div>
+</div>
