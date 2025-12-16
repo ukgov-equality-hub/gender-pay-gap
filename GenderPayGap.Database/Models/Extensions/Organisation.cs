@@ -296,5 +296,20 @@ namespace GenderPayGap.Database
             return Core.OrganisationStatuses.Unknown;
         }
 
+        public ActionPlan GetLatestDraftActionPlan(int reportingYear) => GetLatestActionPlan(reportingYear, ActionPlanStatus.Draft);
+
+        public ActionPlan GetLatestSubmittedActionPlan(int reportingYear) => GetLatestActionPlan(reportingYear, ActionPlanStatus.Submitted);
+
+        public ActionPlan GetLatestSubmittedOrDraftActionPlan(int reportingYear) => GetLatestActionPlan(reportingYear, ActionPlanStatus.Draft, ActionPlanStatus.Submitted);
+
+        private ActionPlan GetLatestActionPlan(int reportingYear, params ActionPlanStatus[] statuses)
+        {
+            return ActionPlans
+                .Where(ap => ap.ReportingYear == reportingYear)
+                .Where(ap => statuses.Contains(ap.Status))
+                .OrderByDescending(ap => ap.DraftCreatedDate)
+                .FirstOrDefault();
+        }
+        
     }
 }

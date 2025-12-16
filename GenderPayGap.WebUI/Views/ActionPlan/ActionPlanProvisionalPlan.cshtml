@@ -1,0 +1,329 @@
+@using GenderPayGap.Core
+@using GenderPayGap.Core.Helpers
+@using GenderPayGap.Database
+@using GenderPayGap.WebUI.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.Database.ActionPlan
+
+@{
+    string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+
+    ViewBag.Title = $"Equality action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+
+    ActionPlan submittedActionPlan = Model.Organisation.GetLatestSubmittedActionPlan(Model.ReportingYear);
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs =
+        [
+            new()
+            {
+                HtmlOrText = new("Manage Employers"),
+                Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new($"Equality action plan {formattedReportingYears}"),
+                Href = Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})
+            },
+            new()
+            {
+                HtmlOrText = new("Provisional action plan")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <div class="govuk-inset-text">
+            <h1 class="govuk-heading-xl">
+                Equality action plan
+                <br/>
+                <span class="govuk-!-font-size-27 govuk-!-margin-top-3" style="display: inline-block; line-height: 1.3 !important;">
+                    Reporting as @(Model.Organisation.OrganisationName)
+                    <br/>
+                    for reporting year @(formattedReportingYears)
+                </span>
+            </h1>
+
+            <h2 class="govuk-heading-l">
+                Your provisional action plan
+            </h2>
+            <p class="govuk-body">
+                This plan is saved in your account but not yet published on the service.
+                You can log out and come back to it at any time.
+            </p>
+            <p class="govuk-body">
+                When you publish your plan, it will be publicly visible on this service.
+                You will still be able to edit it.
+            </p>
+            
+            @(await Html.GovUkErrorSummaryIfNeeded())
+            
+            <div class="govuk-button-group">
+                @(await Html.GovUkButton(new()
+                {
+                    HtmlOrText = new HtmlOrText($"Return to {Model.Organisation.OrganisationName}"),
+                    Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId}),
+                    Classes = ["govuk-button--secondary"],
+                }))
+                
+                @(await Html.GovUkButton(new()
+                {
+                    HtmlOrText = new HtmlOrText("Edit your action plan or add more actions"),
+                    Href = Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}),
+                    Classes = ["govuk-button--secondary"],
+                    Attributes = new() {{"id", "edit-action-plan-link"}}
+                }))
+
+                <form method="post"
+                      action="@(Url.Action("ActionPlanProvisionalPlanPost", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
+                      style="display: contents;">
+                    @Html.AntiForgeryToken()
+
+                    @(await Html.GovUkButton(new()
+                    {
+                        HtmlOrText = new HtmlOrText("Publish your action plan"),
+                    }))
+                </form>
+            </div>
+        </div>
+
+        <h1 class="govuk-heading-l">
+            @(Model.Organisation.OrganisationName)
+            <br/>
+            Action plan @(formattedReportingYears)
+        </h1>
+        
+        <h2 class="govuk-heading-m">
+            Contents
+        </h2>
+        <ol class="govuk-list govuk-list--number">
+            <li>
+                <a href="#intro"
+                   class="govuk-link">
+                    Introduction
+                </a>
+            </li>
+            <li>
+                <a href="#actions-planned"
+                   class="govuk-link">
+                    Actions planned
+                </a>
+            </li>
+            <li>
+                <a href="#actions-completed"
+                   class="govuk-link">
+                    Actions completed
+                </a>
+            </li>
+            <li>
+                <a href="#about"
+                   class="govuk-link">
+                    About @(Model.Organisation.OrganisationName)
+                </a>
+            </li>
+        </ol>
+
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+        <h2 id="intro" class="govuk-heading-m">
+            1. Introduction
+        </h2>
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    What is an action plan?
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                <p class="govuk-body">
+                    Any employer who has a headcount of 250 or more on their ‘snapshot date’ at
+                    the end of the financial year must submit an action plan outlining how they
+                    intend to address the gender pay gap and to support employees going through
+                    menopause.
+                </p>
+                <p class="govuk-body">
+                    Employers review actions from our database, identify any they already routinely
+                    do, and choose some new actions to focus on. You can also
+                    <a href="#"
+                       class="govuk-link">
+                        see the full list of actions in our database</a>.
+                </p>
+                <p class="govuk-body">
+                    For more detail on the process, see the
+                    <a href="#"
+                       class="govuk-link">
+                        gender pay gap and action plan guidance</a>.
+                </p>
+            </div>
+        </details>
+        
+        @if (!string.IsNullOrWhiteSpace(Model.SupportingNarrative))
+        {
+            <p class="govuk-body govuk-!-margin-bottom-2">
+                @(Model.Organisation.OrganisationName) said:
+            </p>
+            <div class="govuk-inset-text govuk-!-margin-top-2">
+                @(Model.SupportingNarrative)
+            </div>
+        }
+        @if (UriSanitiser.IsValidHttpOrHttpsLink(Model.LinkToReport))
+        {
+            <p class="govuk-body">
+                Read more about
+                <a href="@(Model.LinkToReport)"
+                   target="_blank"
+                   class="govuk-link">
+                    what @(Model.Organisation.OrganisationName) says about their pay gaps (opens in a new window)
+                </a>
+            </p>
+        }
+
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+        <h2 id="actions-planned" class="govuk-heading-m">
+            2. Actions planned
+        </h2>
+        <p class="govuk-body">
+            @(Model.Organisation.OrganisationName) has committed to embedding these actions:
+        </p>
+        
+        @foreach (ActionInActionPlan actionInActionPlan in Model.ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.NewOrInProgress))
+        {
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-2">
+                @(ActionsHelper.DictionaryOfAllActions[actionInActionPlan.Action].Name)
+            </h3>
+            <p class="govuk-body">
+                @(ActionsHelper.DictionaryOfAllActions[actionInActionPlan.Action].Summary)
+            </p>
+            
+            @if (!string.IsNullOrWhiteSpace(actionInActionPlan.SupportingText))
+            {
+                <p class="govuk-body govuk-!-margin-bottom-2">
+                    @(Model.Organisation.OrganisationName) said:
+                </p>
+                <div class="govuk-inset-text govuk-!-margin-top-2">
+                    @(actionInActionPlan.SupportingText)
+                </div>
+            }
+        }
+
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+        <h2 id="actions-completed" class="govuk-heading-m">
+            3. Actions already completed
+        </h2>
+        <p class="govuk-body">
+            This section explains what @(Model.Organisation.OrganisationName) have already done and plan to do on workplace equality.
+        </p>
+        
+        @{
+            List<ActionInActionPlan> completedActions = Model.ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.Completed).ToList();
+        }
+        @if (completedActions.Any())
+        {
+            foreach (ActionInActionPlan actionInActionPlan in completedActions)
+            {
+                <h3 class="govuk-heading-s govuk-!-margin-bottom-2">
+                    @(ActionsHelper.DictionaryOfAllActions[actionInActionPlan.Action].Name)
+                </h3>
+                <p class="govuk-body">
+                    @(ActionsHelper.DictionaryOfAllActions[actionInActionPlan.Action].Summary)
+                </p>
+                
+                @if (!string.IsNullOrWhiteSpace(actionInActionPlan.SupportingText))
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-2">
+                        @(Model.Organisation.OrganisationName) said:
+                    </p>
+                    <div class="govuk-inset-text govuk-!-margin-top-2">
+                        @(actionInActionPlan.SupportingText)
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <p class="govuk-body">
+                @(Model.Organisation.OrganisationName) has not marked any of our actions on workplace equality as "Completed".
+            </p>
+            <p class="govuk-body">
+                It is optional for employers to mark actions as "Completed".
+            </p>
+        }
+        
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+        <h2 id="about" class="govuk-heading-m">
+            4. About @(Model.Organisation.OrganisationName)
+        </h2>
+
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Registered address
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @(Model.Organisation.GetLatestAddress()?.GetAddressString())
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Sector
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @(Model.Organisation.GetSicSectorsString())
+                </dd>
+            </div>
+        </dl>
+
+        <div class="govuk-inset-text govuk-!-margin-top-8">
+            <h2 class="govuk-heading-l">
+                Your provisional action plan
+            </h2>
+            <p class="govuk-body">
+                This plan is saved in your account but not yet published on the service.
+                You can log out and come back to it at any time.
+            </p>
+            <p class="govuk-body">
+                When you publish your plan, it will be publicly visible on this service.
+                You will still be able to edit it.
+            </p>
+
+            <div class="govuk-button-group">
+                @(await Html.GovUkButton(new()
+                {
+                    HtmlOrText = new HtmlOrText($"Return to {Model.Organisation.OrganisationName}"),
+                    Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId}),
+                    Classes = ["govuk-button--secondary"],
+                }))
+
+                @(await Html.GovUkButton(new()
+                {
+                    HtmlOrText = new HtmlOrText("Edit your action plan or add more actions"),
+                    Href = Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}),
+                    Classes = ["govuk-button--secondary"],
+                }))
+
+                <form method="post"
+                      action="@(Url.Action("ActionPlanProvisionalPlanPost", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
+                      style="display: contents;">
+                    @Html.AntiForgeryToken()
+
+                    @(await Html.GovUkButton(new()
+                    {
+                        HtmlOrText = new HtmlOrText("Publish your action plan"),
+                    }))
+                </form>
+            </div>
+        </div>
+        
+    </div>
+</div>

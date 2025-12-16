@@ -1,0 +1,77 @@
+@using GenderPayGap.Core.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.Database.ActionPlan
+
+@{
+    string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+
+    ViewBag.Title = $"Equality action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs =
+        [
+            new()
+            {
+                HtmlOrText = new("Manage Employers"),
+                Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new($"Equality action plan {formattedReportingYears}")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <div class="govuk-panel govuk-panel--confirmation">
+            <h1 class="govuk-panel__title">
+                Equality action plan published
+            </h1>
+            <div class="govuk-panel__body">
+                for @(Model.Organisation.OrganisationName)
+                <br/>
+                for reporting year @(formattedReportingYears)
+            </div>
+        </div>
+        
+        <p class="govuk-body">
+            Your action plan has now been published on the Gender pay gap service.
+        </p>
+        <p class="govuk-body">
+            <a href="#"
+               class="govuk-link">
+                View your published action plan
+            </a>
+        </p>
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})">
+                Return to @(Model.Organisation.OrganisationName)
+            </a>
+        </p>
+        <p class="govuk-body">
+            <a href="#"
+               class="govuk-link">
+                What did you think of this service?</a>
+            (takes 30 seconds)
+        </p>
+
+        @(await Html.GovUkButton(new()
+        {
+            HtmlOrText = new("Sign out"),
+            Href = Url.Action("Logout", "Login"),
+        }))
+        
+    </div>
+</div>

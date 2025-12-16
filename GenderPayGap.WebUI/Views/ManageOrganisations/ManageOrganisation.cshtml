@@ -137,6 +137,12 @@
                                    @Model.GetReportLinkText(reportingYear)
                                </a>
                             }
+                            <br/>
+                            <br/>
+                            <a href="@(Url.Action("ActionPlanIntroGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = reportingYear}))"
+                               class="govuk-link">
+                                Action plan
+                            </a>
                         </td>
                     </tr>
                 }
