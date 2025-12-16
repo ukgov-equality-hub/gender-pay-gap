@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using GenderPayGap.Core;
 
-namespace GenderPayGap.WebUI.Helpers;
+namespace GenderPayGap.Core.Helpers;
 
 public enum ActionCategories
 {
