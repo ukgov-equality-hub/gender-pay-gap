@@ -1,0 +1,115 @@
+@using GenderPayGap.Core.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.ActionPlans.ActionPlanSupportingNarrativeAndLinkViewModel
+
+@{
+    string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+
+    ViewBag.Title = $"Equality action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs =
+        [
+            new()
+            {
+                HtmlOrText = new("Manage Employers"),
+                Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new($"Equality action plan {formattedReportingYears}"),
+                Href = Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})
+            },
+            new()
+            {
+                HtmlOrText = new("Supporting narrative and link")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        @(await Html.GovUkErrorSummaryIfNeeded())
+
+        <h1 class="govuk-heading-xl">
+            Equality action plan
+            <br/>
+            <span class="govuk-!-font-size-27 govuk-!-margin-top-3" style="display: inline-block; line-height: 1.3 !important;">
+                Reporting as @(Model.Organisation.OrganisationName)
+                <br/>
+                for reporting year @(formattedReportingYears)
+            </span>
+        </h1>
+
+        <h2 class="govuk-heading-l">
+            Supporting narrative and link
+        </h2>
+
+        <form method="post"
+              action="@(Url.Action("ActionPlanSupportingNarrativeAndLinkPost", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))">
+            @Html.AntiForgeryToken()
+
+            @(await Html.GovUkTextareaFor(
+                m => m.SupportingNarrative,
+                new()
+                {
+                    Label = new() {HtmlOrText = new HtmlOrText("Supporting narrative"), Classes = ["govuk-label--s"]},
+                }
+            ))
+
+            @(await Html.GovUkTextInputFor(
+                m => m.LinkToReport,
+                new()
+                {
+                    Label = new()
+                    {
+                        HtmlOrText = new("Link to report"),
+                        Classes = ["govuk-label--s"]
+                    },
+                    Hint = new()
+                    {
+                        HtmlOrText = new(
+                            @<text>
+                                <p class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">
+                                    If your organisation has published content which explains its equality strategy, you can add the link here.
+                                </p>
+                                <p class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">
+                                    This must start with http:// or https://
+                                </p>
+                            </text>)
+                    }
+                }
+            ))
+
+            <p class="govuk-body">
+                @(await Html.GovUkButton(new()
+                {
+                    HtmlOrText = new HtmlOrText("Save and continue"),
+                    Classes = ["govuk-!-margin-bottom-0", "govuk-!-margin-top-4"],
+                }))
+            </p>
+        </form>
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})">
+                Cancel and return to action plan for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear))
+            </a>
+        </p>
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})">
+                Cancel and return to @(Model.Organisation.OrganisationName)
+            </a>
+        </p>
+    </div>
+</div>

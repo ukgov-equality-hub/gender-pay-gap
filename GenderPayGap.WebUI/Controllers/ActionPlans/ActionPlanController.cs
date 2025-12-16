@@ -156,6 +156,73 @@ public class ActionPlanController: Controller
                actionInActionPlan?.SupportingText != viewModel.SupportingText;
     }
 
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/supporting-narrative-and-link")]
+    public IActionResult ActionPlanSupportingNarrativeAndLinkGet(string encryptedOrganisationId, int reportingYear)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        ActionPlan actionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
+        
+        ActionPlanSupportingNarrativeAndLinkViewModel viewModel = new()
+        {
+            Organisation = organisation,
+            ReportingYear = reportingYear,
+            SupportingNarrative = actionPlan?.SupportingNarrative,
+            LinkToReport = actionPlan?.LinkToReport,
+        };
+        
+        return View("ActionPlanSupportingNarrativeAndLink", viewModel);
+    }
+
+    [ValidateAntiForgeryToken]
+    [HttpPost("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/supporting-narrative-and-link")]
+    public IActionResult ActionPlanSupportingNarrativeAndLinkPost(string encryptedOrganisationId, int reportingYear, ActionPlanSupportingNarrativeAndLinkViewModel viewModel)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+
+        if (!string.IsNullOrEmpty(viewModel.LinkToReport) &&
+            !UriSanitiser.IsValidHttpOrHttpsLink(viewModel.LinkToReport))
+        {
+            ModelState.AddModelError(nameof(viewModel.LinkToReport), "Please enter a valid web address");
+        }
+        
+        if (!ModelState.IsValid)
+        {
+            viewModel.Organisation = organisation;
+            viewModel.ReportingYear = reportingYear;
+            return View("ActionPlanSupportingNarrativeAndLink", viewModel);
+        }
+        
+        ActionPlan submittedOrDraftActionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
+        
+        if (UserHasMadeChangesToSupportingNarrativeOrLink(submittedOrDraftActionPlan, viewModel))
+        {
+            ActionPlan draftActionPlan = GetOrCreateDraftActionPlan(organisation, reportingYear, ActionPlanType.Original);
+            
+            draftActionPlan.SupportingNarrative = viewModel.SupportingNarrative;
+            draftActionPlan.LinkToReport = viewModel.LinkToReport;
+            
+            dataRepository.SaveChanges();
+        }
+        
+        return RedirectToAction("ActionPlanListGet", new {encryptedOrganisationId, reportingYear = reportingYear});
+    }
+
+    private bool UserHasMadeChangesToSupportingNarrativeOrLink(ActionPlan actionPlan, ActionPlanSupportingNarrativeAndLinkViewModel viewModel)
+    {
+        return actionPlan?.SupportingNarrative != viewModel.SupportingNarrative ||
+               actionPlan?.LinkToReport != viewModel.LinkToReport;
+    }
+
 
     private ActionPlan GetOrCreateDraftActionPlan(Organisation organisation, int reportingYear, ActionPlanType actionPlanType)
     {
