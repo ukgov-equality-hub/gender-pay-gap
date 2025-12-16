@@ -129,9 +129,9 @@ namespace GenderPayGap.Core
 
     public enum ActionStatus : byte
     {
-        [Display(Name = "Do not add to plan")]
+        [Display(Name = "Do not add to action plan")]
         DoNotAddToPlan = 0,
-        [Display(Name = "In progress")]
+        [Display(Name = "New or in progress")]
         NewOrInProgress = 1,
         [Display(Name = "Completed")]
         Completed = 2,
@@ -153,8 +153,8 @@ namespace GenderPayGap.Core
             {
                 ActionStatus.NewOrInProgress => "govuk-tag--green",
                 ActionStatus.Completed => "govuk-tag--yellow",
-                ActionStatus.DoNotAddToPlan => "govuk-tag--grey",
-                _ => "govuk-tag--grey"
+                ActionStatus.DoNotAddToPlan => "govuk-tag--blue",
+                _ => "govuk-tag--blue"
             };
         }
     }
