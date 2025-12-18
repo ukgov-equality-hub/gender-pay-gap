@@ -15,7 +15,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
   // Engine
   engine = "aurora-postgresql"
   engine_mode = "provisioned"  // "Serverless v2 uses the provisioned engine_mode"  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster#rds-serverless-v2-cluster
-  engine_version = "16.6"
+  engine_version = "16.8"
 
   // Sizing
   serverlessv2_scaling_configuration {
