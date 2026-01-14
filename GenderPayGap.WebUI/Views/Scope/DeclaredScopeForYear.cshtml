@@ -1,0 +1,62 @@
+@using GenderPayGap.Core
+@using GenderPayGap.Core.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.Scope.DeclareScopeForYearViewModel
+
+@{
+    string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    string requiredOrNotRequired = (Model.Scope.Value.IsInScopeVariant() ? "required": "not required");
+    ViewBag.Title = $"{Model.Organisation.OrganisationName} is {requiredOrNotRequired} to report for {formattedReportingYears} reporting year - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
+    {
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Manage Employers"),
+                Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new($"Declare if you are required to report for {formattedReportingYears}")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        @(await Html.GovUkErrorSummaryIfNeeded())
+
+        <div class="govuk-panel govuk-panel--confirmation">
+            <h1 class="govuk-panel__title">
+                You have declared that you are @(requiredOrNotRequired) to report
+            </h1>
+            <div class="govuk-panel__body">
+                for @(Model.Organisation.OrganisationName)
+                <br/>
+                for reporting year @(formattedReportingYears)
+            </div>
+        </div>
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})">
+                Return to @(Model.Organisation.OrganisationName)
+            </a>
+        </p>
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.Action("ManageOrganisationsGet", "ManageOrganisations")">
+                Return to Manage Employers
+            </a>
+        </p>
+        
+    </div>
+</div>
