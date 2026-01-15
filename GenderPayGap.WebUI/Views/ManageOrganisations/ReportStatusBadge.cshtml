@@ -11,19 +11,19 @@
     switch(Model.ReportStatusTag)
     {
         case ReportStatusTag.SubmittedVoluntarily:
-            reportTagHtml = @<text>Reported voluntarily</text>;
+            reportTagHtml = @<text>Reported voluntarily@(Model.HasDraft ? ", draft amendments" : "")</text>;
             reportTagColour = "govuk-tag--green";
             break;
             
         case ReportStatusTag.SubmittedLate:
             reportTagHtml = @<text>
-                                Submitted late
+                                Submitted late@(Model.HasDraft && !Model.ReportSubmittedDate.HasValue ? ", draft amendments" : "")
                                 @if (Model.ReportSubmittedDate.HasValue)
                                 {
                                     <span>
                                         on
                                         <br/>
-                                        @Model.ReportSubmittedDate.Value.ToString("d MMMM yyyy")
+                                        @Model.ReportSubmittedDate.Value.ToString("d MMMM yyyy")@(Model.HasDraft ? ", draft amendments" : "")
                                     </span>
                                 }
                              </text>;
@@ -31,7 +31,7 @@
             break;
             
         case ReportStatusTag.Submitted:
-            reportTagHtml = @<text>Reported</text>;
+            reportTagHtml = @<text>Reported@(Model.HasDraft ? ", draft amendments" : "")</text>;
             reportTagColour = "govuk-tag--green";
             break;
             
@@ -39,7 +39,7 @@
             reportTagHtml = @<text>
                                 Due on
                                 <span class="employer-reports-page--visually-hidden-on-desktop"><br/></span>
-                                @Model.DeadlineDate.ToString("d MMMM yyyy")
+                                @Model.DeadlineDate.ToString("d MMMM yyyy")@(Model.HasDraft ? ", draft created" : "")
                              </text>;
             reportTagColour = "govuk-tag--blue";
             break;
@@ -48,19 +48,19 @@
             reportTagHtml = @<text>
                                 @(daysOverdue)
                                 @(daysOverdue == 1 ? "day" : "days")
-                                overdue
+                                overdue@(Model.HasDraft ? ", draft created" : "")
                              </text>;
             reportTagColour = "govuk-tag--red";
             break;
         case ReportStatusTag.NotRequired:
             reportTagHtml = @<text>
-                                Not required
+                                Optional@(Model.HasDraft ? ", draft created" : "")
                              </text>;
             reportTagColour = "govuk-tag--grey";
             break;
         case ReportStatusTag.NotRequiredDueToCovid:
             reportTagHtml = @<text>
-                                Not required due to COVID
+                                Optional due to COVID@(Model.HasDraft ? ", draft created" : "")
                              </text>;
             reportTagColour = "govuk-tag--grey";
             break;
@@ -71,5 +71,6 @@
 @await Html.GovUkTag(new TagViewModel
 {
     Html = reportTagHtml,
-    Classes = reportTagColour
+    Classes = reportTagColour,
+    Attributes = new() {{"style", "max-width: unset;"}}
 })

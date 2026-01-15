@@ -3,8 +3,7 @@
 @using GenderPayGap.Database
 @using GenderPayGap.WebUI.Helpers
 @using GenderPayGap.WebUI.Models.ViewReports
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.ManageOrganisations.ManageOrganisationViewModel
 
 @{
@@ -13,25 +12,20 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Manage Employers",
+                HtmlOrText = new("Manage Employers"),
                 Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.Organisation.OrganisationName
-            },
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+                HtmlOrText = new(Model.Organisation.OrganisationName)
+            }
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -49,107 +43,211 @@
         <h2 class="govuk-heading-l">
             Your employer's reports
         </h2>
-    
-        <table class="govuk-table govuk-!-margin-bottom-9">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">
-                        Deadline
-                    </th>
-                    <th scope="col" class="govuk-table__header">
-                        Reporting requirement
-                    </th>
-                    <th scope="col" class="govuk-table__header">
-                        Report status
-                    </th>
-                    <th scope="col" class="govuk-table__header">
-                        <span class="govuk-visually-hidden">
-                            Action
-                        </span>
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table__body">
-                @foreach (int reportingYear in ReportingYearsHelper.GetReportingYears(Model.Organisation.SectorType).OrderByDescending(y => y))
-                {
-                    bool requiredToReportForYear = Model.OrganisationIsRequiredToSubmit(reportingYear);
-                    ReportStatusTag reportStatusTag = ReportStatusTagHelper.GetReportStatusTag(Model.Organisation, reportingYear);
-                    
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">
-                            @(ReportingYearsHelper.GetDeadline(Model.Organisation.SectorType, reportingYear).ToString("d MMM yyyy"))
-                        </th>
-                        
-                        <td class="govuk-table__cell">
-                            You
-                            @(requiredToReportForYear ? "are required" : "are not required")
-                            to report.
+
+        @{
+            int currentReportingYear = ReportingYearsHelper.GetCurrentReportingYear(Model.Organisation.SectorType);
+            int numberOfReportingYearsToShow = 4;
+            int firstReportingYearToShow = currentReportingYear - numberOfReportingYearsToShow + 1;
+            int reportingYearsHidden = 0;
+        }
+
+        @foreach (int reportingYear in ReportingYearsHelper.GetReportingYears(Model.Organisation.SectorType).OrderByDescending(y => y))
+        {
+            bool hideReportingYear = reportingYear < firstReportingYearToShow;
+            if (hideReportingYear)
+            {
+                reportingYearsHidden++;
+            }
+            
+            <div class="block-for-reporting-year @(hideReportingYear ? "govuk-visually-hidden" : null)">
+                <h3 class="govuk-heading-m govuk-!-font-size-27 govuk-!-margin-top-8">
+                    Reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriod(reportingYear))
+                </h3>
+                
+                <div class="govuk-inset-text govuk-!-padding-top-1 govuk-!-padding-bottom-1 govuk-!-margin-top-0">
+                    <dl class="govuk-summary-list"
+                        style="width: unset;">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key"
+                                style="width: 150px;">
+                                Deadline
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <span class="govuk-!-margin-right-2">
+                                    @Model.GetDeadlineDateFormatted(reportingYear)
+                                </span>
+                                
+                                <span>
+                                    @Model.GetDeadlineRelativeDaysIfNeeded(reportingYear)
+                                </span>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key"
+                                style="width: 150px;">
+                                Status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @(await Html.GovUkTag(Model.GetOverallStatusTagForYear(reportingYear)))
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <ul class="govuk-task-list">
+                    @{
+                        string declareScopeStatusId = $"declare-scope-{reportingYear}-status";
+                    }
+                    <li class="govuk-task-list__item govuk-task-list__item--with-link">
+                        <div class="govuk-task-list__name-and-hint">
                             @if (ReportingYearsHelper.CanChangeScope(Model.Organisation.SectorType, reportingYear))
                             {
-                                <br/>
-                                <a href="@Url.Action("ChangeOrganisationScope", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear})"
-                                   class="govuk-link">
-                                    Think this is wrong?
-                                    <span class="govuk-visually-hidden">
-                                        Change scope for year @(ReportingYearsHelper.FormatYearAsReportingPeriod(reportingYear))
-                                    </span>
+                                <a href="@(Url.Action("DeclareScopeForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear}))"
+                                   class="govuk-link govuk-task-list__link"
+                                   aria-describedby="@(declareScopeStatusId)">
+                                    Declare if your organisation is required to report this year
                                 </a>
-                            }
-                        </td>
-                        
-                        <td class="govuk-table__cell">
-                            @await Html.PartialAsync("ReportStatusBadge",
-                                new ReportStatusBadgeViewModel
-                                {
-                                    ReportStatusTag = reportStatusTag,
-                                    ReportSubmittedDate = Model.Organisation.GetReturn(reportingYear)?.Modified,
-                                    DeadlineDate = ReportingYearsHelper.GetDeadline(Model.Organisation.SectorType, reportingYear)
-                                })
-                            
-                            @if (requiredToReportForYear &&
-                                 ReportingYearsHelper.IsReportingYearExcludedFromLateFlagEnforcement(reportingYear) &&
-                                 (reportStatusTag == ReportStatusTag.NotRequiredDueToCovid ||
-                                  reportStatusTag == ReportStatusTag.Overdue ||
-                                  reportStatusTag == ReportStatusTag.SubmittedLate))
-                            {
-                                <br/>
-                                <div class="govuk-!-padding-top-2" style="max-width: 375px;">
-                                        The deadline for 2019-20 was
-                                        @(ReportingYearsHelper.GetDeadline(Model.Organisation.SectorType, 2019).ToString("d MMMM yyyy")).
-                                        Due to Coronavirus (COVID-19), enforcement of reporting deadlines does not
-                                        apply to employers in the 2019-20 reporting year.
-                                </div>
-                            }
-                        </td>
-                        
-                        <td class="govuk-table__cell">
-                            @if (Model.DoesReturnOrDraftReturnExistForYear(reportingYear))
-                            {
-                               <a loadtest-id="create-report-@(reportingYear)"
-                                  href="@Url.Action("ReportOverview", "ReportOverview", new { encryptedOrganisationId, reportingYear = reportingYear, canTriggerLateSubmissionWarning = true}) ">
-                                   @Model.GetReportLinkText(reportingYear)
-                               </a>
                             }
                             else
                             {
-                               <a loadtest-id="create-report-@(reportingYear)"
-                                  href="@Url.Action("ReportingStart", "ReportStarting", new {encryptedOrganisationId, reportingYear = reportingYear})">
-                                   @Model.GetReportLinkText(reportingYear)
-                               </a>
+                                <span aria-describedby="@(declareScopeStatusId)">
+                                    Declare if your organisation is required to report this year
+                                </span>
                             }
-                            <br/>
-                            <br/>
-                            <a href="@(Url.Action("ActionPlanIntroGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = reportingYear}))"
-                               class="govuk-link">
-                                Action plan
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                        </div>
+                        <div class="govuk-task-list__status" id="@(declareScopeStatusId)">
+                            <div style="display: flex; flex-wrap: wrap; justify-content: end; margin: -6px;">
+                                @if (Model.ShowScopeDeclarationStatus(reportingYear))
+                                {
+                                    <div style="margin: 6px;">
+                                        @(await Html.GovUkTag(Model.GetScopeDeclarationStatusTag(reportingYear)))
+                                    </div>
+                                }
+                                @if (Model.ShowScopeStatus(reportingYear))
+                                {
+                                    <div style="margin: 6px;">
+                                        @(await Html.GovUkTag(Model.GetScopeStatusTag(reportingYear)))
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </li>
+                    
+                    @{
+                        string gpgReportStatusId = $"gpg-report-{reportingYear}-status";
+                        string gpgReportHintId = $"gpg-report-{reportingYear}-hint";
+                    }
+                    <li class="govuk-task-list__item govuk-task-list__item--with-link">
+                        <div class="govuk-task-list__name-and-hint">
+                            @if (Model.AbleToReportGpg(reportingYear))
+                            {
+                                <a href="@(Url.Action("ReportingStart", "ReportStarting", new {encryptedOrganisationId, reportingYear = reportingYear}))"
+                                   loadtest-id="create-report-@(reportingYear)"
+                                   class="govuk-link govuk-task-list__link"
+                                   aria-describedby="@((Model.ShowCovidMessage(reportingYear) ? gpgReportHintId : "")) @(gpgReportStatusId)">
+                                    Gender Pay Gap report
+                                </a>
+                            }
+                            else
+                            {
+                                <span aria-describedby="@((Model.ShowCovidMessage(reportingYear) ? gpgReportHintId : "")) @(gpgReportStatusId)">
+                                    Gender Pay Gap report
+                                </span>
+                            }
+
+                            @if (Model.ShowCovidMessage(reportingYear))
+                            {
+                                <div id="@(gpgReportHintId)" class="govuk-task-list__hint">
+                                    The deadline for 2019-20 was
+                                    @(ReportingYearsHelper.GetDeadline(Model.Organisation.SectorType, 2019).ToString("d MMMM yyyy")).
+                                    Due to Coronavirus (COVID-19), enforcement of reporting deadlines does not
+                                    apply to employers in the 2019-20 reporting year.
+                                </div>
+                            }
+                        </div>
+                        <div class="govuk-task-list__status" id="@(gpgReportStatusId)">
+                            @if (Model.AbleToReportGpg(reportingYear))
+                            {
+                                @await Html.PartialAsync("ReportStatusBadge",
+                                    new ReportStatusBadgeViewModel
+                                    {
+                                        ReportStatusTag = ReportStatusTagHelper.GetReportStatusTag(Model.Organisation, reportingYear),
+                                        ReportSubmittedDate = Model.Organisation.GetReturn(reportingYear)?.Modified,
+                                        DeadlineDate = ReportingYearsHelper.GetDeadline(Model.Organisation.SectorType, reportingYear),
+                                        HasDraft = Model.HasDraftGpgReport(reportingYear)
+                                    })
+                            }
+                            else
+                            {
+                                <strong class="govuk-tag govuk-tag--grey"
+                                        style="max-width: unset;">
+                                    Cannot start yet
+                                </strong>
+                            }
+                        </div>
+                    </li>
+                    @{
+                        string actionPlanHintId = $"action-plan-{reportingYear}-hint";
+                        string actionPlanStatusId = $"action-plan-{reportingYear}-status";
+                    }
+                    @if (Model.ShowActionPlanRow(reportingYear))
+                    {
+                        <li class="govuk-task-list__item govuk-task-list__item--with-link">
+                            <div class="govuk-task-list__name-and-hint">
+                                @if (Model.AbleToCreateActionPlan(reportingYear))
+                                {
+                                    <a href="@(Url.Action("ActionPlanIntroGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = reportingYear}))"
+                                       class="govuk-link govuk-task-list__link"
+                                       aria-describedby="@((Model.IsActionPlanOptional(reportingYear) ? actionPlanHintId : "")) @(actionPlanStatusId)">
+                                        Equality Action Plan
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span aria-describedby="@((Model.IsActionPlanOptional(reportingYear) ? actionPlanHintId : "")) @(actionPlanStatusId)">
+                                        Equality Action Plan
+                                    </span>
+                                }
+                                
+                                @if (Model.IsActionPlanOptional(reportingYear))
+                                {
+                                    <div id="@(actionPlanHintId)" class="govuk-task-list__hint">
+                                        Optional for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriod(reportingYear))
+                                    </div>
+                                }
+                            </div>
+                            <div class="govuk-task-list__status" id="@(actionPlanStatusId)">
+                                @(await Html.GovUkTag(Model.ActionPlanStatusTag(reportingYear)))
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
         
-        <h2 class="govuk-heading-l">
+        <div id="see-more-reporting-years-block"
+           class="govuk-inset-text govuk-!-margin-top-8"
+           style="display: none;">
+            <a href="#"
+               id="see-more-reporting-years-link"
+               class="govuk-link">
+                See @(reportingYearsHidden) more reporting years
+            </a>
+        </div>
+        <script>
+            document.getElementById("see-more-reporting-years-block").style.display = "block";
+            
+            document.getElementById("see-more-reporting-years-link").addEventListener("click", function (e) {
+                e.preventDefault();
+                document.querySelectorAll(".block-for-reporting-year").forEach(function (block) {
+                    block.classList.remove("govuk-visually-hidden");
+                })
+                document.getElementById("see-more-reporting-years-block").style.display = "none";
+            })
+        </script>
+
+        
+        <h2 class="govuk-heading-l govuk-!-margin-top-9">
             Registered users
         </h2>
         
@@ -225,7 +323,7 @@
         </table>
         
         
-        <h2 class="govuk-heading-l">
+        <h2 class="govuk-heading-l govuk-!-margin-top-9">
             Employer details
         </h2>
         
