@@ -110,14 +110,12 @@ namespace GenderPayGap.WebUI.BackgroundJobs.ScheduledJobs
 
         private void SendReminderEmailsForReportingYear(User user, int year, ReminderEmail reminderEmail)
         {
-            var snapshotDate = reminderEmail.SectorType.GetAccountingStartDate(year);
-
             List<Organisation> inScopeActiveOrganisationsForUserAndSectorTypeThatStillNeedToReport = user.UserOrganisations
                 .Where(uo => uo.HasBeenActivated())
                 .Select(uo => uo.Organisation)
                 .Where(o => o.Status == OrganisationStatuses.Active)
                 .Where(o => o.SectorType == reminderEmail.SectorType)
-                .Where(OrganisationIsInScopeForSnapshotDate(snapshotDate))
+                .Where(OrganisationIsInScopeForReportingYear(year))
                 .Where(OrganisationHasNotReportedForReportingYear(year))
                 .ToList();
 
@@ -128,11 +126,11 @@ namespace GenderPayGap.WebUI.BackgroundJobs.ScheduledJobs
                 reminderEmail);
         }
 
-        private Func<Organisation, bool> OrganisationIsInScopeForSnapshotDate(DateTime snapshotDate)
+        private Func<Organisation, bool> OrganisationIsInScopeForReportingYear(int reportingYear)
         {
             return o => o.OrganisationScopes.Any(
                 s => s.Status == ScopeRowStatuses.Active
-                     && s.SnapshotDate == snapshotDate
+                     && s.ReportingYear == reportingYear
                      && (s.ScopeStatus == ScopeStatuses.InScope || s.ScopeStatus == ScopeStatuses.PresumedInScope));
         }
 

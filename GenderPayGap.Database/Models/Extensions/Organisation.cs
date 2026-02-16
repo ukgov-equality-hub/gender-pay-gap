@@ -103,7 +103,7 @@ namespace GenderPayGap.Database
         public IEnumerable<OrganisationScope> GetAllScopesForYear(int reportingYear)
         {
             return OrganisationScopes
-                .Where(s => s.SnapshotDate.Year == reportingYear);
+                .Where(s => s.ReportingYear == reportingYear);
         }
 
         public IEnumerable<OrganisationScope> GetActiveScopesForYear(int reportingYear)

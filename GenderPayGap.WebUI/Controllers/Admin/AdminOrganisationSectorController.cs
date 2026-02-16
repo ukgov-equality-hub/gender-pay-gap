@@ -198,7 +198,7 @@ namespace GenderPayGap.WebUI.Controllers.Admin
             // Change snapshot date for all organisation scopes to match new sector
             foreach (OrganisationScope scope in organisation.OrganisationScopes)
             {
-                scope.SnapshotDate = organisation.SectorType.GetAccountingStartDate(scope.SnapshotDate.Year);
+                scope.SnapshotDate = organisation.SectorType.GetAccountingStartDate(scope.ReportingYear);
             }
             
             // Change accounting date for all returns to match new sector
