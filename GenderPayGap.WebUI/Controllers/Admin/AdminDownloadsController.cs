@@ -211,7 +211,7 @@ namespace GenderPayGap.WebUI.Controllers
 
             List<Return> returnsForYear = organisationsWithReturnsForYear
                 .SelectMany(organisation => organisation.Returns)
-                .Where(ret => ret.AccountingDate.Year == year)
+                .Where(ret => ret.ReportingYear == year)
                 .ToList();
 
             List<object> records = returnsForYear
@@ -228,8 +228,7 @@ namespace GenderPayGap.WebUI.Controllers
         {
             Organisation organisation = returnForYear.Organisation;
 
-            int year = returnForYear.AccountingDate.Year;
-            OrganisationScope scopeForYear = organisation.GetScopeForYear(year);
+            OrganisationScope scopeForYear = organisation.GetScopeForYear(returnForYear.ReportingYear);
 
             return new
             {
@@ -242,8 +241,8 @@ namespace GenderPayGap.WebUI.Controllers
                 SectorType = organisation.SectorType,
                 ScopeStatus = scopeForYear?.ScopeStatus.ToString() ?? "(no active scope)",
 
-                SnapshotDate = returnForYear.AccountingDate,
-                DeadlineDate = ReportingYearsHelper.GetDeadlineForAccountingDate(returnForYear.AccountingDate),
+                SnapshotDate = ReportingYearsHelper.GetAccountingStartDate(organisation.SectorType, returnForYear.ReportingYear),
+                DeadlineDate = ReportingYearsHelper.GetDeadline(organisation.SectorType, returnForYear.ReportingYear),
                 ModifiedDate = returnForYear.Modified,
                 IsLateSubmission = returnForYear.IsLateSubmission,
 

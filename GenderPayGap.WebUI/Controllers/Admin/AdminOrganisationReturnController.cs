@@ -53,7 +53,7 @@ namespace GenderPayGap.WebUI.Controllers.Admin
         {
             Organisation organisation = dataRepository.Get<Organisation>(id);
 
-            var returns = organisation.Returns.OrderByDescending(r => r.AccountingDate).ThenByDescending(r => r.StatusDate);
+            var returns = organisation.Returns.OrderByDescending(r => r.ReportingYear).ThenByDescending(r => r.StatusDate);
 
             var records = returns.Select(
                 ret =>
@@ -63,8 +63,8 @@ namespace GenderPayGap.WebUI.Controllers.Admin
                         OrganisationName = ret.Organisation.OrganisationName,
                         ReturnId = ret.ReturnId,
 
-                        SnapshotDate = ret.AccountingDate,
-                        DeadlineDate = ReportingYearsHelper.GetDeadlineForAccountingDate(ret.AccountingDate),
+                        SnapshotDate = ReportingYearsHelper.GetAccountingStartDate(organisation.SectorType, ret.ReportingYear),
+                        DeadlineDate = ReportingYearsHelper.GetDeadline(organisation.SectorType, ret.ReportingYear),
                         ModifiedDate = ret.Modified,
 
                         Status = ret.Status,
@@ -118,9 +118,9 @@ namespace GenderPayGap.WebUI.Controllers.Admin
         public IActionResult DeleteReturnsOfAYearGet(long id, int year)
         {
             var organisation = dataRepository.Get<Organisation>(id);
-            List<long> returnsId = organisation.Returns.Where(r => r.AccountingDate.Year == year).Select(r => r.ReturnId).ToList();
+            List<long> returnIds = organisation.Returns.Where(r => r.ReportingYear == year).Select(r => r.ReturnId).ToList();
 
-            var viewModel = new AdminDeleteReturnViewModel {Organisation = organisation, ReturnIds = returnsId, Year = year};
+            var viewModel = new AdminDeleteReturnViewModel {Organisation = organisation, ReturnIds = returnIds, Year = year};
 
             return View("DeleteReturns", viewModel);
         }

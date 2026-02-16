@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using GenderPayGap.Core;
 using GenderPayGap.Core.Helpers;
 using GenderPayGap.Core.Interfaces;
@@ -197,7 +197,7 @@ namespace GenderPayGap.WebUI.Services
         {
             List<Return> oldActiveReturnsForSameYear =
                 newReturn.Organisation.Returns
-                    .Where(r => r.AccountingDate == newReturn.AccountingDate) // Get only the Returns for this year
+                    .Where(r => r.ReportingYear == newReturn.ReportingYear) // Get only the Returns for this year
                     .Where(r => r.Status == ReturnStatuses.Submitted) // Get only the Submitted(Active) Returns - normally only one
                     .Except(new[] { newReturn }) // Except this new Return
                     .ToList();
@@ -211,16 +211,16 @@ namespace GenderPayGap.WebUI.Services
         private void SendGeoFirstTimeSubmissionEmail(Return newReturn, IUrlHelper urlHelper)
         {
             if (Global.EnableSubmitAlerts
-                && newReturn.Organisation.Returns.Count(r => r.AccountingDate == newReturn.AccountingDate) == 1)
+                && newReturn.Organisation.Returns.Count(r => r.ReportingYear == newReturn.ReportingYear) == 1)
             {
                 string urlToPublicViewingPage = urlHelper.Action(
                     "ReportForYear",
                     "ViewReports",
-                    new { organisationId = newReturn.OrganisationId, reportingYear = newReturn.AccountingDate.Year },
+                    new { organisationId = newReturn.OrganisationId, reportingYear = newReturn.ReportingYear },
                     "https");
 
                 emailSendingService.SendGeoFirstTimeDataSubmissionEmail(
-                    newReturn.AccountingDate.Year.ToString(),
+                    newReturn.ReportingYear.ToString(),
                     newReturn.Organisation.OrganisationName,
                     newReturn.StatusDate.ToShortDateString(),
                     urlToPublicViewingPage);
@@ -232,13 +232,13 @@ namespace GenderPayGap.WebUI.Services
             string urlToPublicViewingPage = urlHelper.Action(
                 "ReportForYear",
                 "ViewReports",
-                new { organisationId = newReturn.OrganisationId, reportingYear = newReturn.AccountingDate.Year },
+                new { organisationId = newReturn.OrganisationId, reportingYear = newReturn.ReportingYear },
                 "https");
 
             List<Return> otherReturns =
                 newReturn.Organisation.Returns
                     .Except(new[] { newReturn })
-                    .Where(r => r.AccountingDate == newReturn.AccountingDate)
+                    .Where(r => r.ReportingYear == newReturn.ReportingYear)
                     .ToList();
             string submittedOrUpdated = otherReturns.Count > 0 ? "updated" : "submitted";
 

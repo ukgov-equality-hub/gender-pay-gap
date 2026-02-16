@@ -119,7 +119,7 @@ namespace GenderPayGap.WebUI.Search
                                 Status = o.Status,
                                 OrganisationSizes = submittedReports.Select(r => r.OrganisationSize).Distinct().ToList(),
                                 SicSectionIds = o.OrganisationSicCodes.Select(osc => osc.SicCode.SicSection.SicSectionId).Distinct().ToList(),
-                                ReportedLateYears = submittedReports.Where(r => r.IsLateSubmission).Select(r => r.AccountingDate.Year).ToList(),
+                                ReportedLateYears = submittedReports.Where(r => r.IsLateSubmission).Select(r => r.ReportingYear).ToList(),
                                 IncludeInViewingService = GetIncludeInViewingService(o),
                                 Address = o.GetLatestAddress()?.GetAddressString() ?? ""
                             };

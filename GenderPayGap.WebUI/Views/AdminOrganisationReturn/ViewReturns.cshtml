@@ -85,18 +85,18 @@
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
-                    @{ var previousAccountingDate = DateTime.MinValue; }
-                    @foreach (Return returnForYear in Model.Returns.OrderByDescending(r => r.AccountingDate).ThenByDescending(r => r.Modified))
+                    @{ var previousReportingYear = 0; }
+                    @foreach (Return returnForYear in Model.Returns.OrderByDescending(r => r.ReportingYear).ThenByDescending(r => r.Modified))
                     {
                         <tr class="govuk-table__row">
-                            @if (returnForYear.AccountingDate == previousAccountingDate)
+                            @if (returnForYear.ReportingYear == previousReportingYear)
                             {
                                 @* Omit this TD, a TD above has a rowspan that covers this row *@
                             }
                             else
                             {
-                                int versionsForThisReportingYear = Model.Returns.Count(s => s.AccountingDate == returnForYear.AccountingDate);
-                                var reportingYear = ReportingYearsHelper.FormatYearAsReportingPeriod(returnForYear.AccountingDate.Year);
+                                int versionsForThisReportingYear = Model.Returns.Count(s => s.ReportingYear == returnForYear.ReportingYear);
+                                var reportingYear = ReportingYearsHelper.FormatYearAsReportingPeriod(returnForYear.ReportingYear);
 
                                 <th scope="row" class="govuk-table__cell" style="white-space: nowrap" rowspan="@(versionsForThisReportingYear)">
                                     @reportingYear
@@ -104,13 +104,13 @@
                                 <td class="govuk-table__cell" rowspan="@(versionsForThisReportingYear)">
                                     <span style="line-height: 1.7;">
                                         <a href="@Url.Action("ViewReturnDetailsForYear", "AdminOrganisationReturn",
-                                                     new {id = Model.OrganisationId, year = returnForYear.AccountingDate.Year})"
+                                                     new {id = Model.OrganisationId, year = returnForYear.ReportingYear})"
                                            class="govuk-link" style="font-weight: normal">
                                             <span style="white-space: nowrap">Full history</span>
                                             <span class="govuk-visually-hidden">of returns for reporting year @reportingYear</span>
                                         </a>
                                         <br/>
-                                        <a href="@Url.Action("ReportForYear", "ViewReports", new {organisationId = Model.OrganisationId, reportingYear = returnForYear.AccountingDate.Year})"
+                                        <a href="@Url.Action("ReportForYear", "ViewReports", new {organisationId = Model.OrganisationId, reportingYear = returnForYear.ReportingYear})"
                                            class="govuk-link" style="font-weight: normal">
                                             <span style="white-space: nowrap">Public page</span>
                                             <span class="govuk-visually-hidden">for reporting year @reportingYear</span>
@@ -120,7 +120,7 @@
                                             @if (User.IsInRole(LoginRoles.GpgAdmin))
                                             {
                                                 <br/>
-                                                <a href="@Url.Action("DeleteReturnsOfAYearGet", "AdminOrganisationReturn", new {id = Model.OrganisationId, year = returnForYear.AccountingDate.Year})"
+                                                <a href="@Url.Action("DeleteReturnsOfAYearGet", "AdminOrganisationReturn", new {id = Model.OrganisationId, year = returnForYear.ReportingYear})"
                                                    class="govuk-link" style="font-weight: normal">
                                                     <span style="white-space: nowrap">Delete returns</span>
                                                     <span class="govuk-visually-hidden">for reporting year @reportingYear</span>
@@ -145,7 +145,7 @@
                             </td>
                             <td class="govuk-table__cell">@(returnForYear.Status)</td>
                             <td class="govuk-table__cell">
-                                @if (returnForYear.AccountingDate != previousAccountingDate)
+                                @if (returnForYear.ReportingYear != previousReportingYear)
                                 {
                                     <span>@(returnForYear.IsLateSubmission ? "Yes" : "No")</span>
                                     @if (User.IsInRole(LoginRoles.GpgAdmin))
@@ -163,7 +163,7 @@
                                 {
                                     @if (User.IsInRole(LoginRoles.GpgAdmin))
                                     {
-                                        <a href="@Url.Action("DeleteReturnGet", "AdminOrganisationReturn", new {id = Model.OrganisationId, year = returnForYear.AccountingDate.Year, returnId = returnForYear.ReturnId})"
+                                        <a href="@Url.Action("DeleteReturnGet", "AdminOrganisationReturn", new {id = Model.OrganisationId, year = returnForYear.ReportingYear, returnId = returnForYear.ReturnId})"
                                            class="govuk-link">
                                             Delete
                                             <span class="govuk-visually-hidden"> the return for @(returnForYear.GetReportingPeriod()) modified on @(returnForYear.Modified.ToString("d MMM yyyy HH:mm"))</span>
@@ -172,7 +172,7 @@
                                 }
                             </td>
                         </tr>
-                        previousAccountingDate = returnForYear.AccountingDate;
+                        previousReportingYear = returnForYear.ReportingYear;
                     }
                 </tbody>
             </table>

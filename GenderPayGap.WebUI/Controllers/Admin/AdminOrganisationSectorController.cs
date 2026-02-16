@@ -204,7 +204,7 @@ namespace GenderPayGap.WebUI.Controllers.Admin
             // Change accounting date for all returns to match new sector
             foreach (Return returnItem in organisation.Returns)
             {
-                returnItem.AccountingDate = organisation.SectorType.GetAccountingStartDate(returnItem.AccountingDate.Year);
+                returnItem.AccountingDate = organisation.SectorType.GetAccountingStartDate(returnItem.ReportingYear);
             }
 
             dataRepository.SaveChanges();

@@ -9,6 +9,8 @@ namespace GenderPayGap.Database
     public partial class Return
     {
 
+        public int ReportingYear => AccountingDate.Year;
+
         [NotMapped]
         public string ResponsiblePerson
         {
@@ -80,7 +82,7 @@ namespace GenderPayGap.Database
         {
             return OrganisationSize != OrganisationSizes.Employees0To249
                 && GetScopeStatus().IsInScopeVariant()
-                && !Global.ReportingStartYearsToExcludeFromLateFlagEnforcement.Contains(AccountingDate.Year);
+                && !Global.ReportingStartYearsToExcludeFromLateFlagEnforcement.Contains(ReportingYear);
         }
 
         public bool HasBonusesPaid()
@@ -91,11 +93,9 @@ namespace GenderPayGap.Database
                    || DiffMedianBonusPercent != default(long);
         }
 
-        #region Methods
-
         public ScopeStatuses GetScopeStatus()
         {
-            return Organisation.GetScopeStatusForYear(AccountingDate.Year);
+            return Organisation.GetScopeStatusForYear(ReportingYear);
         }
 
         public bool CalculateIsLateSubmission()
@@ -103,7 +103,7 @@ namespace GenderPayGap.Database
             return Modified > GetDueDate()
                    && OrganisationSize != OrganisationSizes.Employees0To249
                    && GetScopeStatus().IsInScopeVariant()
-                   && !Global.ReportingStartYearsToExcludeFromLateFlagEnforcement.Contains(AccountingDate.Year);
+                   && !Global.ReportingStartYearsToExcludeFromLateFlagEnforcement.Contains(ReportingYear);
         }
 
         public bool IsVoluntarySubmission()
@@ -242,7 +242,7 @@ namespace GenderPayGap.Database
 
         public string GetReportingPeriod()
         {
-            return ReportingYearsHelper.FormatYearAsReportingPeriod(AccountingDate.Year, "/");
+            return ReportingYearsHelper.FormatYearAsReportingPeriod(ReportingYear, "/");
         }
 
         // The deadline date is the final day that a return can be submitted without being considered late
@@ -250,10 +250,8 @@ namespace GenderPayGap.Database
         // i.e. if the deadline date is 2021/04/01, submissions on that day are not late, any after 2021/04/02 00:00:00 are
         public DateTime GetDueDate()
         {
-            return ReportingYearsHelper.GetDeadlineForAccountingDate(AccountingDate).AddDays(1);
+            return ReportingYearsHelper.GetDeadline(Organisation.SectorType, ReportingYear).AddDays(1);
         }
-
-        #endregion
 
     }
 }

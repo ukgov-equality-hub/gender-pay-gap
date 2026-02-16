@@ -181,7 +181,7 @@ namespace GenderPayGap.Database
         public IEnumerable<Return> GetAllReturnsForYear(int reportingYear)
         {
             return Returns
-                .Where(r => r.AccountingDate.Year == reportingYear);
+                .Where(r => r.ReportingYear == reportingYear);
         }
 
         public IEnumerable<Return> GetSubmittedReturnsForYear(int reportingYear)
@@ -194,14 +194,14 @@ namespace GenderPayGap.Database
         {
             return Returns
                 .Where(r => r.Status == ReturnStatuses.Submitted)
-                .OrderByDescending(r => r.AccountingDate);
+                .OrderByDescending(r => r.ReportingYear);
         }
 
         public Return GetLatestReturn()
         {
             return Returns
                 .Where(r => r.Status == ReturnStatuses.Submitted)
-                .OrderByDescending(r => r.AccountingDate)
+                .OrderByDescending(r => r.ReportingYear)
                 .FirstOrDefault();
         }
 

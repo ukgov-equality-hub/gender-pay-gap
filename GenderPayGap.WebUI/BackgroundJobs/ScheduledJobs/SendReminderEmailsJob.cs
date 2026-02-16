@@ -118,7 +118,7 @@ namespace GenderPayGap.WebUI.BackgroundJobs.ScheduledJobs
                 .Where(o => o.Status == OrganisationStatuses.Active)
                 .Where(o => o.SectorType == reminderEmail.SectorType)
                 .Where(OrganisationIsInScopeForSnapshotDate(snapshotDate))
-                .Where(OrganisationHasNotReportedForSnapshotDate(snapshotDate))
+                .Where(OrganisationHasNotReportedForReportingYear(year))
                 .ToList();
 
             CheckAndSendReminderEmailsForReportingYear(
@@ -136,9 +136,9 @@ namespace GenderPayGap.WebUI.BackgroundJobs.ScheduledJobs
                      && (s.ScopeStatus == ScopeStatuses.InScope || s.ScopeStatus == ScopeStatuses.PresumedInScope));
         }
 
-        private Func<Organisation, bool> OrganisationHasNotReportedForSnapshotDate(DateTime snapshotDate)
+        private Func<Organisation, bool> OrganisationHasNotReportedForReportingYear(int reportingYear)
         {
-            return o => !o.Returns.Any(r => r.Status == ReturnStatuses.Submitted && r.AccountingDate == snapshotDate);
+            return o => !o.Returns.Any(r => r.Status == ReturnStatuses.Submitted && r.ReportingYear == reportingYear);
         }
 
         private void SendReminderEmailRecordIfNotInProgress(User user, SectorTypes sectorType, DateTime reminderDate, int year)
