@@ -8,6 +8,7 @@ namespace GenderPayGap.WebUI.Models.ViewReports
         public ReportStatusTag ReportStatusTag { get; set; }
         public DateTime? ReportSubmittedDate { get; set; }
         public DateTime DeadlineDate { get; set; }
+        public bool HasDraft { get; set; }
 
     }
 }

@@ -1,0 +1,196 @@
+@using GenderPayGap.Core
+@using GenderPayGap.Core.Helpers
+@using GenderPayGap.WebUI.Models.Scope
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.Scope.DeclareScopeForYearViewModel
+
+@{
+    string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    DateTime snapshotDate = Model.Organisation.SectorType.GetAccountingStartDate(Model.ReportingYear);
+    ViewBag.Title = $"Declare if you are required to report for {formattedReportingYears} reporting year - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
+    {
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Manage Employers"),
+                Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new($"Declare if you are required to report for {formattedReportingYears}")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        @(await Html.GovUkErrorSummaryIfNeeded())
+
+        <h1 class="govuk-heading-xl">
+            Declare if your employer is required to report
+            <br>
+            <span class="govuk-!-font-size-27 govuk-!-margin-top-3" style="display: inline-block; line-height: 1.3 !important;">
+                for @(Model.Organisation.OrganisationName)
+                <br>
+                for reporting year @(formattedReportingYears)
+            </span>
+        </h1>
+        
+        <div class="govuk-inset-text">
+            You can read guidance on
+            <a href="@Global.WhoNeedsToReportGuidanceLink" target="_blank" rel="noopener">
+                how to work out if your employer is required to report</a>.
+        </div>
+        
+        <form method="post"
+              action="@Url.Action("DeclareScopeForYearPost", "Scope", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})">
+            @(Html.AntiForgeryToken())
+
+            @{
+                var whyOutOfScopeDetailsHtml = new HtmlOrText(
+                    @<text>
+                         @await Html.GovUkCharacterCountFor(
+                             m => m.WhyOutOfScopeDetails,
+                             new()
+                             {
+                                 Label = new()
+                                 {
+                                     HtmlOrText = new("Please provide some details")
+                                 }
+                             }
+                         )
+                     </text>);
+
+                var whyOutOfScopeHtml = new HtmlOrText(
+                    @<text>
+                        @await Html.GovUkRadiosFor(
+                            m => m.WhyOutOfScope,
+                            new()
+                            {
+                                Fieldset = new()
+                                {
+                                    Legend = new()
+                                    {
+                                        HtmlOrText = new($"Why is {Model.Organisation.OrganisationName} not required to report for reporting year {formattedReportingYears}?"),
+                                        Classes = ["govuk-fieldset__legend--s", "govuk-!-margin-top-4"]
+                                    }
+                                }
+                            },
+                            radioItemViewModels: new()
+                            {
+                                {
+                                    DeclareScopeForYearWhyOutOfScope.Under250,
+                                    new() {
+                                        Label = new()
+                                        {
+                                            HtmlOrText = new($"{Model.Organisation.OrganisationName} employed fewer than 250 employees on the snapshot date of {snapshotDate.ToString("d MMMM yyyy")}")
+                                        }
+                                    }
+                                },
+                                {
+                                    DeclareScopeForYearWhyOutOfScope.Other,
+                                    new() {
+                                        Conditional = whyOutOfScopeDetailsHtml
+                                    }
+                                },
+                            }
+                        )
+                     </text>);
+                
+                var readGuidanceHintHtml = new HtmlOrText(
+                    @<text>
+                         You can
+                         <a href="@Global.WhoNeedsToReportGuidanceLink" target="_blank" rel="noopener">
+                             read our guidance, which explains who needs to report</a>.
+                     </text>);
+
+                var readGuidanceHtml = new HtmlOrText(
+                    @<text>
+                        @await Html.GovUkRadiosFor(
+                            m => m.ReadGuidance,
+                            new()
+                            {
+                                Fieldset = new()
+                                {
+                                    Legend = new()
+                                    {
+                                        HtmlOrText = new($"Have you read our guidance, which explains who needs to report?"),
+                                        Classes = ["govuk-fieldset__legend--s"]
+                                    }
+                                },
+                                Hint = new()
+                                {
+                                    HtmlOrText = readGuidanceHintHtml
+                                }
+                            }
+                        )
+                     </text>);
+            }
+            
+            @await Html.GovUkRadiosFor(
+                m => m.Scope,
+                new RadiosViewModel
+                {
+                    Fieldset = new()
+                    {
+                        Legend = new()
+                        {
+                            HtmlOrText = new($"Is {Model.Organisation.OrganisationName} required to report for the reporting year {formattedReportingYears}?"),
+                            Classes = ["govuk-fieldset__legend--m"]
+                        },
+                    },
+                },
+                new Dictionary<ScopeStatuses, RadioItemViewModel>()
+                {
+                    {ScopeStatuses.InScope, new()
+                    {
+                        Label = new()
+                        {
+                            HtmlOrText = new("Required to report")
+                        }
+                    }},
+                    {ScopeStatuses.OutOfScope, new()
+                    {
+                        Label = new()
+                        {
+                            HtmlOrText = new("Not required to report")
+                        },
+                        Conditional = new(
+                            @<text>
+                                 @(whyOutOfScopeHtml.Value)
+                                 
+                                 @(readGuidanceHtml.Value)
+                             </text>)
+                    }},
+                },
+                overrideEnumValues: [ScopeStatuses.InScope, ScopeStatuses.OutOfScope]
+            )
+
+            @(await Html.GovUkButton(new ButtonViewModel
+            {
+                HtmlOrText = new("Confirm and save"),
+                Classes = ["govuk-!-margin-bottom-3"],
+                PreventDoubleClick = true
+            }))
+
+            <p class="govuk-body">
+                <a class="govuk-link" href="@Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})">
+                    Return to @(Model.Organisation.OrganisationName)
+                </a>
+            </p>
+            
+        </form>
+        
+    </div>
+</div>

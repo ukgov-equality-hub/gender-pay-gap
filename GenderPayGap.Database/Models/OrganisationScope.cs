@@ -38,6 +38,10 @@ namespace GenderPayGap.Database
         {
             return ScopeStatus.IsScopePresumed();
         }
+        public bool IsScopeDeclared()
+        {
+            return ScopeStatus.IsScopeDeclared();
+        }
 
     }
 }

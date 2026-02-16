@@ -213,6 +213,10 @@ namespace GenderPayGap.Core
         {
             return scopeStatus == ScopeStatuses.PresumedInScope || scopeStatus == ScopeStatuses.PresumedOutOfScope;
         }
+        public static bool IsScopeDeclared(this ScopeStatuses scopeStatus)
+        {
+            return scopeStatus == ScopeStatuses.InScope || scopeStatus == ScopeStatuses.OutOfScope;
+        }
     }
     
     public enum OrganisationSizes
