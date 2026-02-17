@@ -73,7 +73,7 @@
             <tbody class="govuk-table__body">
                 @{
                     List<Return> returnVersions = Model.Organisation.Returns
-                        .Where(r => r.AccountingDate.Year == Model.Year)
+                        .Where(r => r.ReportingYear == Model.Year)
                         .OrderByDescending(r => r.Modified)
                         .ToList();
 
@@ -416,7 +416,7 @@
                             {
                                 @if (User.IsInRole(LoginRoles.GpgAdmin))
                                 {
-                                    <a href="@Url.Action("DeleteReturnGet", "AdminOrganisationReturn", new {id = Model.Organisation.OrganisationId, year = thisVersion.AccountingDate.Year, returnId = thisVersion.ReturnId})"
+                                    <a href="@Url.Action("DeleteReturnGet", "AdminOrganisationReturn", new {id = Model.Organisation.OrganisationId, year = thisVersion.ReportingYear, returnId = thisVersion.ReturnId})"
                                        class="govuk-link">
                                         Delete
                                     </a>

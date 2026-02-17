@@ -126,7 +126,12 @@ namespace GenderPayGap.WebUI.Controllers
             Organisation organisation = dataRepository.Get<Organisation>(organisationId);
             OrganisationScope organisationScope = organisation.GetScopeForYear(reportingYear);
             
-            var viewModel = new ScopeViewModel {Organisation = organisation, ReportingYear = organisationScope.SnapshotDate, IsToSetInScope = !organisationScope.IsInScopeVariant() };
+            var viewModel = new ScopeViewModel
+            {
+                Organisation = organisation,
+                ReportingYear = ReportingYearsHelper.GetAccountingStartDate(organisation.SectorType, reportingYear),
+                IsToSetInScope = !organisationScope.IsInScopeVariant()
+            };
             
             return View(organisationScope.IsInScopeVariant() ? "OutOfScopeQuestions" : "ConfirmScope", viewModel);
         }
@@ -142,10 +147,10 @@ namespace GenderPayGap.WebUI.Controllers
 
             // Get Organisation and OrganisationScope for reporting year
             Organisation organisation = dataRepository.Get<Organisation>(organisationId);
-            OrganisationScope organisationScope = organisation.OrganisationScopes.FirstOrDefault(s => s.SnapshotDate.Year == reportingYear);
+            OrganisationScope organisationScope = organisation.OrganisationScopes.FirstOrDefault(s => s.ReportingYear == reportingYear);
 
             viewModel.Organisation = organisation;
-            viewModel.ReportingYear = organisationScope.SnapshotDate;
+            viewModel.ReportingYear = ReportingYearsHelper.GetAccountingStartDate(organisation.SectorType, reportingYear);
             viewModel.IsToSetInScope = false;
             
             if (!ModelState.IsValid)
@@ -180,10 +185,10 @@ namespace GenderPayGap.WebUI.Controllers
 
             SendScopeChangeEmails(organisation, viewModel.ReportingYear.Year, ScopeStatuses.OutOfScope);
 
-            OrganisationScope organisationScope = organisation.OrganisationScopes.FirstOrDefault(s => s.SnapshotDate.Year == reportingYear);
+            OrganisationScope organisationScope = organisation.OrganisationScopes.FirstOrDefault(s => s.ReportingYear == reportingYear);
 
             viewModel.Organisation = organisation;
-            viewModel.ReportingYear = organisationScope.SnapshotDate;
+            viewModel.ReportingYear = ReportingYearsHelper.GetAccountingStartDate(organisation.SectorType, reportingYear);
 
             return View("FinishOutOfScopeJourney", viewModel);
         }
@@ -226,7 +231,7 @@ namespace GenderPayGap.WebUI.Controllers
             var viewModel = new ScopeDeclaredViewModel
             {
                 Organisation = organisation,
-                ReportingYear = organisationScope.SnapshotDate.Year,
+                ReportingYear = organisationScope.ReportingYear,
                 ScopeStatus = organisationScope.ScopeStatus
             };
             
@@ -317,7 +322,7 @@ namespace GenderPayGap.WebUI.Controllers
 
         public void RetireOldScopes(Organisation organisation, int reportingYear)
         {
-            foreach (OrganisationScope s in organisation.OrganisationScopes.Where(o => o.SnapshotDate.Year == reportingYear))
+            foreach (OrganisationScope s in organisation.OrganisationScopes.Where(o => o.ReportingYear == reportingYear))
             {
                 s.Status = ScopeRowStatuses.Retired;
             }

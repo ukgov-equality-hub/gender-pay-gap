@@ -198,13 +198,13 @@ namespace GenderPayGap.WebUI.Controllers.Admin
             // Change snapshot date for all organisation scopes to match new sector
             foreach (OrganisationScope scope in organisation.OrganisationScopes)
             {
-                scope.SnapshotDate = organisation.SectorType.GetAccountingStartDate(scope.SnapshotDate.Year);
+                scope.SnapshotDate = organisation.SectorType.GetAccountingStartDate(scope.ReportingYear);
             }
             
             // Change accounting date for all returns to match new sector
             foreach (Return returnItem in organisation.Returns)
             {
-                returnItem.AccountingDate = organisation.SectorType.GetAccountingStartDate(returnItem.AccountingDate.Year);
+                returnItem.AccountingDate = organisation.SectorType.GetAccountingStartDate(returnItem.ReportingYear);
             }
 
             dataRepository.SaveChanges();

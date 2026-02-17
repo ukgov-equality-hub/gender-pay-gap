@@ -268,7 +268,7 @@
                 @foreach (int year in Model.ReportingYears)
                 {
                     Return latestReturnForCurrentYear = Model.Organisation.Returns
-                        .Where(r => r.AccountingDate.Year == year)
+                        .Where(r => r.ReportingYear == year)
                         .OrderByDescending(r => r.Modified)
                         .FirstOrDefault();
 

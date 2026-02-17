@@ -76,18 +76,18 @@ else
             </tr>
         </thead>
         <tbody class="govuk-table__body">
-            @{ var previousSnapshotDate = DateTime.MinValue; }
-            @foreach (OrganisationScope scope in Model.OrganisationScopes.OrderByDescending(s => s.SnapshotDate).ThenByDescending(s => s.ScopeStatusDate))
+            @{ int previousReportingYear = 0; }
+            @foreach (OrganisationScope scope in Model.OrganisationScopes.OrderByDescending(s => s.ReportingYear).ThenByDescending(s => s.ScopeStatusDate))
             {
                 <tr class="govuk-table__row">
-                    @if (scope.SnapshotDate == previousSnapshotDate)
+                    @if (scope.ReportingYear == previousReportingYear)
                     {
                         @* Omit this TD, a TD above has a rowspan that covers this row *@
                     }
                     else
                     {
-                        <th scope="row" class="govuk-table__cell" rowspan="@(Model.OrganisationScopes.Count(s => s.SnapshotDate == scope.SnapshotDate))">
-                            @(ReportingYearsHelper.FormatYearAsReportingPeriod(scope.SnapshotDate.Year))
+                        <th scope="row" class="govuk-table__cell" rowspan="@(Model.OrganisationScopes.Count(s => s.ReportingYear == scope.ReportingYear))">
+                            @(ReportingYearsHelper.FormatYearAsReportingPeriod(scope.ReportingYear))
                         </th>
                     }
                     <td class="govuk-table__cell">@(scope.ScopeStatus)</td>
@@ -98,7 +98,7 @@ else
                     </td>
                     <td class="govuk-table__cell">@(scope.ScopeStatusDate.ToString("d MMM yyyy"))</td>
                     <td class="govuk-table__cell">@(scope.Status)</td>
-                    @if (scope.SnapshotDate == previousSnapshotDate)
+                    @if (scope.ReportingYear == previousReportingYear)
                     {
                         @* Omit this TD, a TD above has a rowspan that covers this row *@
                     }
@@ -106,16 +106,16 @@ else
                     {
                         @if (User.IsInRole(LoginRoles.GpgAdmin))
                         {
-                            <td class="govuk-table__cell" rowspan="@(Model.OrganisationScopes.Count(s => s.SnapshotDate == scope.SnapshotDate))">
-                                <a href="@Url.Action("ChangeScopeForYearGet", "AdminOrganisationScope", new {id = scope.OrganisationId, year = scope.SnapshotDate.Year})"
+                            <td class="govuk-table__cell" rowspan="@(Model.OrganisationScopes.Count(s => s.ReportingYear == scope.ReportingYear))">
+                                <a href="@Url.Action("ChangeScopeForYearGet", "AdminOrganisationScope", new {id = scope.OrganisationId, year = scope.ReportingYear})"
                                    class="govuk-link">
-                                    Change <span class="govuk-visually-hidden"> scope for @(ReportingYearsHelper.FormatYearAsReportingPeriod(scope.SnapshotDate.Year))</span>
+                                    Change <span class="govuk-visually-hidden"> scope for @(ReportingYearsHelper.FormatYearAsReportingPeriod(scope.ReportingYear))</span>
                                 </a>
                             </td>
                         }
                     }
                 </tr>
-                previousSnapshotDate = scope.SnapshotDate;
+                previousReportingYear = scope.ReportingYear;
             }
         </tbody>
     </table>

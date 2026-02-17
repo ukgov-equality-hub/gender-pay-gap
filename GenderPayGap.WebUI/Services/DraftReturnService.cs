@@ -57,7 +57,7 @@ namespace GenderPayGap.WebUI.Services
             return new DraftReturn
             {
                 OrganisationId = submittedReturn.OrganisationId,
-                SnapshotYear = submittedReturn.AccountingDate.Year,
+                SnapshotYear = submittedReturn.ReportingYear,
                 
                 OptedOutOfReportingPayQuarters = submittedReturn.OptedOutOfReportingPayQuarters,
 

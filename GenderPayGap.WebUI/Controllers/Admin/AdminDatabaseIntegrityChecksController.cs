@@ -140,8 +140,8 @@ namespace GenderPayGap.WebUI.Controllers.Admin
 
                 IEnumerable<int> yearsWithActiveScopes = organisation.OrganisationScopes
                     .Where(os => os.Status == ScopeRowStatuses.Active)
-                    .GroupBy(scope => scope.SnapshotDate)
-                    .Select(g => g.Key.Year);
+                    .GroupBy(scope => scope.ReportingYear)
+                    .Select(g => g.Key);
 
                 foreach (int year in requiredYears)
                 {

@@ -110,15 +110,13 @@ namespace GenderPayGap.WebUI.BackgroundJobs.ScheduledJobs
 
         private void SendReminderEmailsForReportingYear(User user, int year, ReminderEmail reminderEmail)
         {
-            var snapshotDate = reminderEmail.SectorType.GetAccountingStartDate(year);
-
             List<Organisation> inScopeActiveOrganisationsForUserAndSectorTypeThatStillNeedToReport = user.UserOrganisations
                 .Where(uo => uo.HasBeenActivated())
                 .Select(uo => uo.Organisation)
                 .Where(o => o.Status == OrganisationStatuses.Active)
                 .Where(o => o.SectorType == reminderEmail.SectorType)
-                .Where(OrganisationIsInScopeForSnapshotDate(snapshotDate))
-                .Where(OrganisationHasNotReportedForSnapshotDate(snapshotDate))
+                .Where(OrganisationIsInScopeForReportingYear(year))
+                .Where(OrganisationHasNotReportedForReportingYear(year))
                 .ToList();
 
             CheckAndSendReminderEmailsForReportingYear(
@@ -128,17 +126,17 @@ namespace GenderPayGap.WebUI.BackgroundJobs.ScheduledJobs
                 reminderEmail);
         }
 
-        private Func<Organisation, bool> OrganisationIsInScopeForSnapshotDate(DateTime snapshotDate)
+        private Func<Organisation, bool> OrganisationIsInScopeForReportingYear(int reportingYear)
         {
             return o => o.OrganisationScopes.Any(
                 s => s.Status == ScopeRowStatuses.Active
-                     && s.SnapshotDate == snapshotDate
+                     && s.ReportingYear == reportingYear
                      && (s.ScopeStatus == ScopeStatuses.InScope || s.ScopeStatus == ScopeStatuses.PresumedInScope));
         }
 
-        private Func<Organisation, bool> OrganisationHasNotReportedForSnapshotDate(DateTime snapshotDate)
+        private Func<Organisation, bool> OrganisationHasNotReportedForReportingYear(int reportingYear)
         {
-            return o => !o.Returns.Any(r => r.Status == ReturnStatuses.Submitted && r.AccountingDate == snapshotDate);
+            return o => !o.Returns.Any(r => r.Status == ReturnStatuses.Submitted && r.ReportingYear == reportingYear);
         }
 
         private void SendReminderEmailRecordIfNotInProgress(User user, SectorTypes sectorType, DateTime reminderDate, int year)

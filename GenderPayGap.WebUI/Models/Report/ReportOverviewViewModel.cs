@@ -24,8 +24,6 @@ namespace GenderPayGap.WebUI.Models.Report
         [BindNever /* Output Only - only used for sending data from the Controller to the View */]
         public bool IsEditingSubmittedReturn { get; set; }
 
-        public DateTime SnapshotDate { get; set; }
-        
         #region Quarter
 
         [DisplayFormat(DataFormatString = "{0:0.#}")]
@@ -150,7 +148,7 @@ namespace GenderPayGap.WebUI.Models.Report
 
         public bool AllRequiredFieldsAreFilled()
         {
-            bool optOutOfReporting = ReportingYearsHelper.IsReportingYearWithFurloughScheme(SnapshotDate) && OptedOutOfReportingPayQuarters;
+            bool optOutOfReporting = ReportingYearsHelper.IsReportingYearWithFurloughScheme(ReportingYear) && OptedOutOfReportingPayQuarters;
 
             bool hasPayQuartersData = MaleLowerPayBand.HasValue
                                       && FemaleLowerPayBand.HasValue

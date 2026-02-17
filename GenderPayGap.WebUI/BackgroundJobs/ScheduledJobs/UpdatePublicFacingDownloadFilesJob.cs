@@ -56,7 +56,7 @@ namespace GenderPayGap.WebUI.BackgroundJobs.ScheduledJobs
 
                 CustomLogger.Information($"UpdateDownloadFiles: - Filtering Returns");
                 List<Return> returns = allReturns
-                    .Where(r => r.AccountingDate.Year == year)
+                    .Where(r => r.ReportingYear == year)
                     .Where(r => r.Status == ReturnStatuses.Submitted)
                     .ToList();
 
