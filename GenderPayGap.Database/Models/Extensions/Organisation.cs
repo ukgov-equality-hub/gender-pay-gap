@@ -312,6 +312,20 @@ namespace GenderPayGap.Database
                 .OrderByDescending(ap => ap.DraftCreatedDate)
                 .FirstOrDefault();
         }
+
+        public bool HasSubmittedAnyActionPlans()
+        {
+            return ActionPlans.Any(ap => ap.Status == ActionPlanStatus.Submitted);
+        }
         
+        public ActionPlan GetLatestSubmittedActionPlanForAnyYear()
+        {
+            return ActionPlans
+                .Where(ap => ap.Status == ActionPlanStatus.Submitted)
+                .OrderByDescending(ap => ap.ReportingYear)
+                .ThenByDescending(ap => ap.DraftCreatedDate)
+                .FirstOrDefault();
+        }
+
     }
 }
