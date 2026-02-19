@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using GenderPayGap.Core;
 using GenderPayGap.Core.Helpers;
 using GenderPayGap.Core.Interfaces;
@@ -214,7 +214,7 @@ namespace GenderPayGap.WebUI.Services
                 && newReturn.Organisation.Returns.Count(r => r.ReportingYear == newReturn.ReportingYear) == 1)
             {
                 string urlToPublicViewingPage = urlHelper.Action(
-                    "ReportForYear",
+                    "GenderPayGapReportForYear",
                     "ViewReports",
                     new { organisationId = newReturn.OrganisationId, reportingYear = newReturn.ReportingYear },
                     "https");
@@ -230,7 +230,7 @@ namespace GenderPayGap.WebUI.Services
         private void SendSuccessfulSubmissionEmailToRegisteredUsers(Return newReturn, IUrlHelper urlHelper)
         {
             string urlToPublicViewingPage = urlHelper.Action(
-                "ReportForYear",
+                "GenderPayGapReportForYear",
                 "ViewReports",
                 new { organisationId = newReturn.OrganisationId, reportingYear = newReturn.ReportingYear },
                 "https");
