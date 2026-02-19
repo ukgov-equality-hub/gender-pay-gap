@@ -1,6 +1,7 @@
-using GenderPayGap.Core.Interfaces;
+﻿using GenderPayGap.Core.Interfaces;
 using GenderPayGap.Database;
 using GenderPayGap.WebUI.Helpers;
+using GenderPayGap.WebUI.Models.ViewReports;
 using GenderPayGap.WebUI.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +30,9 @@ namespace GenderPayGap.WebUI.Controllers
             Organisation organisation = ControllerHelper.LoadOrganisationOrThrow404(organisationId, dataRepository);
             ControllerHelper.Throw404IfOrganisationIsNotSearchable(organisation);
 
-            return View("Employer", organisation);
+            var viewModel = new ViewEmployerViewModel {Organisation = organisation};
+
+            return View("Employer", viewModel);
         }
 
         [HttpGet("employers/{organisationId}/reporting-year-{reportingYear}/gender-pay-gap-report")]

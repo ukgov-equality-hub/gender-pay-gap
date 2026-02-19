@@ -3,30 +3,66 @@
 @using GenderPayGap.Database
 @using GenderPayGap.WebUI.Helpers
 @using GenderPayGap.WebUI.Models.ViewReports
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @using Microsoft.Extensions.Primitives
-@model GenderPayGap.Database.Organisation
+@model ViewEmployerViewModel
 
 @{
-    ViewBag.Title = $"Gender pay gap reports for {Model.OrganisationName} - Gender pay gap service";
+    ViewBag.Title = $"{Model.Organisation.OrganisationName} - Gender pay gap service";
+
+    bool showSectionLatestGpgReport = false;
+    int sectionNumberLatestGpgReport = 0;
+    
+    bool showSectionActionPlan = false;
+    int sectionNumberActionPlan = 0;
+    
+    int sectionNumberPreviousGpgReports = 0;
+    string previousGpgReportsTitle;
+    
+    int sectionNumberAboutEmployer = 0;
+    
+    int nextSectionNumber = 1;
+
+    Return latestSubmittedGpgReport = Model.Organisation.GetSubmittedReports().FirstOrDefault();
+    if (latestSubmittedGpgReport != null)
+    {
+        showSectionLatestGpgReport = true;
+        sectionNumberLatestGpgReport = nextSectionNumber;
+        previousGpgReportsTitle = "Previous gender pay gap reports and action plans";
+        nextSectionNumber++;
+    }
+    else
+    {
+        previousGpgReportsTitle = "Gender pay gap reports and action plans";
+    }
+
+    if (Model.Organisation.HasSubmittedAnyActionPlans())
+    {
+        showSectionActionPlan = true;
+        sectionNumberActionPlan = nextSectionNumber;
+        nextSectionNumber++;
+    }
+    
+    sectionNumberPreviousGpgReports = nextSectionNumber;
+    nextSectionNumber++;
+    
+    sectionNumberAboutEmployer = nextSectionNumber;
 }
 
 @section BeforeMain {
     @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+        List<CrumbViewModel> crumbs = [
+            new()
             {
-                Text = "Homepage",
+                HtmlOrText = new("Homepage"),
                 Href = Url.Action("Index", "Homepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Search and compare",
+                HtmlOrText = new("Search and compare"),
                 Href = Url.Action("SearchPage", "Search")
             }
-        };
+        ];
 
         string searchResultsUrlPrefix = Url.Action("SearchPage", "Search", null, Context.Request.Scheme) + "?";
         
@@ -35,21 +71,21 @@
             referrer[0].StartsWith(searchResultsUrlPrefix))
         {
             crumbs.Add(
-                new CrumbViewModel
+                new()
                 {
-                    Text = "Search results",
-                    Href = referrer
+                    HtmlOrText = new("Search results"),
+                    Href = referrer[0]
                 });
         }
         
         crumbs.Add(
-            new CrumbViewModel
+            new()
             {
-                Text = Model.OrganisationName
+                HtmlOrText = new(Model.Organisation.OrganisationName)
             });
     }
 
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
+    @(await Html.GovUkBreadcrumbs(new()
     {
         Crumbs = crumbs
     }))
@@ -61,39 +97,18 @@
     <div class="govuk-grid-column-full">
         
         <h1 class="govuk-heading-l">
-            Gender pay gap reports for
-            <br/>
-            @Model.OrganisationName
+            @Model.Organisation.OrganisationName
         </h1>
 
-        <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Registered address
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    @(Model.GetLatestAddress()?.GetAddressString())
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Nature of business (SIC code)
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    @(Model.GetSicSectorsString())
-                </dd>
-            </div>
-        </dl>
-        
     </div>
 </div>
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
         
-        <partial name="../CompareEmployers/AddRemoveEmployerNew.cshtml" model="Model"/>
+        <partial name="../CompareEmployers/AddRemoveEmployerNew.cshtml" model="Model.Organisation"/>
 
-        @if (Model.GetSubmittedReports().Any() && Model.Status == OrganisationStatuses.Retired)
+        @if (Model.ShowOrganisationRetiredMessage())
         {
             <div class="govuk-warning-text" id="warningText">
                 <span class="govuk-warning-text__icon" aria-hidden="true" style="top: calc(50% - 15px)">!</span>
@@ -103,128 +118,416 @@
                 </strong>
             </div>
         }
-
-    </div>
-</div>
-
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-2"/>
         
-        <details class="govuk-details govuk-!-margin-top-4" data-module="govuk-details">
+        <h2 class="govuk-heading-m">
+            Contents
+        </h2>
+
+        <ol class="govuk-list govuk-list--number">
+            @if (showSectionLatestGpgReport)
+            {
+                <li>
+                    <a href="#latest-gender-pay-gap-report"
+                       class="govuk-link">
+                        Latest gender pay gap report
+                    </a>
+                </li>
+            }
+            
+            @if (showSectionActionPlan)
+            {
+                <li>
+                    <a href="#action-plan"
+                       class="govuk-link">
+                        Action plan
+                    </a>
+                </li>
+            }
+            
+            <li>
+                <a href="#previous-reports-and-action-plans"
+                   class="govuk-link">
+                    @(previousGpgReportsTitle)
+                </a>
+            </li>
+            <li>
+                <a href="#about-employer"
+                   class="govuk-link">
+                    About @(Model.Organisation.OrganisationName)
+                </a>
+            </li>
+        </ol>
+
+        <details class="govuk-details govuk-!-margin-top-6">
             <summary class="govuk-details__summary">
                 <span class="govuk-details__summary-text">
-                    Who is required to report, and the deadlines
+                    What are employers required to submit?
                 </span>
             </summary>
             <div class="govuk-details__text">
-                <p class="govuk-body">
-                    From 2017, any employer who has a headcount of 250 or more on their &lsquo;snapshot date&rsquo;
-                    must comply with regulations on gender pay gap reporting.
+                <p>
+                    Any employer who has a headcount of 250 or more on their ‘snapshot date’ at
+                    the end of the financial year must submit both:
                 </p>
-
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>
-                        most
-                        <a href="https://www.gov.uk/guidance/who-needs-to-report-their-gender-pay-gap#public-regulations"
-                           target="_blank" rel="noopener" class="govuk-link">
-                            public authority employers (opens in a new window)</a>
-                        must use a snapshot date of 31 March and report and publish
-                        gender pay gap information by 30 March of the following year
-                    </li>
-                    <li>
-                        <a href="https://www.gov.uk/guidance/who-needs-to-report-their-gender-pay-gap#private-regulations"
-                           target="_blank" rel="noopener" class="govuk-link">
-                            private, voluntary and all other public authority employers (opens in a new window)</a>
-                        must use a snapshot date of 5 April and report and publish
-                        gender pay gap information by 4 April of the following year.
-                    </li>
+                <ul class="govuk-list--bullet">
+                    <li>a gender pay gap report showing their breakdown of pay by gender</li>
+                    <li>an action plan outlining how they intend to address the gender pay gap and support employees going through menopause</li>
                 </ul>
+                <p>
+                    For more detail, see the
+                    <a href="#"
+                       class="govuk-link">
+                        gender pay gap and action plan guidance</a>.
+                </p>
             </div>
         </details>
+        
+        @if (showSectionLatestGpgReport)
+        {
+            <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible"/>
+            <h2 class="govuk-heading-m" id="latest-gender-pay-gap-report">
+                @(sectionNumberLatestGpgReport).
+                Latest gender pay gap report
+                (@(ReportingYearsHelper.FormatYearAsReportingPeriod(latestSubmittedGpgReport.ReportingYear)))
+            </h2>
+            
+            <div class="headline-figures-boxes-container">
+                <a href="@(Url.Action("GenderPayGapReportForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = latestSubmittedGpgReport.ReportingYear}))#hourly-pay"
+                   class="govuk-button govuk-button--secondary headline-figures-box">
+                    <div class="headline-figures-box--title">
+                        Women’s median hourly pay
+                    </div>
+                    <div class="headline-figures-box--value-row">
+                        <div class="headline-figures-box--value">
+                            @Math.Abs((double) latestSubmittedGpgReport.DiffMedianHourlyPercent).ToString("0.0")%
+                        </div>
+                        <div class="headline-figures-box--value-suffix">
+                            @(latestSubmittedGpgReport.DiffMedianHourlyPercent >= 0 ? "lower" : "higher")
+                        </div>
+                    </div>
+                    <div class="headline-figures-box--follow-on-text">
+                        Women earned
+                        @(ViewReportsHelper.FormatNumberAsPoundsOrPence((100 - latestSubmittedGpgReport.DiffMedianHourlyPercent) / 100))
+                        for every £1 that men earned
+                    </div>
+                    <dl class="headline-figures-box--bar-chart">
+                        <dt>Men</dt>
+                        <dd>
+                            <div class="headline-figures-box--bar-chart--bar"
+                                 style="background-color: #12436D; width: calc((100% - 41px) * @(ViewReportsHelper.CalculateBarChartHeightForMen(latestSubmittedGpgReport.DiffMedianHourlyPercent)/100));">
+                            </div>
+                            £1
+                        </dd>
+                        <dt>Women</dt>
+                        <dd>
+                            <div class="headline-figures-box--bar-chart--bar"
+                                 style="background-color: #28A197; width: calc((100% - 41px) * @(ViewReportsHelper.CalculateBarChartHeightForWomen(latestSubmittedGpgReport.DiffMedianHourlyPercent)/100));">
+                            </div>
+                            @(ViewReportsHelper.FormatNumberAsPoundsOrPence((100 - latestSubmittedGpgReport.DiffMedianHourlyPercent) / 100))
+                        </dd>
+                    </dl>
+                </a>
+                
+                @if (latestSubmittedGpgReport.FemaleUpperQuartilePayBand.HasValue && latestSubmittedGpgReport.FemaleLowerPayBand.HasValue)
+                {
+                    <a href="@(Url.Action("GenderPayGapReportForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = latestSubmittedGpgReport.ReportingYear}))#pay-quarters"
+                       class="govuk-button govuk-button--secondary headline-figures-box">
+                        <div class="headline-figures-box--title">
+                            Women in the highest paid quarter
+                        </div>
+                        <div class="headline-figures-box--value-row">
+                            <div class="headline-figures-box--value">
+                                @(latestSubmittedGpgReport.FemaleUpperQuartilePayBand.Value.ToString("0.0"))%
+                            </div>
+                        </div>
+                        <div class="headline-figures-box--follow-on-text">
+                            and
+                            @(latestSubmittedGpgReport.FemaleLowerPayBand.Value.ToString("0.0"))%
+                            of the lowest paid quarter
+                        </div>
+                    </a>
+                }
 
-        <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row employer-reports-page--visually-hidden-on-mobile"
-                 @* This title row is aria-hidden="true"
-                  * Visually, it looks a bit like a table, but it's actually a <dl> definition list
-                  * <dl>s don't have titles, each row has its own title
-                  * 
-                  *@
-                 aria-hidden="true">
-                <div class="govuk-summary-list__key govuk-!-font-size-24">
-                    Reporting Year
-                </div>
-                <div class="govuk-summary-list__key govuk-!-font-size-24 employer-reports-page--alight-right-on-desktop">
-                    Report Status
-                </div>
+                @if (latestSubmittedGpgReport.HasBonusesPaid())
+                {
+                    <a href="@(Url.Action("GenderPayGapReportForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = latestSubmittedGpgReport.ReportingYear}))#bonus-pay"
+                       class="govuk-button govuk-button--secondary headline-figures-box">
+                        <div class="headline-figures-box--title">
+                            Women who received bonus pay
+                        </div>
+                        <div class="headline-figures-box--value-row">
+                            <div class="headline-figures-box--value">
+                                @(latestSubmittedGpgReport.FemaleMedianBonusPayPercent.ToString("0.0"))%
+                            </div>
+                        </div>
+                        <div class="headline-figures-box--follow-on-text">
+                            compared with @(latestSubmittedGpgReport.MaleMedianBonusPayPercent.ToString("0.0"))% of men
+                        </div>
+                        <dl class="headline-figures-box--bar-chart">
+                            <dt>Men</dt>
+                            <dd>
+                                <div class="headline-figures-box--bar-chart--bar"
+                                     style="background-color: #12436D; width: calc((100% - 41px) * @(latestSubmittedGpgReport.MaleMedianBonusPayPercent/100));">
+                                </div>
+                                @(latestSubmittedGpgReport.MaleMedianBonusPayPercent)%
+                            </dd>
+                            <dt>Women</dt>
+                            <dd>
+                                <div class="headline-figures-box--bar-chart--bar"
+                                     style="background-color: #28A197; width: calc((100% - 41px) * @(latestSubmittedGpgReport.FemaleMedianBonusPayPercent/100));">
+                                </div>
+                                @(latestSubmittedGpgReport.FemaleMedianBonusPayPercent)%
+                            </dd>
+                        </dl>
+                    </a>
+                }
             </div>
             
-            @foreach (int reportingYear in ReportingYearsHelper.GetReportingYears(Model.SectorType).OrderByDescending(y => y))
+            <p class="govuk-body">
+                <a href="@(Url.Action("GenderPayGapReportForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = latestSubmittedGpgReport.ReportingYear}))"
+                   class="govuk-link">
+                    View the full Gender pay report
+                </a>
+            </p>
+        }
+        
+        @if (showSectionActionPlan)
+        {
+            ActionPlan latestActionPlan = Model.Organisation.GetLatestSubmittedActionPlanForAnyYear();
+            
+            <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible"/>
+            <h2 class="govuk-heading-m" id="action-plan">
+                @(sectionNumberActionPlan).
+                Taking action to address pay gaps and support employees
+            </h2>
+            
+            @if (!string.IsNullOrWhiteSpace(latestActionPlan.SupportingNarrative))
             {
-                Return returnForYear = Model.GetReturn(reportingYear);
-                ReportStatusTag reportStatusTag = ReportStatusTagHelper.GetReportStatusTag(Model, reportingYear);
-                
-                <div class="govuk-summary-list__row"
-                     style="@(reportStatusTag == ReportStatusTag.NotRequiredDueToCovid || returnForYear != null ? "border: none;" : "")">
-                    <dt class="govuk-summary-list__key govuk-!-margin-bottom-3">
-                        @(ReportingYearsHelper.FormatYearAsReportingPeriod(reportingYear))
-                        <span class="employer-reports-page--visually-hidden-on-desktop">
-                            reporting year
+                <p class="govuk-body govuk-!-margin-bottom-2">
+                    @(Model.Organisation.OrganisationName) said:
+                </p>
+                <div class="govuk-inset-text govuk-!-margin-top-2">
+                    @(latestActionPlan.SupportingNarrative)
+                </div>
+            }
+            
+            @if (UriSanitiser.IsValidHttpOrHttpsLink(latestActionPlan.LinkToReport))
+            {
+                <p class="govuk-body">
+                    Read more about
+                    <a href="@(latestActionPlan.LinkToReport)"
+                       target="_blank"
+                       class="govuk-link">
+                        what @(Model.Organisation.OrganisationName) says about their action plan (opens in a new window)
+                    </a>
+                </p>
+            }
+            
+            <h3 class="govuk-heading-s">
+                Action plan
+            </h3>
+            <details class="govuk-details" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        What is an action plan?
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    <p>
+                        Any employer who has a headcount of 250 or more on their ‘snapshot date’ at the end of the
+                        financial year must submit an action plan outlining how they intend to address the
+                        gender pay gap and to support employees going through menopause.
+                    </p>
+                    <p>
+                        Employers review actions from our database, identify any they already routinely do, and choose
+                        some new actions to focus on. You can also
+                        <a href="#"
+                           class="govuk-link">
+                            see the full list of actions in our database</a>.
+                    </p>
+                    <p>
+                        For more detail on the process, see the
+                        <a href="#"
+                           class="govuk-link">
+                            gender pay gap and action plan guidance</a>.
+                    </p>
+                </div>
+            </details>
+            
+            <p class="govuk-body">
+                @(Model.Organisation.OrganisationName) has committed to embedding these actions:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                @foreach (ActionInActionPlan action in latestActionPlan.GetNewOrInProgressActions())
+                {
+                    <li>
+                        @(ActionsHelper.DictionaryOfAllActions[action.Action].Name)
+                    </li>
+                }
+            </ul>
+
+            List<ActionInActionPlan> completedActions = latestActionPlan.GetCompletedActions();
+            if (completedActions.Any())
+            {
+                <h3 class="govuk-heading-s">
+                    Actions they have completed
+                </h3>
+                <ul class="govuk-list govuk-list--bullet">
+                    @foreach (ActionInActionPlan action in completedActions)
+                    {
+                        <li>
+                            @(ActionsHelper.DictionaryOfAllActions[action.Action].Name)
+                        </li>
+                    }
+                </ul>
+            }
+            
+            <p class="govuk-body">
+                <a href="@(Url.Action("ActionPlanForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = latestActionPlan.ReportingYear}))"
+                   class="govuk-link">
+                    View the full Action plan
+                </a>
+            </p>
+        }
+        
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible"/>
+        <h2 class="govuk-heading-m" id="previous-reports-and-action-plans">
+            @(sectionNumberPreviousGpgReports).
+            @(previousGpgReportsTitle)
+        </h2>
+
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">
+                        Reporting year
+                    </th>
+                    <th scope="col" class="govuk-table__header">
+                        Submission type
+                    </th>
+                    <th scope="col" class="govuk-table__header">
+                        Status
+                    </th>
+                    <th scope="col" class="govuk-table__header">
+                        <span class="govuk-visually-hidden">
+                            Action
                         </span>
-                    </dt>
-                    <dd class="govuk-summary-list__value employer-reports-page--alight-right-on-desktop">
-                        <div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach (int reportingYear in ReportingYearsHelper.GetReportingYears(Model.Organisation.SectorType).OrderByDescending(y => y))
+                {
+                    int numberOfRowsForThisYear = 1;
+                    
+                    if (Model.ShowActionPlanRow(reportingYear))
+                    {
+                        numberOfRowsForThisYear++;
+                    }
+                    if (Model.ShowCovidMessage(reportingYear))
+                    {
+                        numberOfRowsForThisYear++;
+                    }
+                
+                    Return returnForYear = Model.Organisation.GetReturn(reportingYear);
+
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header" rowspan="@(numberOfRowsForThisYear)">
+                            @(ReportingYearsHelper.FormatYearAsReportingPeriod(reportingYear))
+                        </th>
+                        <th class="govuk-table__header govuk-!-font-weight-regular">
+                            Gender pay gap report
+                        </th>
+                        <td class="govuk-table__cell">
                             @await Html.PartialAsync("ReportStatusBadge",
                                 new ReportStatusBadgeViewModel
                                 {
-                                    ReportStatusTag = reportStatusTag,
+                                    ReportStatusTag = ReportStatusTagHelper.GetReportStatusTag(Model.Organisation, reportingYear),
                                     ReportSubmittedDate = returnForYear?.Modified,
-                                    DeadlineDate = ReportingYearsHelper.GetDeadline(Model.SectorType, reportingYear)
+                                    DeadlineDate = ReportingYearsHelper.GetDeadline(Model.Organisation.SectorType, reportingYear)
                                 })
-                        </div>
-                    </dd>
-                </div>
-                @if (reportStatusTag == ReportStatusTag.NotRequiredDueToCovid ||
-                     (reportStatusTag == ReportStatusTag.Overdue && ReportingYearsHelper.IsReportingYearExcludedFromLateFlagEnforcement(reportingYear)))
-                {
-                    <div class="govuk-summary-list__row">
-                        <dd class="govuk-summary-list__value employer-reports-page--covid-hint-text govuk-!-padding-top-0">
-                            The deadline for 2019-20 was
-                            @(ReportingYearsHelper.GetDeadline(Model.SectorType, 2019).ToString("d MMMM yyyy")).
-                            Due to Coronavirus (COVID-19), enforcement of reporting deadlines does not
-                            apply to employers in the 2019-20 reporting year.
-                        </dd>
-                    </div>
-                }
-                @if (returnForYear != null)
-                {
-                    <div class="govuk-summary-list__row">
-                        <div class="govuk-summary-list__value govuk-!-padding-top-0">
-                            @if (reportStatusTag == ReportStatusTag.SubmittedLate)
+                        </td>
+                        <td class="govuk-table__cell">
+                            @if (returnForYear != null)
                             {
-                                <span>
-                                    This report was due on
-                                    <span style="white-space: nowrap">
-                                        @(ReportingYearsHelper.GetDeadline(Model.SectorType, reportingYear).ToString("d MMM yyyy"))
-                                    </span>
+                                <a href="@Url.Action("GenderPayGapReportForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = reportingYear})"
+                                   class="govuk-link">
+                                    View report
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="govuk-visually-hidden">
+                                    No report available to view
                                 </span>
                             }
-                        </div>
-                        <dd class="govuk-summary-list__value employer-reports-page--alight-right-on-desktop govuk-!-padding-top-0">
-                            <a href="@Url.Action("ReportForYear", "ViewReports", new {organisationId = Model.OrganisationId, reportingYear = reportingYear})"
-                               class="govuk-link">
-                                View report
-                                <span class="govuk-visually-hidden">
-                                    for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriod(reportingYear))
-                                </span>
-                            </a>
-                        </dd>
-                    </div>
-                }
-            }
-            
-        </dl>
-    </div>
+                        </td>
+                    </tr>
+                    
+                    @if (Model.ShowActionPlanRow(reportingYear))
+                    {
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header govuk-!-font-weight-regular">
+                                @(Model.GetActionPlanSubmissionType(reportingYear))
+                            </th>
+                            <td class="govuk-table__cell">
+                                @(await Html.GovUkTag(Model.GetActionPlanStatusTag(reportingYear)))
+                            </td>
+                            <td class="govuk-table__cell">
+                                @if (Model.ActionPlanAvailableToView(reportingYear))
+                                {
+                                    <a href="@Url.Action("ActionPlanForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = reportingYear})"
+                                       class="govuk-link">
+                                        View action plan
+                                    </a>
+                                }
+                            </td>
 
-    @await Html.PartialAsync("/Views/Submit/RelatedContent.cshtml")
+                        </tr>
+                    }
+                    
+                    @if (Model.ShowCovidMessage(reportingYear))
+                    {
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header govuk-!-font-weight-regular" colspan="3">
+                                <span class="govuk-visually-hidden">
+                                    Note:
+                                </span>
+                                The deadline for 2019-20 was
+                                @(ReportingYearsHelper.GetDeadline(Model.Organisation.SectorType, 2019).ToString("d MMMM yyyy")).
+                                Due to Coronavirus (COVID-19), enforcement of reporting deadlines does not
+                                apply to employers in the 2019-20 reporting year.
+                            </th>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible"/>
+        <h2 class="govuk-heading-m" id="about-employer">
+            @(sectionNumberAboutEmployer).
+            About @(Model.Organisation.OrganisationName)
+        </h2>
+        
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Registered address
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @(Model.Organisation.GetLatestAddress()?.GetAddressString())
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Nature of business (SIC code)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @(Model.Organisation.GetSicSectorsString())
+                </dd>
+            </div>
+        </dl>
+
+    </div>
 </div>

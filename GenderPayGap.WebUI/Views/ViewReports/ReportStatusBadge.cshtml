@@ -37,33 +37,27 @@
             
         case ReportStatusTag.Due:
             reportTagHtml = @<text>
-                                <span class="employer-reports-page--visually-hidden-on-desktop">Report</span>
-                                due
-                                <span class="employer-reports-page--visually-hidden-on-desktop"><br/></span>
-                                @Model.DeadlineDate.ToString("d MMMM yyyy")
+                                 Due
+                                 @Model.DeadlineDate.ToString("d MMMM yyyy")
                              </text>;
             reportTagColour = "govuk-tag--blue";
             break;
         case ReportStatusTag.Overdue:
             reportTagHtml = @<text>
-                                <span class="employer-reports-page--visually-hidden-on-desktop">Report</span>
-                                overdue
-                                <span class="employer-reports-page--visually-hidden-on-desktop"><br/></span>
-                                @Model.DeadlineDate.ToString("d MMMM yyyy")
+                                 Overdue
+                                 @Model.DeadlineDate.ToString("d MMMM yyyy")
                              </text>;
             reportTagColour = "govuk-tag--red";
             break;
         case ReportStatusTag.NotRequired:
             reportTagHtml = @<text>
-                                <span class="employer-reports-page--visually-hidden-on-desktop">Report</span>
-                                not required
+                                 Not required
                              </text>;
             reportTagColour = "govuk-tag--grey";
             break;
         case ReportStatusTag.NotRequiredDueToCovid:
             reportTagHtml = @<text>
-                                <span class="employer-reports-page--visually-hidden-on-desktop">Report</span>
-                                not required
+                                 Not required
                              </text>;
             reportTagColour = "govuk-tag--grey";
             break;
