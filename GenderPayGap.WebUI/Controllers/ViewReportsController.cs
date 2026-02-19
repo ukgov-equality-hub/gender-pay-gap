@@ -47,5 +47,20 @@ namespace GenderPayGap.WebUI.Controllers
             return View("GenderPayGapReportForYear", returnForYear);
         }
 
+        [HttpGet("employers/{organisationId}/reporting-year-{reportingYear}/action-plan")]
+        public IActionResult ActionPlanForYear(long organisationId, int reportingYear)
+        {
+            comparisonBasketService.LoadComparedEmployersFromCookie();
+            comparisonBasketService.SaveComparedEmployersToCookieIfAnyAreObfuscated();
+            
+            Organisation organisation = ControllerHelper.LoadOrganisationOrThrow404(organisationId, dataRepository);
+            ControllerHelper.Throw404IfOrganisationIsNotSearchable(organisation);
+            ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+            
+            ActionPlan actionPlanForYear = ControllerHelper.LoadActionPlanForYearOrThrow404(organisation, reportingYear);
+
+            return View("ActionPlanForYear", actionPlanForYear);
+        }
+
     }
 }
