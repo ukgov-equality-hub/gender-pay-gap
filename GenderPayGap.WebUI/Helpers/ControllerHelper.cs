@@ -211,6 +211,18 @@ namespace GenderPayGap.WebUI.Helpers
             return returnForYear;
         }
 
+        public static ActionPlan LoadActionPlanForYearOrThrow404(Organisation organisation, int reportingYear)
+        {
+            ActionPlan actionPlanForYear = organisation.GetLatestSubmittedActionPlan(reportingYear);
+            
+            if (actionPlanForYear == null)
+            {
+                throw new PageNotFoundException();
+            }
+
+            return actionPlanForYear;
+        }
+
         public static void ThrowIfAdminIsImpersonatingUser(ClaimsPrincipal aspDotNetUser)
         {
             if (LoginHelper.IsUserBeingImpersonated(aspDotNetUser))

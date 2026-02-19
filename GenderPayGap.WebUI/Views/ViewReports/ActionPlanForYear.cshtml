@@ -1,0 +1,53 @@
+@using GenderPayGap.Core
+@using GenderPayGap.Core.Helpers
+@using GenderPayGap.WebUI.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.Database.ActionPlan
+
+@{
+    string reportingYearFormatted = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    ViewBag.Title = $"{Model.Organisation.OrganisationName} action plan for {reportingYearFormatted} reporting year";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Homepage"),
+                Href = Url.Action("Index", "Homepage")
+            },
+            new()
+            {
+                HtmlOrText = new("Search and compare"),
+                Href = Url.Action("SearchPage", "Search")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("Employer", "ViewReports", new {organisationId = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new($"Action plan for {reportingYearFormatted}")
+            }
+        ]
+    })
+}
+
+<partial name="ComparisonBasketNew"/>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">
+            @(Model.Organisation.OrganisationName)
+            <br/>
+            Action plan @ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear)
+        </h1>
+        
+        @(await Html.PartialAsync("ActionPlanForYearContent", Model))
+
+    </div>
+</div>
