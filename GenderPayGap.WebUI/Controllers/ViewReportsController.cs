@@ -1,4 +1,4 @@
-﻿using GenderPayGap.Core.Interfaces;
+using GenderPayGap.Core.Interfaces;
 using GenderPayGap.Database;
 using GenderPayGap.WebUI.Helpers;
 using GenderPayGap.WebUI.Services;
@@ -32,8 +32,8 @@ namespace GenderPayGap.WebUI.Controllers
             return View("Employer", organisation);
         }
 
-        [HttpGet("employers/{organisationId}/reporting-year-{reportingYear}")]
-        public IActionResult ReportForYear(long organisationId, int reportingYear)
+        [HttpGet("employers/{organisationId}/reporting-year-{reportingYear}/gender-pay-gap-report")]
+        public IActionResult GenderPayGapReportForYear(long organisationId, int reportingYear)
         {
             comparisonBasketService.LoadComparedEmployersFromCookie();
             comparisonBasketService.SaveComparedEmployersToCookieIfAnyAreObfuscated();
@@ -44,7 +44,7 @@ namespace GenderPayGap.WebUI.Controllers
             
             Return returnForYear = ControllerHelper.LoadReturnForYearOrThrow404(organisation, reportingYear);
 
-            return View("ReportForYear", returnForYear);
+            return View("GenderPayGapReportForYear", returnForYear);
         }
 
     }

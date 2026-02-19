@@ -242,7 +242,7 @@
                                 Return returnForYear = organisation.GetReturn(Model.ReportingYear);
 
                                 string employerUrl = hasEmployerReportedForYear
-                                    ? Url.Action("ReportForYear", "ViewReports", new {organisationId = organisation.OrganisationId, reportingYear = Model.ReportingYear})
+                                    ? Url.Action("GenderPayGapReportForYear", "ViewReports", new {organisationId = organisation.OrganisationId, reportingYear = Model.ReportingYear})
                                     : Url.Action("Employer", "ViewReports", new {organisationId = organisation.OrganisationId});
                                 string removeEmployerUrl = Url.Action(
                                     "RemoveEmployer", "CompareEmployers",
