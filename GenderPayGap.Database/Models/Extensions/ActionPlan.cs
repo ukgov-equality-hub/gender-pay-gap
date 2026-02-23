@@ -63,5 +63,9 @@ public partial class ActionPlan
                 break;
         }
     }
-    
+
+    public List<ActionInActionPlan> GetNewOrInProgressActions() => ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.NewOrInProgress).ToList();
+
+    public List<ActionInActionPlan> GetCompletedActions() => ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.Completed).ToList();
+
 }

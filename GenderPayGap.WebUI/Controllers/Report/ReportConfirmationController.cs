@@ -63,7 +63,7 @@ namespace GenderPayGap.WebUI.Controllers.Report
 
             if (foundReturn == null ||
                 foundReturn.OrganisationId != organisationId ||
-                foundReturn.AccountingDate.Year != reportingYear)
+                foundReturn.ReportingYear != reportingYear)
             {
                 throw new PageNotFoundException();
             }
