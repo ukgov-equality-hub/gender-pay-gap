@@ -40,29 +40,40 @@ public class ActionPlanController: Controller
         return View("ActionPlanIntro", viewModel);
     }
 
-    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/task-list")] 
-    public IActionResult ActionPlanTaskListGet(string encryptedOrganisationId, int reportingYear) 
-    { 
-        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId); 
-        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository); 
-        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId); 
-        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository); 
-         
-        Organisation organisation = dataRepository.Get<Organisation>(organisationId); 
-        ActionPlan actionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear); 
-         
-        ActionPlanTaskListViewModel viewModel = new ActionPlanTaskListViewModel 
-        { 
-            Organisation = organisation, 
-            ReportingYear = reportingYear, 
-            ActionPlan = actionPlan 
-        }; 
-         
-        return View("ActionPlanTaskList", viewModel); 
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/task-list")]
+    public IActionResult ActionPlanTaskListGet(string encryptedOrganisationId, int reportingYear)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        ActionPlan actionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
+        
+        ActionPlanTaskListViewModel viewModel = new ActionPlanTaskListViewModel
+        {
+            Organisation = organisation,
+            ReportingYear = reportingYear,
+            ActionPlan = actionPlan
+        };
+        
+        return View("ActionPlanTaskList", viewModel);
     }
-    
-    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/actions-list")]
-    public IActionResult ActionPlanListGet(string encryptedOrganisationId, int reportingYear)
+
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/select-actions-gender-pay-gap")]
+    public IActionResult ActionPlanSelectActionsGenderPayGapGet(string encryptedOrganisationId, int reportingYear)
+    {
+        return ActionPlanSelectActions(encryptedOrganisationId, reportingYear, ActionTag.GenderPayGap);
+    }
+
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/select-actions-menopause")]
+    public IActionResult ActionPlanSelectActionsMenopauseGet(string encryptedOrganisationId, int reportingYear)
+    {
+        return ActionPlanSelectActions(encryptedOrganisationId, reportingYear, ActionTag.Menopause);
+    }
+
+    private IActionResult ActionPlanSelectActions(string encryptedOrganisationId, int reportingYear, ActionTag actionTag)
     {
         long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
         ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
@@ -76,7 +87,8 @@ public class ActionPlanController: Controller
         {
             Organisation = organisation,
             ReportingYear = reportingYear,
-            ActionPlan = actionPlan
+            ActionPlan = actionPlan,
+            ActionTag = actionTag
         };
         
         return View("ActionPlanList", viewModel);
