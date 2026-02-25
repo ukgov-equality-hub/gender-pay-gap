@@ -363,7 +363,7 @@ public class ActionPlanController: Controller
         {
             ModelState.AddModelError(
                 "edit-action-plan-link",
-                "This equality action plan has already been published. Please make some changes before trying to publish it again"
+                "This action plan has already been published. Please make some changes before trying to publish it again"
             );
             return View("ActionPlanProvisionalPlan", actionPlan);
         }

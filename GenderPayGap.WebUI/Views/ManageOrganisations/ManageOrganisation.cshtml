@@ -199,13 +199,13 @@
                                     <a href="@(Url.Action("ActionPlanIntroGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = reportingYear}))"
                                        class="govuk-link govuk-task-list__link"
                                        aria-describedby="@((Model.IsActionPlanOptional(reportingYear) ? actionPlanHintId : "")) @(actionPlanStatusId)">
-                                        Equality Action Plan
+                                        Action Plan
                                     </a>
                                 }
                                 else
                                 {
                                     <span aria-describedby="@((Model.IsActionPlanOptional(reportingYear) ? actionPlanHintId : "")) @(actionPlanStatusId)">
-                                        Equality Action Plan
+                                        Action Plan
                                     </span>
                                 }
                                 

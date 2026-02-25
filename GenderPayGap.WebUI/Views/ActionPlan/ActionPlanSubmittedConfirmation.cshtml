@@ -6,7 +6,7 @@
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
     string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
 
-    ViewBag.Title = $"Equality action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+    ViewBag.Title = $"Action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
 }
 
 @section BeforeMain {
@@ -26,7 +26,7 @@
             },
             new()
             {
-                HtmlOrText = new($"Equality action plan {formattedReportingYears}")
+                HtmlOrText = new($"Action plan {formattedReportingYears}")
             }
         ]
     })
@@ -37,7 +37,7 @@
 
         <div class="govuk-panel govuk-panel--confirmation">
             <h1 class="govuk-panel__title">
-                Equality action plan published
+                Action plan published
             </h1>
             <div class="govuk-panel__body">
                 for @(Model.Organisation.OrganisationName)

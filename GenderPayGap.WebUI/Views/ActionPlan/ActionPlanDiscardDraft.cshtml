@@ -7,7 +7,7 @@
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
     string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
 
-    ViewBag.Title = $"Equality action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+    ViewBag.Title = $"Action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
 
     ActionPlan submittedActionPlan = Model.Organisation.GetLatestSubmittedActionPlan(Model.ReportingYear);
 }
@@ -29,7 +29,7 @@
             },
             new()
             {
-                HtmlOrText = new($"Equality action plan {formattedReportingYears}"),
+                HtmlOrText = new($"Action plan {formattedReportingYears}"),
                 Href = Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})
             },
             new()
@@ -46,7 +46,7 @@
         @(await Html.GovUkErrorSummaryIfNeeded())
 
         <h1 class="govuk-heading-xl">
-            Equality action plan
+            Action plan
             <br/>
             <span class="govuk-!-font-size-27 govuk-!-margin-top-3" style="display: inline-block; line-height: 1.3 !important;">
                 Reporting as @(Model.Organisation.OrganisationName)
@@ -62,7 +62,7 @@
         @if (submittedActionPlan != null)
         {
             <p class="govuk-body">
-                @(Model.Organisation.OrganisationName) published an equality action plan
+                @(Model.Organisation.OrganisationName) published an action plan
                 for reporting year @(formattedReportingYears)
                 on @(submittedActionPlan.SubmittedDate.Value.ToString("d MMM yyyy"))
             </p>
@@ -70,13 +70,13 @@
                 <a href="#"
                    target="_blank"
                    class="govuk-link">
-                    View your published equality action plan (opens in a new tab)
+                    View your published action plan (opens in a new tab)
                 </a>
             </p>
         }
 
         <p class="govuk-body">
-            @(Model.Organisation.OrganisationName) created a new draft equality action plan
+            @(Model.Organisation.OrganisationName) created a new draft action plan
             for reporting year @(formattedReportingYears)
             on @(Model.DraftCreatedDate.ToString("d MMM yyyy"))
         </p>
