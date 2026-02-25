@@ -94,8 +94,19 @@ public class ActionPlanController: Controller
         return View("ActionPlanList", viewModel);
     }
 
-    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/actions/{whichAction}")]
-    public IActionResult ActionPlanActionGet(string encryptedOrganisationId, int reportingYear, Actions whichAction)
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/select-actions-gender-pay-gap/{whichAction}")]
+    public IActionResult ActionPlanGenderPayGapActionGet(string encryptedOrganisationId, int reportingYear, Actions whichAction)
+    {
+        return ActionPlanActionGet(encryptedOrganisationId, reportingYear, whichAction, ActionTag.GenderPayGap);
+    }
+    
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/select-actions-menopause/{whichAction}")]
+    public IActionResult ActionPlanMenopauseActionGet(string encryptedOrganisationId, int reportingYear, Actions whichAction)
+    {
+        return ActionPlanActionGet(encryptedOrganisationId, reportingYear, whichAction, ActionTag.Menopause);
+    }
+    
+    private IActionResult ActionPlanActionGet(string encryptedOrganisationId, int reportingYear, Actions whichAction, ActionTag actionTag)
     {
         long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
         ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
@@ -113,14 +124,27 @@ public class ActionPlanController: Controller
             Action = whichAction,
             Status = actionInActionPlan?.NewStatus,
             SupportingText = actionInActionPlan?.SupportingText,
+            ActionTag = actionTag
         };
         
         return View("ActionPlanAction", viewModel);
     }
-
+    
     [ValidateAntiForgeryToken]
-    [HttpPost("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/actions/{whichAction}")]
-    public IActionResult ActionPlanActionPost(string encryptedOrganisationId, int reportingYear, Actions whichAction, ActionPlanEditActionViewModel viewModel)
+    [HttpPost("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/select-actions-gender-pay-gap/{whichAction}")]
+    public IActionResult ActionPlanGenderPayGapActionPost(string encryptedOrganisationId, int reportingYear, Actions whichAction, ActionPlanEditActionViewModel viewModel)
+    {
+        return ActionPlanActionPost(encryptedOrganisationId, reportingYear, whichAction, viewModel, ActionTag.GenderPayGap);
+    }
+    
+    [ValidateAntiForgeryToken]
+    [HttpPost("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/select-actions-menopause/{whichAction}")]
+    public IActionResult ActionPlanMenopauseActionPost(string encryptedOrganisationId, int reportingYear, Actions whichAction, ActionPlanEditActionViewModel viewModel)
+    {
+        return ActionPlanActionPost(encryptedOrganisationId, reportingYear, whichAction, viewModel, ActionTag.Menopause);
+    }
+    
+    private IActionResult ActionPlanActionPost(string encryptedOrganisationId, int reportingYear, Actions whichAction, ActionPlanEditActionViewModel viewModel, ActionTag actionTag)
     {
         long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
         ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
@@ -134,6 +158,7 @@ public class ActionPlanController: Controller
             viewModel.Organisation = organisation;
             viewModel.ReportingYear = reportingYear;
             viewModel.Action = whichAction;
+            viewModel.ActionTag = actionTag;
             return View("ActionPlanAction", viewModel);
         }
         
@@ -180,11 +205,15 @@ public class ActionPlanController: Controller
                     throw new ArgumentOutOfRangeException();
             }
             dataRepository.SaveChanges();
-        } 
-         
-        return RedirectToAction("ActionPlanListGet", new {encryptedOrganisationId, reportingYear = reportingYear}); 
+        }
+        
+        RedirectToActionResult redirectTarget = actionTag == ActionTag.GenderPayGap
+            ? RedirectToAction("ActionPlanSelectActionsGenderPayGapGet", new {encryptedOrganisationId, reportingYear = reportingYear})
+            : RedirectToAction("ActionPlanSelectActionsMenopauseGet", new {encryptedOrganisationId, reportingYear = reportingYear});
+        
+        return redirectTarget; 
     }
-
+    
     private bool UserHasMadeChangesToActionInActionPlan(ActionInActionPlan actionInActionPlan, ActionPlanEditActionViewModel viewModel)
     {
         return actionInActionPlan?.NewStatus != viewModel.Status ||

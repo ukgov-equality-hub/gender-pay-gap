@@ -8,7 +8,26 @@
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
     string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
 
-    ViewBag.Title = $"Equality action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+    string urlOfActionsList;
+    string selectActionsTo;
+    string formPostUrl;
+    switch (Model.ActionTag)
+    {
+        case ActionTag.GenderPayGap:
+            urlOfActionsList = Url.Action("ActionPlanSelectActionsGenderPayGapGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear});
+            selectActionsTo = "reduce your gender pay gap";
+            formPostUrl = Url.Action("ActionPlanGenderPayGapActionPost", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear, whichAction = Model.Action});
+            break;
+        case ActionTag.Menopause:
+            urlOfActionsList = Url.Action("ActionPlanSelectActionsMenopauseGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear});
+            selectActionsTo = "support women experiencing menopause";
+            formPostUrl = Url.Action("ActionPlanMenopauseActionPost", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear, whichAction = Model.Action});
+            break;
+        default:
+            throw new ArgumentOutOfRangeException();
+    }
+
+    ViewBag.Title = $"Action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
 }
 
 @section BeforeMain {
@@ -30,6 +49,11 @@
             {
                 HtmlOrText = new($"Equality action plan {formattedReportingYears}"),
                 Href = Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})
+            },
+            new()
+            {
+                HtmlOrText = new($"Select actions to {selectActionsTo}"),
+                Href = urlOfActionsList
             },
             new()
             {
@@ -68,7 +92,7 @@
         </p>
 
         <form method="post"
-              action="@(Url.Action("ActionPlanActionPost", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear, action = Model.Action}))">
+              action="@(formPostUrl)">
             @Html.AntiForgeryToken()
             
             @(await Html.GovUkRadiosFor(
