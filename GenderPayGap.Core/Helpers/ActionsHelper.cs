@@ -30,11 +30,18 @@ public static class ActionCategoriesExtensions
     }
 }
 
+public enum ActionTag
+{
+    GenderPayGap,
+    Menopause
+}
+
 public class ActionDetails
 {
 
     public Actions Action { get; set; }
     public ActionCategories Category { get; set; }
+    public List<ActionTag> Tags { get; set; }
     public string Name { get; set; }
     public string Summary { get; set; }
 }
@@ -48,6 +55,7 @@ public static class ActionsHelper
             {
                 Action = Actions.MakeJobAdvertsInclusive,
                 Category = ActionCategories.RecruitingStaff,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Make job adverts inclusive",
                 Summary = "Inclusive job adverts attract diverse talent by using neutral language, listing only essential requirements, and highlighting equal opportunities."
             }
@@ -57,6 +65,7 @@ public static class ActionsHelper
             {
                 Action = Actions.EncourageApplicationsFromDiverseCandidates,
                 Category = ActionCategories.RecruitingStaff,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Encourage applications from diverse candidates",
                 Summary = "Actively seeking applications from underrepresented groups ensures a broader candidate pool for all roles."
             }
@@ -66,6 +75,7 @@ public static class ActionsHelper
             {
                 Action = Actions.ReduceUnconsciousBiasInCVScreening,
                 Category = ActionCategories.RecruitingStaff,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Reduce unconscious bias in CV screening",
                 Summary = "Using structured, skill-based screening minimises bias and boosts diversity in hiring."
             }
@@ -75,6 +85,7 @@ public static class ActionsHelper
             {
                 Action = Actions.RunStructuredInterviews,
                 Category = ActionCategories.RecruitingStaff,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Run structured interviews",
                 Summary = "Running structured interviews ensures fair, objective hiring. Standardised questions and scoring helps reduce bias and promotes equal opportunity."
             }
@@ -84,6 +95,7 @@ public static class ActionsHelper
             {
                 Action = Actions.EnsureInterviewOutcomesAreFair,
                 Category = ActionCategories.RecruitingStaff,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Ensure interview outcomes are fair",
                 Summary = "Implementing structured interviews with trained assessors leads to objective, consistent, and evidence-based decisions"
             }
@@ -93,6 +105,7 @@ public static class ActionsHelper
             {
                 Action = Actions.PromoteFlexibleWorkingArrangementsInJobAdverts,
                 Category = ActionCategories.RecruitingStaff,
+                Tags = [ActionTag.GenderPayGap, ActionTag.Menopause],
                 Name = "Promote flexible working arrangements in job adverts",
                 Summary = "Flexible work policies aid work-life balance, especially for those with caring roles. Advertising flexibility attracts a wider, more diverse talent pool."
             }
@@ -102,6 +115,7 @@ public static class ActionsHelper
             {
                 Action = Actions.IncreaseTransparencyForPayPromotionAndRewards,
                 Category = ActionCategories.DevelopingAndPromotingStaff,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Increase transparency for pay, promotion and rewards",
                 Summary = "Transparency in pay, promotion, and bonus policies ensures everyone understands how decisions are made."
             }
@@ -111,6 +125,7 @@ public static class ActionsHelper
             {
                 Action = Actions.AutomaticallyPutForwardEmployeesForPromotion,
                 Category = ActionCategories.DevelopingAndPromotingStaff,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Automatically put forward employees for promotion",
                 Summary = "Automatically considering all eligible employees for promotion gives them the choice to opt-out rather than opt-in."
             }
@@ -120,6 +135,7 @@ public static class ActionsHelper
             {
                 Action = Actions.EncourageEmployeeDevelopmentThroughActionableSteps,
                 Category = ActionCategories.DevelopingAndPromotingStaff,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Encourage employee development through actionable steps",
                 Summary = "Asking employees for advice instead of feedback can aid skill development, and benefit organisations with low female progression and retention."
             }
@@ -129,6 +145,7 @@ public static class ActionsHelper
             {
                 Action = Actions.OfferInternshipsMentoringAndOtherDevelopmentProgrammes,
                 Category = ActionCategories.DevelopingAndPromotingStaff,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Offer internships, mentoring and other development programmes",
                 Summary = "Providing development programmes, such as internships, gives employees a formal channel for advice, support, and advocacy."
             }
@@ -138,6 +155,7 @@ public static class ActionsHelper
             {
                 Action = Actions.SetTargetsToImproveGenderRepresentation,
                 Category = ActionCategories.BuildingDiversityIntoYourOrganisation,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Set targets to improve gender representation",
                 Summary = "Setting specific, monitorable internal targets gives your organisation clear steps to boost gender representation and equality."
             }
@@ -147,6 +165,7 @@ public static class ActionsHelper
             {
                 Action = Actions.AppointDiversityLeadsOrTaskforces,
                 Category = ActionCategories.BuildingDiversityIntoYourOrganisation,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Appoint diversity leads or taskforces",
                 Summary = "Appointing equality leads or committees to scrutinise hiring and progression policies ensures organisational accountability."
             }
@@ -156,6 +175,7 @@ public static class ActionsHelper
             {
                 Action = Actions.SupportStaffToTakeParentalLeave,
                 Category = ActionCategories.BuildingDiversityIntoYourOrganisation,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Support staff to take parental leave",
                 Summary = "Promoting clear and accessible parental leave policies boosts gender equality and helps employees balance family life with work."
             }
@@ -165,6 +185,7 @@ public static class ActionsHelper
             {
                 Action = Actions.AnalyseDataToUnderstandPayGapAndStaffNeeds,
                 Category = ActionCategories.AnalysingYourData,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Analyse your data to understand your pay gap and staff needs",
                 Summary = "Analysing pay data can help you understand your gender pay gap's scale and drivers, and choose effective actions to close the gap."
             }
@@ -174,6 +195,7 @@ public static class ActionsHelper
             {
                 Action = Actions.MeasureOutcomesOfEqualityInitiatives,
                 Category = ActionCategories.AnalysingYourData,
+                Tags = [ActionTag.GenderPayGap],
                 Name = "Measure outcomes of equality initiatives",
                 Summary = "Tracking equality initiative outcomes can measure changes and see if you're making progress towards your goals."
             }
@@ -183,6 +205,7 @@ public static class ActionsHelper
             {
                 Action = Actions.TrainLineManagersToSupportEmployeesExperiencingMenopause,
                 Category = ActionCategories.SupportingStaffDuringMenopause,
+                Tags = [ActionTag.Menopause],
                 Name = "Train line managers to support employees experiencing menopause",
                 Summary = "Line manager training on the menopause and its effects can help organisations to better support employees experiencing the menopause."
             }
@@ -192,6 +215,7 @@ public static class ActionsHelper
             {
                 Action = Actions.OfferOccupationalHealthAdviceForMenopause,
                 Category = ActionCategories.SupportingStaffDuringMenopause,
+                Tags = [ActionTag.Menopause],
                 Name = "Offer occupational health advice to employees experiencing menopause",
                 Summary = "Supporting employees with specialised occupational health advice can help them manage symptoms, access support, and work more comfortably."
             }
@@ -201,6 +225,7 @@ public static class ActionsHelper
             {
                 Action = Actions.SetUpMenopauseNetworksAndSupportGroups,
                 Category = ActionCategories.SupportingStaffDuringMenopause,
+                Tags = [ActionTag.Menopause],
                 Name = "Set up menopause networks and support groups",
                 Summary = "Accessible menopause support groups within your organisation can help provide peer support, information, and guidance."
             }
@@ -210,6 +235,7 @@ public static class ActionsHelper
             {
                 Action = Actions.OfferWorkplaceAdjustmentsForMenopause,
                 Category = ActionCategories.SupportingStaffDuringMenopause,
+                Tags = [ActionTag.Menopause],
                 Name = "Offer workplace adjustments to employees experiencing menopause",
                 Summary = "Personalised workplace adjustments help support employees experiencing menopause and wider women's health conditions."
             }
@@ -219,6 +245,7 @@ public static class ActionsHelper
             {
                 Action = Actions.ConductMenopauseRiskAssessmentForWorkplace,
                 Category = ActionCategories.SupportingStaffDuringMenopause,
+                Tags = [ActionTag.Menopause],
                 Name = "Conduct a menopause risk assessment for your workplace",
                 Summary = "Workplace risk assessments on menopause and women's health can identify necessary adaptations to support employee wellbeing."
             }
@@ -226,4 +253,7 @@ public static class ActionsHelper
     };
     
     public static readonly List<ActionDetails> ListOfAllActions = DictionaryOfAllActions.Values.ToList();
+    
+    public static readonly List<ActionDetails> ListOfGenderPayGapActions = DictionaryOfAllActions.Values.Where(a => a.Tags.Contains(ActionTag.GenderPayGap)).ToList();
+    public static readonly List<ActionDetails> ListOfMenopauseActions = DictionaryOfAllActions.Values.Where(a => a.Tags.Contains(ActionTag.Menopause)).ToList();
 }
