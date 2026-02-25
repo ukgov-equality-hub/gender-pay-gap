@@ -30,7 +30,7 @@
             new()
             {
                 HtmlOrText = new($"Equality action plan {formattedReportingYears}"),
-                Href = Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})
+                Href = Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})
             },
             new()
             {
@@ -95,7 +95,7 @@
         </form>
 
         <p class="govuk-body">
-            <a class="govuk-link" href="@Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})">
+            <a class="govuk-link" href="@Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})">
                 Cancel and return to action plan for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear))
             </a>
         </p>

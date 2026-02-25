@@ -1,4 +1,4 @@
-﻿using GenderPayGap.Core;
+using GenderPayGap.Core;
 using GenderPayGap.Core.Helpers;
 using GenderPayGap.Core.Interfaces;
 using GenderPayGap.Database;
@@ -40,6 +40,27 @@ public class ActionPlanController: Controller
         return View("ActionPlanIntro", viewModel);
     }
 
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/task-list")] 
+    public IActionResult ActionPlanTaskListGet(string encryptedOrganisationId, int reportingYear) 
+    { 
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId); 
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository); 
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId); 
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository); 
+         
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId); 
+        ActionPlan actionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear); 
+         
+        ActionPlanTaskListViewModel viewModel = new ActionPlanTaskListViewModel 
+        { 
+            Organisation = organisation, 
+            ReportingYear = reportingYear, 
+            ActionPlan = actionPlan 
+        }; 
+         
+        return View("ActionPlanTaskList", viewModel); 
+    }
+    
     [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/actions-list")]
     public IActionResult ActionPlanListGet(string encryptedOrganisationId, int reportingYear)
     {
@@ -216,7 +237,7 @@ public class ActionPlanController: Controller
             dataRepository.SaveChanges();
         }
         
-        return RedirectToAction("ActionPlanListGet", new {encryptedOrganisationId, reportingYear = reportingYear});
+        return RedirectToAction("ActionPlanTaskListGet", new {encryptedOrganisationId, reportingYear = reportingYear});
     }
 
     private bool UserHasMadeChangesToSupportingNarrativeOrLink(ActionPlan actionPlan, ActionPlanSupportingNarrativeAndLinkViewModel viewModel)

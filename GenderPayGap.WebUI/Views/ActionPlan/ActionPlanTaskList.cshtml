@@ -1,0 +1,132 @@
+@using GenderPayGap.Core
+@using GenderPayGap.Core.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.ActionPlans.ActionPlanTaskListViewModel
+
+@{
+    string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+
+    ViewBag.Title = $"Action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs =
+        [
+            new()
+            {
+                HtmlOrText = new("Manage Employers"),
+                Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new($"Action plan {formattedReportingYears}")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <h1 class="govuk-heading-xl">
+            Create your action plan
+            <br/>
+            <span class="govuk-!-font-size-27 govuk-!-margin-top-3" style="display: inline-block; line-height: 1.3 !important;">
+                Reporting as @(Model.Organisation.OrganisationName)
+                <br/>
+                for reporting year @(formattedReportingYears)
+            </span>
+        </h1>
+        
+        <h2 class="govuk-heading-l">
+            Task list
+        </h2>
+        <p class="govuk-body">
+            You must choose a minimum of 2 actions in your first action plan:
+        </p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>one must address your gender pay gap</li>
+            <li>one must support women experiencing menopause</li>
+        </ul>
+        <p class="govuk-body">
+            You can also add a supporting narrative with any background information.
+        </p>
+
+        <ul class="govuk-task-list govuk-!-margin-top-7">
+            <li class="govuk-task-list__item govuk-task-list__item--with-link">
+                <div class="govuk-task-list__name-and-hint">
+                    <a href="@(Url.Action("ActionPlanSelectActionsGenderPayGapGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
+                       class="govuk-link govuk-task-list__link"
+                       aria-describedby="action-plan-task-list--gpg-actions--status">
+                        Select actions to reduce your gender pay gap
+                    </a>
+                </div>
+                <div class="govuk-task-list__status"
+                     id="action-plan-task-list--gpg-actions--status">
+                    @(await Html.GovUkTag(Model.GetGenderPayGapActionsStatusTag()))
+                </div>
+            </li>
+
+            <li class="govuk-task-list__item govuk-task-list__item--with-link">
+                <div class="govuk-task-list__name-and-hint">
+                    <a href="@(Url.Action("ActionPlanSelectActionsMenopauseGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
+                       class="govuk-link govuk-task-list__link"
+                       aria-describedby="overall-task-list-2-status">
+                        Select actions to support women experiencing menopause
+                    </a>
+                </div>
+                <div class="govuk-task-list__status" id="overall-task-list-2-status">
+                    @(await Html.GovUkTag(Model.GetMenopauseActionsStatusTag()))
+                </div>
+            </li>
+
+            <li class="govuk-task-list__item govuk-task-list__item--with-link">
+                <div class="govuk-task-list__name-and-hint">
+                    <a href="@(Url.Action("ActionPlanSupportingNarrativeAndLinkGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
+                       class="govuk-link govuk-task-list__link"
+                       aria-describedby="overall-task-list-3-status">
+                        Add your supporting narrative
+                    </a>
+                </div>
+                <div class="govuk-task-list__status" id="overall-task-list-3-status">
+                    @(await Html.GovUkTag(Model.GetSupportingNarrativeStatusTag()))
+                </div>
+            </li>
+
+            <li class="govuk-task-list__item govuk-task-list__item--with-link">
+                <div class="govuk-task-list__name-and-hint">
+                    <a href="@(Url.Action("ActionPlanProvisionalPlanGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
+                       class="govuk-link govuk-task-list__link">
+                        Preview and publish your action plan
+                    </a>
+                </div>
+            </li>
+        </ul>
+
+        @if (Model.ActionPlan?.Status == ActionPlanStatus.Draft)
+        {
+            <p class="govuk-body">
+                @(await Html.GovUkButton(new()
+                {
+                    HtmlOrText = new HtmlOrText("Discard draft action plan"),
+                    Href = Url.Action("ActionPlanDiscardDraftGet", "ActionPlan", new{encryptedOrganisationId, reportingYear = Model.ReportingYear}),
+                    Classes = ["govuk-button--secondary", "govuk-!-margin-top-4", "govuk-!-margin-bottom-0"],
+                }))
+            </p>
+        }
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})">
+               Return to @(Model.Organisation.OrganisationName)
+            </a>
+        </p>
+    </div>
+</div>

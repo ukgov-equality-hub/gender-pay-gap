@@ -30,7 +30,7 @@
             new()
             {
                 HtmlOrText = new($"Equality action plan {formattedReportingYears}"),
-                Href = Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})
+                Href = Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})
             },
             new()
             {
@@ -75,7 +75,7 @@
             }))
         </form>
         <p class="govuk-body">
-            <a href="@(Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
+            <a href="@(Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
                class="govuk-link">
                 Edit your action plan or add more actions
             </a>

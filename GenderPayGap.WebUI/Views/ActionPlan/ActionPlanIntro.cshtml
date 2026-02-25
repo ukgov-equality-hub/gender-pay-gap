@@ -90,7 +90,7 @@
             @(await Html.GovUkButton(new()
             {
                 HtmlOrText = new HtmlOrText("Continue"),
-                Href = Url.Action("ActionPlanListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}),
+                Href = Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}),
                 Classes = ["govuk-!-margin-bottom-0", "govuk-!-margin-top-4"]
             }))
         </p>
