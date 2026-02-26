@@ -44,7 +44,7 @@ namespace GenderPayGap.WebUI.Controllers
             {
                 displayedScope = organisationScope.ScopeStatus;
             }
-            else if (organisationScope.IsScopePresumed())
+            else if (organisationScope.IsInScopeVariant())
             {
                 displayedScope = ScopeStatuses.InScope;
             }
