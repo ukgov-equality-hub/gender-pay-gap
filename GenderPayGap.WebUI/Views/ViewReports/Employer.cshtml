@@ -361,7 +361,7 @@
                 @foreach (ActionInActionPlan action in latestActionPlan.GetNewOrInProgressActions())
                 {
                     <li>
-                        @(ActionsHelper.DictionaryOfAllActions[action.Action].Name)
+                        @(action.ActionDetails.Name)
                     </li>
                 }
             </ul>
@@ -376,7 +376,7 @@
                     @foreach (ActionInActionPlan action in completedActions)
                     {
                         <li>
-                            @(ActionsHelper.DictionaryOfAllActions[action.Action].Name)
+                            @(action.ActionDetails.Name)
                         </li>
                     }
                 </ul>

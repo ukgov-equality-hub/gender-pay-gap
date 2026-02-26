@@ -100,10 +100,10 @@
 @foreach (ActionInActionPlan actionInActionPlan in Model.ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.NewOrInProgress))
 {
     <h3 class="govuk-heading-s govuk-!-margin-bottom-2">
-        @(ActionsHelper.DictionaryOfAllActions[actionInActionPlan.Action].Name)
+        @(actionInActionPlan.ActionDetails.Name)
     </h3>
     <p class="govuk-body">
-        @(ActionsHelper.DictionaryOfAllActions[actionInActionPlan.Action].Summary)
+        @(actionInActionPlan.ActionDetails.Summary)
     </p>
     
     @if (!string.IsNullOrWhiteSpace(actionInActionPlan.SupportingText))
@@ -133,10 +133,10 @@
     foreach (ActionInActionPlan actionInActionPlan in completedActions)
     {
         <h3 class="govuk-heading-s govuk-!-margin-bottom-2">
-            @(ActionsHelper.DictionaryOfAllActions[actionInActionPlan.Action].Name)
+            @(actionInActionPlan.ActionDetails.Name)
         </h3>
         <p class="govuk-body">
-            @(ActionsHelper.DictionaryOfAllActions[actionInActionPlan.Action].Summary)
+            @(actionInActionPlan.ActionDetails.Summary)
         </p>
         
         @if (!string.IsNullOrWhiteSpace(actionInActionPlan.SupportingText))
