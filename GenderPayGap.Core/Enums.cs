@@ -133,7 +133,7 @@ namespace GenderPayGap.Core
         DoNotAddToPlan = 0,
         [Display(Name = "New or in progress")]
         NewOrInProgress = 1,
-        [Display(Name = "Completed")]
+        [Display(Name = "Embedded")]
         Completed = 2,
     }
     public static class ActionStatusExtensions

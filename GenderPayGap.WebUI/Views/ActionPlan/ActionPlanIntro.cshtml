@@ -6,7 +6,7 @@
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
     string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
 
-    ViewBag.Title = $"Equality action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+    ViewBag.Title = $"Create your action plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
 }
 
 @section BeforeMain {
@@ -26,7 +26,7 @@
             },
             new()
             {
-                HtmlOrText = new($"Equality action plan {formattedReportingYears}")
+                HtmlOrText = new($"Action plan {formattedReportingYears}")
             }
         ]
     })
@@ -36,7 +36,7 @@
     <div class="govuk-grid-column-two-thirds">
         
         <h1 class="govuk-heading-xl">
-            Equality action plan
+            Create your action plan
             <br/>
             <span class="govuk-!-font-size-27 govuk-!-margin-top-3" style="display: inline-block; line-height: 1.3 !important;">
                 Reporting as @(Model.Organisation.OrganisationName)
@@ -47,15 +47,15 @@
 
         <p class="govuk-body">
             From April 2027, organisations with over 250 employees must submit an action
-            plan with their gender pay gap report. This plan must show how you will:
+            plan with their gender pay gap report. This must show how you will:
         </p>
         <ul class="govuk-list govuk-list--bullet">
             <li>reduce your gender pay gap</li>
-            <li>improve gender equality in your organisation</li>
+            <li>support women experiencing menopause</li>
         </ul>
         <div class="govuk-inset-text">
             <a href="#" class="govuk-link">
-                Read more about creating an equality action plan on GOV.UK
+                Read more about creating an action plan on GOV.UK
             </a>
         </div>
 
@@ -63,27 +63,12 @@
             Before you start
         </h2>
         <p class="govuk-body">
-            You should make sure you:
+            Make sure you:
         </p>
         <ul class="govuk-list govuk-list--bullet">
+            <li>understand the issues in your organisation</li>
             <li>know which actions you will be selecting</li>
             <li>have prepared your supporting text</li>
-        </ul>
-        <p class="govuk-body">
-            You need to select at least 2 new actions in your first action plan.
-        </p>
-        <p class="govuk-body">
-            You can also add:
-        </p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>
-                supporting text for each action – this should explain what your organisation is doing or plans to do
-                in this area
-            </li>
-            <li>
-                a supporting narrative for your overall action plan – this should give any background information
-                including your organisation’s objectives for equality, diversity and inclusion
-            </li>
         </ul>
 
         <p class="govuk-body">

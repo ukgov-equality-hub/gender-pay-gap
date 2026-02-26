@@ -41,7 +41,7 @@
             },
             new()
             {
-                HtmlOrText = new($"Equality action plan {formattedReportingYears}"),
+                HtmlOrText = new($"Action plan {formattedReportingYears}"),
                 Href = Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})
             },
             new()
@@ -64,32 +64,24 @@
                 for reporting year @(formattedReportingYears)
             </span>
         </h1>
-        
-        <h2 class="govuk-heading-l">
-            List of actions
-        </h2>
-        <p class="govuk-body">
-            Select actions to include in your action plan for the next reporting year.
-        </p>
-        <div class="govuk-inset-text">
-            You must select from our list of actions. These are backed by evidence which demonstrates their effectiveness.
-        </div>
         <p class="govuk-body">
             For each action you select, we will ask if it is:
         </p>
         <ul class="govuk-list govuk-list--bullet">
             <li>
-                ‘new or in progress’ – this means you will be working on it for the first time or building on something you are already doing
+                <b>New or in progress</b>
+                – this means you will be working on it for the first time or building on something you are already doing
             </li>
             <li>
-                ‘completed’ – this means you have already done it and will not be working on it in the next reporting year
+                <b>Embedded</b>
+                – this means it is already an established part of your working practice
             </li>
         </ul>
         <p class="govuk-body">
-            You will be able to review and edit your action plan before you submit it.
+            You must select at least one action that is ‘new or in progress’.
         </p>
         <div class="govuk-inset-text">
-            Your action plan will be published alongside the data you report on the gender pay gap service.
+            For each action you select, you must add further details.
         </div>
 
         @foreach (ActionCategories actionCategory in Enum.GetValues(typeof(ActionCategories)))

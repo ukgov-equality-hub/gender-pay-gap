@@ -18,6 +18,9 @@ public class ActionPlanEditActionViewModel
     public Actions Action { get; set; }
 
     [BindNever /* Output Only - only used for sending data from the Controller to the View */]
+    public ActionDetails ActionDetails => ActionsHelper.DictionaryOfAllActions.TryGetValue(Action, out ActionDetails details) ? details : null;
+
+    [BindNever /* Output Only - only used for sending data from the Controller to the View */]
     public ActionTag ActionTag { get; set; }
     
     [GovUkValidateRequiredIf(IsRequiredPropertyName = nameof(StatusRequired), ErrorMessageIfMissing = "To save your supporting text, you must select a status")]
