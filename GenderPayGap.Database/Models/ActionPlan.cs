@@ -36,6 +36,13 @@ public partial class ActionPlan
     [JsonProperty]
     public string LinkToReport { get; set; }
 
+    [JsonProperty]
+    public string ResponsiblePersonFirstName { get; set; }
+    [JsonProperty]
+    public string ResponsiblePersonLastName { get; set; }
+    [JsonProperty]
+    public string ResponsiblePersonJobTitle { get; set; }
+
     public virtual Organisation Organisation { get; set; }
 
     public virtual ICollection<ActionInActionPlan> ActionsInActionPlans { get; set; }
