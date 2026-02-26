@@ -39,11 +39,21 @@ namespace GenderPayGap.WebUI.Controllers
             Organisation organisation = dataRepository.Get<Organisation>(organisationId);
             OrganisationScope organisationScope = organisation.GetScopeForYear(reportingYear);
 
+            ScopeStatuses? displayedScope = null;
+            if (organisationScope.IsScopeDeclared())
+            {
+                displayedScope = organisationScope.ScopeStatus;
+            }
+            else if (organisationScope.IsScopePresumed())
+            {
+                displayedScope = ScopeStatuses.InScope;
+            }
+            
             var viewModel = new DeclareScopeForYearViewModel
             {
                 Organisation = organisation,
                 ReportingYear = reportingYear,
-                Scope = organisationScope.IsScopeDeclared() ? organisationScope.ScopeStatus : null,
+                Scope = displayedScope,
                 WhyOutOfScope =
                     organisationScope.Reason != null
                         ? (organisationScope.Reason == "Under250" ? DeclareScopeForYearWhyOutOfScope.Under250 : DeclareScopeForYearWhyOutOfScope.Other)
