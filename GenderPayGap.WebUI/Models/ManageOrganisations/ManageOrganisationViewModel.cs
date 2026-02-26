@@ -97,7 +97,7 @@ namespace GenderPayGap.WebUI.Models.ManageOrganisations
         
         public bool ShowScopeStatus(int reportingYear)
         {
-            return IsScopeDeclared(reportingYear) || !RequiredToDeclareScope(reportingYear);
+            return IsScopeDeclared(reportingYear) || !RequiredToDeclareScope(reportingYear) || IsInScope(reportingYear);
         }
 
         public TagViewModel GetScopeStatusTag(int reportingYear)
@@ -115,6 +115,8 @@ namespace GenderPayGap.WebUI.Models.ManageOrganisations
         }
 
         private bool IsScopeDeclared(int reportingYear) => Organisation.GetScopeStatusForYear(reportingYear).IsScopeDeclared();
+
+        private bool IsInScope(int reportingYear) => Organisation.GetScopeStatusForYear(reportingYear).IsInScopeVariant();
 
         private static bool RequiredToDeclareScope(int reportingYear) => reportingYear >= Global.FirstReportingYearForMandatoryScopeDeclaration;
 
