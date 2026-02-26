@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace GenderPayGap.Database;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class ActionInActionPlan
+public partial class ActionInActionPlan
 {
     [JsonProperty]
     public long ActionInActionPlanId { get; set; }

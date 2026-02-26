@@ -2,7 +2,7 @@
 @using GenderPayGap.Core.Helpers
 @using GenderPayGap.Database
 @using GenderPayGap.WebUI.Helpers
-@model GenderPayGap.Database.ActionPlan
+@model GenderPayGap.WebUI.Models.ViewReports.ActionPlanForYearContentViewModel
 
 
 <h2 class="govuk-heading-m">
@@ -68,20 +68,20 @@
     </div>
 </details>
 
-@if (!string.IsNullOrWhiteSpace(Model.SupportingNarrative))
+@if (!string.IsNullOrWhiteSpace(Model.ActionPlan?.SupportingNarrative))
 {
     <p class="govuk-body govuk-!-margin-bottom-2">
         @(Model.Organisation.OrganisationName) said:
     </p>
     <div class="govuk-inset-text govuk-!-margin-top-2">
-        @(Model.SupportingNarrative)
+        @(Model.ActionPlan?.SupportingNarrative)
     </div>
 }
-@if (UriSanitiser.IsValidHttpOrHttpsLink(Model.LinkToReport))
+@if (UriSanitiser.IsValidHttpOrHttpsLink(Model.ActionPlan?.LinkToReport))
 {
     <p class="govuk-body">
         Read more about
-        <a href="@(Model.LinkToReport)"
+        <a href="@(Model.ActionPlan?.LinkToReport)"
            target="_blank"
            class="govuk-link">
             what @(Model.Organisation.OrganisationName) says about their action plan (opens in a new window)
@@ -97,13 +97,18 @@
     @(Model.Organisation.OrganisationName) has committed to embedding these actions:
 </p>
 
-@foreach (ActionInActionPlan actionInActionPlan in Model.ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.NewOrInProgress))
+@{
+    List<ActionInActionPlan> newInProgressActions = Model.ActionPlan != null
+        ? Model.ActionPlan.ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.NewOrInProgress).ToList()
+        : [];
+}
+@foreach (ActionInActionPlan actionInActionPlan in newInProgressActions)
 {
     <h3 class="govuk-heading-s govuk-!-margin-bottom-2">
-        @(ActionsHelper.DictionaryOfAllActions[actionInActionPlan.Action].Name)
+        @(actionInActionPlan.ActionDetails.Name)
     </h3>
     <p class="govuk-body">
-        @(ActionsHelper.DictionaryOfAllActions[actionInActionPlan.Action].Summary)
+        @(actionInActionPlan.ActionDetails.Summary)
     </p>
     
     @if (!string.IsNullOrWhiteSpace(actionInActionPlan.SupportingText))
@@ -126,17 +131,19 @@
 </p>
 
 @{
-    List<ActionInActionPlan> completedActions = Model.ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.Completed).ToList();
+    List<ActionInActionPlan> completedActions = Model.ActionPlan != null
+        ? Model.ActionPlan.ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.Completed).ToList()
+        : [];
 }
 @if (completedActions.Any())
 {
     foreach (ActionInActionPlan actionInActionPlan in completedActions)
     {
         <h3 class="govuk-heading-s govuk-!-margin-bottom-2">
-            @(ActionsHelper.DictionaryOfAllActions[actionInActionPlan.Action].Name)
+            @(actionInActionPlan.ActionDetails.Name)
         </h3>
         <p class="govuk-body">
-            @(ActionsHelper.DictionaryOfAllActions[actionInActionPlan.Action].Summary)
+            @(actionInActionPlan.ActionDetails.Summary)
         </p>
         
         @if (!string.IsNullOrWhiteSpace(actionInActionPlan.SupportingText))
@@ -182,4 +189,15 @@ else
             @(Model.Organisation.GetSicSectorsString())
         </dd>
     </div>
+    @if (Model.Organisation.SectorType == SectorTypes.Private)
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Person responsible
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @(Model.ActionPlan?.ResponsiblePerson)
+            </dd>
+        </div>
+    }
 </dl>

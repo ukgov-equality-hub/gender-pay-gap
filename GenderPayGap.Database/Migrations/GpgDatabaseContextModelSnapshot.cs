@@ -84,6 +84,15 @@ namespace GenderPayGap.Database.Migrations
                     b.Property<int>("ReportingYear")
                         .HasColumnType("integer");
 
+                    b.Property<string>("ResponsiblePersonFirstName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResponsiblePersonJobTitle")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResponsiblePersonLastName")
+                        .HasColumnType("text");
+
                     b.Property<byte>("Status")
                         .HasColumnType("smallint");
 

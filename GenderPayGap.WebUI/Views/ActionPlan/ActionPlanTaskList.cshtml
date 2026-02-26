@@ -101,6 +101,22 @@
                 </div>
             </li>
 
+            @if (Model.Organisation.SectorType == SectorTypes.Private)
+            {
+                <li class="govuk-task-list__item govuk-task-list__item--with-link">
+                    <div class="govuk-task-list__name-and-hint">
+                        <a href="@(Url.Action("ActionPlanResponsiblePersonGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
+                           class="govuk-link govuk-task-list__link"
+                           aria-describedby="overall-task-list-3-status">
+                            Responsible person
+                        </a>
+                    </div>
+                    <div class="govuk-task-list__status" id="overall-task-list-3-status">
+                        @(await Html.GovUkTag(Model.GetResponsiblePersonStatusTag()))
+                    </div>
+                </li>
+            }
+
             <li class="govuk-task-list__item govuk-task-list__item--with-link">
                 <div class="govuk-task-list__name-and-hint">
                     <a href="@(Url.Action("ActionPlanProvisionalPlanGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"

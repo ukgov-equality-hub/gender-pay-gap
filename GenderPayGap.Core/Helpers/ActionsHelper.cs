@@ -32,8 +32,23 @@ public static class ActionCategoriesExtensions
 
 public enum ActionTag
 {
+    [Display(Name = "Select actions to reduce your gender pay gap")]
     GenderPayGap,
+    [Display(Name = "Select actions to support women experiencing menopause")]
     Menopause
+}
+
+public static class ActionTagExtensions
+{
+    public static string GetDisplayName(this ActionTag actionCategory)
+    {
+        DisplayAttribute displayAttribute = actionCategory.GetType()
+            .GetMember(actionCategory.ToString())
+            .FirstOrDefault()
+            ?.GetCustomAttribute<DisplayAttribute>();
+                
+        return displayAttribute?.Name;
+    }
 }
 
 public class ActionDetails

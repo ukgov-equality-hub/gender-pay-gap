@@ -1,6 +1,7 @@
 @using GenderPayGap.Core
 @using GenderPayGap.Core.Helpers
 @using GenderPayGap.WebUI.Helpers
+@using GenderPayGap.WebUI.Models.ViewReports
 @using GovUkDesignSystemDotNet
 @model GenderPayGap.Database.ActionPlan
 
@@ -46,8 +47,13 @@
             <br/>
             Action plan @ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear)
         </h1>
-        
-        @(await Html.PartialAsync("ActionPlanForYearContent", Model))
+
+        @(await Html.PartialAsync("../ViewReports/ActionPlanForYearContent", new ActionPlanForYearContentViewModel
+        {
+            Organisation = Model.Organisation,
+            ReportingYear = Model.ReportingYear,
+            ActionPlan = Model,
+        }))
 
     </div>
 </div>
