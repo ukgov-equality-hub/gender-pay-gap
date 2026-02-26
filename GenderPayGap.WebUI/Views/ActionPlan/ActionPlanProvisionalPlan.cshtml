@@ -1,15 +1,13 @@
 @using GenderPayGap.Core.Helpers
-@using GenderPayGap.Database
+@using GenderPayGap.WebUI.Models.ViewReports
 @using GovUkDesignSystemDotNet
-@model GenderPayGap.Database.ActionPlan
+@model GenderPayGap.WebUI.Models.ActionPlans.ActionPlanPreviewViewModel
 
 @{
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
     string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
 
     ViewBag.Title = $"Action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
-
-    ActionPlan submittedActionPlan = Model.Organisation.GetLatestSubmittedActionPlan(Model.ReportingYear);
 }
 
 @section BeforeMain {
@@ -71,7 +69,8 @@
         </p>
         <p class="govuk-body">
             <a href="@(Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
-               class="govuk-link">
+               class="govuk-link"
+               id="edit-action-plan-link">
                 Edit your action plan or add more actions
             </a>
         </p>
@@ -95,7 +94,12 @@
             Action plan @ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear)
         </h1>
 
-        @(await Html.PartialAsync("../ViewReports/ActionPlanForYearContent", submittedActionPlan))
+        @(await Html.PartialAsync("../ViewReports/ActionPlanForYearContent", new ActionPlanForYearContentViewModel
+            {
+                Organisation = Model.Organisation,
+                ReportingYear = Model.ReportingYear,
+                ActionPlan = Model.ActionPlan, // We use this ActionPlanForYearContentViewModel because the ActionPlan might be null
+            }))
         
     </div>
 </div>

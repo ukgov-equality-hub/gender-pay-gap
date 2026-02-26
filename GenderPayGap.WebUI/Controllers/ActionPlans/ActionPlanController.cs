@@ -404,7 +404,14 @@ public class ActionPlanController: Controller
         Organisation organisation = dataRepository.Get<Organisation>(organisationId);
         ActionPlan actionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
         
-        return View("ActionPlanProvisionalPlan", actionPlan);
+        var viewModel = new ActionPlanPreviewViewModel
+        {
+            Organisation = organisation,
+            ReportingYear = reportingYear,
+            ActionPlan = actionPlan,
+        };
+        
+        return View("ActionPlanProvisionalPlan", viewModel);
     }
 
     [ValidateAntiForgeryToken]
@@ -431,19 +438,72 @@ public class ActionPlanController: Controller
             );
             return View("ActionPlanProvisionalPlan", actionPlan);
         }
-        else if (!actionPlan.HasFulfilledRequirementsToPublish())
-        {
-            ModelState.AddModelError(
-                "edit-action-plan-link",
-                $"You must select at least one action from the \"{ActionCategories.SupportingStaffDuringMenopause.GetDisplayName()}\" category "
-                + "and at least one action from any other category. "
-                + "Actions that are already fully embedded do not count for this purpose. "
-                + "Your plan must have actions with which you can make further progress."
-            );
-            return View("ActionPlanProvisionalPlan", actionPlan);
-        }
         else
         {
+            if (!actionPlan.HasAtLeastOneNewOrInProgressGenderPayGapAction())
+            {
+                string errorMessage = $"You must select at least one action from the page \"{ActionTag.GenderPayGap.GetDisplayName()}\"";
+                if (actionPlan.HasAnyCompletedGenderPayGapActions())
+                {
+                    errorMessage += ". Actions that are already fully embedded do not count for this purpose. "
+                                    + "Your plan must have actions with which you can make further progress.";
+                }
+                
+                ModelState.AddModelError("edit-action-plan-link", errorMessage);
+            }
+            if (!actionPlan.HasAtLeastOneNewOrInProgressMenopauseAction())
+            {
+                string errorMessage = $"You must select at least one action from the page \"{ActionTag.Menopause.GetDisplayName()}\"";
+                if (actionPlan.HasAnyCompletedMenopauseActions())
+                {
+                    errorMessage += ". Actions that are already fully embedded do not count for this purpose. "
+                                    + "Your plan must have actions with which you can make further progress.";
+                }
+                
+                ModelState.AddModelError("edit-action-plan-link", errorMessage);
+            }
+            if (!actionPlan.HasAtLeastTwoNewOrInProgressActions())
+            {
+                string errorMessage = $"You must select at least two \"New or in progress\" actions";
+                if (actionPlan.SingleSelectedActionHasBothGenderPayGapAndMenopauseTags())
+                {
+                    errorMessage += $". The action \"{actionPlan.GetNewOrInProgressActions()[0].ActionDetails.Name}\" "
+                                    + "appears on both the Gender Pay Gap and Menopause pages, but only counts as one action";
+                }
+                
+                ModelState.AddModelError("edit-action-plan-link", errorMessage);
+            }
+            if (!actionPlan.HasCompletedSupportingNarrative())
+            {
+                ModelState.AddModelError(
+                    "edit-action-plan-link",
+                    $"You must enter a supporting narrative");
+            }
+            if (!UriSanitiser.IsValidHttpOrHttpsLink(actionPlan.LinkToReport))
+            {
+                ModelState.AddModelError(
+                    "edit-action-plan-link",
+                    $"You must enter a link to your organisation's website");
+            }
+            if (!actionPlan.HasCompletedResponsiblePersonDetailsIfNeeded())
+            {
+                ModelState.AddModelError(
+                    "edit-action-plan-link",
+                    $"You must enter the details of the person responsible for your organisation's action plan");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new ActionPlanPreviewViewModel
+                {
+                    Organisation = organisation,
+                    ReportingYear = reportingYear,
+                    ActionPlan = actionPlan,
+                };
+        
+                return View("ActionPlanProvisionalPlan", viewModel);
+            }
+            
             actionPlan.SubmitActionPlan();
             dataRepository.SaveChanges();
 
