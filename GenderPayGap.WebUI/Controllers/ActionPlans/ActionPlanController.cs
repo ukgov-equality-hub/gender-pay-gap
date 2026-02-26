@@ -287,6 +287,70 @@ public class ActionPlanController: Controller
                actionPlan?.LinkToReport != viewModel.LinkToReport;
     }
 
+    [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/responsible-person")]
+    public IActionResult ActionPlanResponsiblePersonGet(string encryptedOrganisationId, int reportingYear)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        ActionPlan actionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
+        
+        ActionPlanResponsiblePersonViewModel viewModel = new()
+        {
+            Organisation = organisation,
+            ReportingYear = reportingYear,
+            ResponsiblePersonFirstName = actionPlan?.ResponsiblePersonFirstName,
+            ResponsiblePersonLastName = actionPlan?.ResponsiblePersonLastName,
+            ResponsiblePersonJobTitle = actionPlan?.ResponsiblePersonJobTitle,
+        };
+        
+        return View("ActionPlanResponsiblePerson", viewModel);
+    }
+
+    [ValidateAntiForgeryToken]
+    [HttpPost("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/responsible-person")]
+    public IActionResult ActionPlanResponsiblePersonPost(string encryptedOrganisationId, int reportingYear, ActionPlanResponsiblePersonViewModel viewModel)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+
+        if (!ModelState.IsValid)
+        {
+            viewModel.Organisation = organisation;
+            viewModel.ReportingYear = reportingYear;
+            return View("ActionPlanResponsiblePerson", viewModel);
+        }
+        
+        ActionPlan submittedOrDraftActionPlan = organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear);
+        
+        if (UserHasMadeChangesToResponsiblePerson(submittedOrDraftActionPlan, viewModel))
+        {
+            ActionPlan draftActionPlan = GetOrCreateDraftActionPlan(organisation, reportingYear, ActionPlanType.Original);
+            
+            draftActionPlan.ResponsiblePersonFirstName = viewModel.ResponsiblePersonFirstName;
+            draftActionPlan.ResponsiblePersonLastName = viewModel.ResponsiblePersonLastName;
+            draftActionPlan.ResponsiblePersonJobTitle = viewModel.ResponsiblePersonJobTitle;
+            
+            dataRepository.SaveChanges();
+        }
+        
+        return RedirectToAction("ActionPlanTaskListGet", new {encryptedOrganisationId, reportingYear = reportingYear});
+    }
+
+    private bool UserHasMadeChangesToResponsiblePerson(ActionPlan actionPlan, ActionPlanResponsiblePersonViewModel viewModel)
+    {
+        return actionPlan?.ResponsiblePersonFirstName != viewModel.ResponsiblePersonFirstName ||
+               actionPlan?.ResponsiblePersonLastName != viewModel.ResponsiblePersonLastName ||
+               actionPlan?.ResponsiblePersonJobTitle != viewModel.ResponsiblePersonJobTitle;
+    }
+
     [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/discard-draft")]
     public IActionResult ActionPlanDiscardDraftGet(string encryptedOrganisationId, int reportingYear)
     {

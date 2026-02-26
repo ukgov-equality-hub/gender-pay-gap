@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using GenderPayGap.Core;
 using GenderPayGap.Core.Helpers;
@@ -9,6 +10,22 @@ namespace GenderPayGap.Database;
 [DebuggerDisplay("{OrganisationName},{Status}")]
 public partial class ActionPlan
 {
+
+    [NotMapped]
+    public string ResponsiblePerson
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(ResponsiblePersonFirstName) ||
+                string.IsNullOrWhiteSpace(ResponsiblePersonLastName) ||
+                string.IsNullOrWhiteSpace(ResponsiblePersonJobTitle))
+            {
+                return null;
+            }
+
+            return $"{ResponsiblePersonFirstName} {ResponsiblePersonLastName} ({ResponsiblePersonJobTitle})";
+        }
+    }
 
     public bool HasFulfilledRequirementsToPublish()
     {

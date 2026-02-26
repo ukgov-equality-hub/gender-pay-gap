@@ -84,4 +84,36 @@ public class ActionPlanTaskListViewModel
         }
     }
 
+    public TagViewModel GetResponsiblePersonStatusTag()
+    {
+        bool hasSpecifiedFirstName = !string.IsNullOrWhiteSpace(ActionPlan?.ResponsiblePersonFirstName);
+        bool hasSpecifiedLastName = !string.IsNullOrWhiteSpace(ActionPlan?.ResponsiblePersonLastName);
+        bool hasSpecifiedJobTitle = !string.IsNullOrWhiteSpace(ActionPlan?.ResponsiblePersonJobTitle);
+
+        if (hasSpecifiedFirstName && hasSpecifiedLastName && hasSpecifiedJobTitle)
+        {
+            return new TagViewModel
+            {
+                HtmlOrText = new("Complete"),
+                Classes = ["govuk-tag--green"],
+            };
+        }
+        else if (!hasSpecifiedFirstName && !hasSpecifiedLastName && !hasSpecifiedJobTitle)
+        {
+            return new TagViewModel
+            {
+                HtmlOrText = new("Not started"),
+                Classes = ["govuk-tag--blue"],
+            };
+        }
+        else
+        {
+            return new TagViewModel
+            {
+                HtmlOrText = new("In progress"),
+                Classes = ["govuk-tag--blue"],
+            };
+        }
+    }
+
 }

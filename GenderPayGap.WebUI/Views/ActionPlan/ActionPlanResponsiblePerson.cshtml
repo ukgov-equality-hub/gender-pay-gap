@@ -1,0 +1,113 @@
+@using GenderPayGap.Core.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.ActionPlans.ActionPlanResponsiblePersonViewModel
+
+@{
+    string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+
+    ViewBag.Title = $"Action plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs =
+        [
+            new()
+            {
+                HtmlOrText = new("Manage Employers"),
+                Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new($"Action plan {formattedReportingYears}"),
+                Href = Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})
+            },
+            new()
+            {
+                HtmlOrText = new("Responsible person")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        @(await Html.GovUkErrorSummaryIfNeeded())
+
+        <h1 class="govuk-heading-xl">
+            Responsible Person
+            <br/>
+            <span class="govuk-!-font-size-27 govuk-!-margin-top-3" style="display: inline-block; line-height: 1.3 !important;">
+                Reporting as @(Model.Organisation.OrganisationName)
+                <br/>
+                for reporting year @(formattedReportingYears)
+            </span>
+        </h1>
+
+        <form method="post"
+              action="@(Url.Action("ActionPlanResponsiblePersonPost", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))">
+            @Html.AntiForgeryToken()
+
+            @(await Html.GovUkTextInputFor(
+                m => m.ResponsiblePersonFirstName,
+                new()
+                {
+                    Label = new()
+                    {
+                        HtmlOrText = new("First name"),
+                        Classes = ["govuk-label--s"]
+                    },
+                }
+            ))
+            @(await Html.GovUkTextInputFor(
+                m => m.ResponsiblePersonLastName,
+                new()
+                {
+                    Label = new()
+                    {
+                        HtmlOrText = new("Last name"),
+                        Classes = ["govuk-label--s"]
+                    },
+                }
+            ))
+            @(await Html.GovUkTextInputFor(
+                m => m.ResponsiblePersonJobTitle,
+                new()
+                {
+                    Label = new()
+                    {
+                        HtmlOrText = new("Job title"),
+                        Classes = ["govuk-label--s"]
+                    },
+                }
+            ))
+
+            <p class="govuk-body">
+                @(await Html.GovUkButton(new()
+                {
+                    HtmlOrText = new HtmlOrText("Save and continue"),
+                    Classes = ["govuk-!-margin-bottom-0", "govuk-!-margin-top-4"],
+                }))
+            </p>
+        </form>
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})">
+                Cancel and return to action plan for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear))
+            </a>
+        </p>
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})">
+                Cancel and return to @(Model.Organisation.OrganisationName)
+            </a>
+        </p>
+    </div>
+</div>

@@ -182,4 +182,15 @@ else
             @(Model.Organisation.GetSicSectorsString())
         </dd>
     </div>
+    @if (Model.Organisation.SectorType == SectorTypes.Private)
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Person responsible
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @(Model.ActionPlan?.ResponsiblePerson)
+            </dd>
+        </div>
+    }
 </dl>
