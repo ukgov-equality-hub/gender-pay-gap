@@ -548,6 +548,12 @@ public class ActionPlanController: Controller
                     Organisation = organisation,
                     ReportingYear = reportingYear,
                     Status = ActionPlanStatus.Draft,
+                    
+                    SupportingNarrative = submittedOrDraftActionPlan.SupportingNarrative,
+                    LinkToReport = submittedOrDraftActionPlan.LinkToReport,
+                    ResponsiblePersonFirstName = submittedOrDraftActionPlan.ResponsiblePersonFirstName,
+                    ResponsiblePersonLastName = submittedOrDraftActionPlan.ResponsiblePersonLastName,
+                    ResponsiblePersonJobTitle = submittedOrDraftActionPlan.ResponsiblePersonJobTitle,
                         
                     ActionPlanType = actionPlanType,
                 };
