@@ -1,4 +1,4 @@
-﻿@using GenderPayGap.Core
+@using GenderPayGap.Core
 @using GenderPayGap.Core.Helpers
 @using GenderPayGap.Database
 @using GenderPayGap.WebUI.Helpers
@@ -45,9 +45,7 @@
         </h2>
 
         @{
-            int currentReportingYear = ReportingYearsHelper.GetCurrentReportingYear(Model.Organisation.SectorType);
-            int numberOfReportingYearsToShow = 4;
-            int firstReportingYearToShow = currentReportingYear - numberOfReportingYearsToShow + 1;
+            int firstReportingYearToShow = Model.GetFirstReportingYearToShow();
             int reportingYearsHidden = 0;
         }
 
