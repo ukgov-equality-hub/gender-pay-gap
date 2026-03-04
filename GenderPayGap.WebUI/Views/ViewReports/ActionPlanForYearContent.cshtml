@@ -1,7 +1,7 @@
 @using GenderPayGap.Core
-@using GenderPayGap.Core.Helpers
 @using GenderPayGap.Database
 @using GenderPayGap.WebUI.Helpers
+@using GenderPayGap.WebUI.Models.ViewReports
 @model GenderPayGap.WebUI.Models.ViewReports.ActionPlanForYearContentViewModel
 
 
@@ -73,9 +73,7 @@
     <p class="govuk-body govuk-!-margin-bottom-2">
         @(Model.Organisation.OrganisationName) said:
     </p>
-    <div class="govuk-inset-text govuk-!-margin-top-2">
-        @(Model.ActionPlan?.SupportingNarrative)
-    </div>
+    <partial name="../ViewReports/UserGeneratedFormattedText" model="@(new UserGeneratedFormattedTextViewModel(Model.ActionPlan?.SupportingNarrative))" />
 }
 @if (UriSanitiser.IsValidHttpOrHttpsLink(Model.ActionPlan?.LinkToReport))
 {
@@ -116,9 +114,7 @@
         <p class="govuk-body govuk-!-margin-bottom-2">
             @(Model.Organisation.OrganisationName) said:
         </p>
-        <div class="govuk-inset-text govuk-!-margin-top-2">
-            @(actionInActionPlan.SupportingText)
-        </div>
+        <partial name="../ViewReports/UserGeneratedFormattedText" model="@(new UserGeneratedFormattedTextViewModel(actionInActionPlan.SupportingText))" />
     }
 }
 
@@ -151,9 +147,7 @@
             <p class="govuk-body govuk-!-margin-bottom-2">
                 @(Model.Organisation.OrganisationName) said:
             </p>
-            <div class="govuk-inset-text govuk-!-margin-top-2">
-                @(actionInActionPlan.SupportingText)
-            </div>
+            <partial name="../ViewReports/UserGeneratedFormattedText" model="@(new UserGeneratedFormattedTextViewModel(actionInActionPlan.SupportingText))" />
         }
     }
 }

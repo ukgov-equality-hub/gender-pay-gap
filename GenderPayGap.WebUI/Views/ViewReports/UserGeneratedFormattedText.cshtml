@@ -1,0 +1,10 @@
+@model GenderPayGap.WebUI.Models.ViewReports.UserGeneratedFormattedTextViewModel
+
+<div class="govuk-inset-text govuk-!-margin-top-2">
+    @foreach (string paragraph in Model.GetParagraphs())
+    {
+        <p class="govuk-body">
+            @(paragraph)
+        </p>
+    }
+</div>
