@@ -7,7 +7,7 @@
 @model GenderPayGap.WebUI.Models.ManageOrganisations.ManageOrganisationViewModel
 
 @{
-    ViewBag.Title = "Manage your employers - Gender pay gap service";
+    ViewBag.Title = $"Manage your employer's reporting for {Model.Organisation.OrganisationName} - Gender pay gap service - GOV.UK";
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
 }
 
@@ -45,9 +45,7 @@
         </h2>
 
         @{
-            int currentReportingYear = ReportingYearsHelper.GetCurrentReportingYear(Model.Organisation.SectorType);
-            int numberOfReportingYearsToShow = 4;
-            int firstReportingYearToShow = currentReportingYear - numberOfReportingYearsToShow + 1;
+            int firstReportingYearToShow = Model.GetFirstReportingYearToShow();
             int reportingYearsHidden = 0;
         }
 

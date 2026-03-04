@@ -23,6 +23,28 @@ namespace GenderPayGap.WebUI.Models.ManageOrganisations
             this.allDraftReturns = allDraftReturns;
         }
 
+        public int GetFirstReportingYearToShow()
+        {
+            int currentReportingYear = ReportingYearsHelper.GetCurrentReportingYear(Organisation.SectorType);
+            int minimumNumberOfReportingYearsToShow = 2;
+            int minimumFirstReportingYearToShow = currentReportingYear - minimumNumberOfReportingYearsToShow + 1;
+            
+            foreach (int reportingYear in ReportingYearsHelper.GetReportingYears(Organisation.SectorType))
+            {
+                if (reportingYear < minimumFirstReportingYearToShow)
+                {
+                    TagViewModel tag = GetOverallStatusTagForYear(reportingYear);
+
+                    if (tag.HtmlOrText.HasText && tag.HtmlOrText.Text != "Complete")
+                    {
+                        return reportingYear;
+                    }
+                }
+            }
+            
+            return minimumFirstReportingYearToShow;
+        }
+        
         public List<User> GetFullyRegisteredUsersForOrganisationWithCurrentUserFirst()
         {
             List<User> users = Organisation.UserOrganisations
