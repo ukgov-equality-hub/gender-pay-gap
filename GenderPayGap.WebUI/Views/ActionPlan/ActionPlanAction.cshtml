@@ -27,7 +27,7 @@
             throw new ArgumentOutOfRangeException();
     }
 
-    ViewBag.Title = $"Action Plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service";
+    ViewBag.Title = $"{Model.ActionDetails.Name} - Select actions to {selectActionsTo} - Action Plan for reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service - GOV.UK";
 }
 
 @section BeforeMain {

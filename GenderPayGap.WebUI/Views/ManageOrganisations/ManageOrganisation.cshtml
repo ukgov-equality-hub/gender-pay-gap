@@ -1,4 +1,4 @@
-@using GenderPayGap.Core
+﻿@using GenderPayGap.Core
 @using GenderPayGap.Core.Helpers
 @using GenderPayGap.Database
 @using GenderPayGap.WebUI.Helpers
@@ -7,7 +7,7 @@
 @model GenderPayGap.WebUI.Models.ManageOrganisations.ManageOrganisationViewModel
 
 @{
-    ViewBag.Title = "Manage your employers - Gender pay gap service";
+    ViewBag.Title = $"Manage your employer's reporting for {Model.Organisation.OrganisationName} - Gender pay gap service - GOV.UK";
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
 }
 
