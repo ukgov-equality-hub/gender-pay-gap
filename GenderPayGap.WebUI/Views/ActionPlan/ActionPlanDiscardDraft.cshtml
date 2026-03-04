@@ -67,7 +67,7 @@
                 on @(submittedActionPlan.SubmittedDate.Value.ToString("d MMM yyyy"))
             </p>
             <p class="govuk-body">
-                <a href="#"
+                <a href="@(Url.Action("ActionPlanForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = Model.ReportingYear}))"
                    target="_blank"
                    class="govuk-link">
                     View your published action plan (opens in a new tab)

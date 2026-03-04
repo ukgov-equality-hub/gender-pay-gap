@@ -50,7 +50,7 @@
             Your action plan has now been published on the Gender pay gap service.
         </p>
         <p class="govuk-body">
-            <a href="#"
+            <a href="@(Url.Action("ActionPlanForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = Model.ReportingYear}))"
                class="govuk-link">
                 View your published action plan
             </a>
