@@ -6,6 +6,7 @@ using GenderPayGap.Database;
 using GenderPayGap.Database.Models;
 using GenderPayGap.Extensions;
 using GenderPayGap.WebUI.Helpers;
+using GenderPayGap.WebUI.Models.SendFeedback;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GenderPayGap.WebUI.Controllers.SendFeedback

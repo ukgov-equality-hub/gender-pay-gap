@@ -1,16 +1,15 @@
 @using GenderPayGap.Core
-@using GenderPayGap.WebUI.Controllers.SendFeedback
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
-@model GenderPayGap.WebUI.Controllers.SendFeedback.FeedbackViewModel
+@using GenderPayGap.WebUI.Models.SendFeedback
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.SendFeedback.FeedbackViewModel
 @{
-    ViewBag.Title = "Give feedback about the gender pay gap service - Gender pay gap service";
+    ViewBag.Title = "Give feedback about the gender pay gap service - Gender pay gap service - GOV.UK";
 }
 
 @section BeforeMain {
-    @(await Html.GovUkBackLink(new BackLinkViewModel
+    @(await Html.GovUkBackLink(new()
     {
-        Text = "Back",
+        HtmlOrText = new("Back"),
         OverrideWithJavascript = true
     }))
 }
@@ -24,144 +23,167 @@
             </h1>
             <div class="govuk-form-group">
 
-                @(await Html.GovUkErrorSummary(ViewData.ModelState, new[]
-                {
+                @(await Html.GovUkErrorSummaryIfNeeded([
                     nameof(FeedbackViewModel.HowEasyIsThisServiceToUse),
                     nameof(FeedbackViewModel.HowDidYouHearAboutGpg),
                     nameof(FeedbackViewModel.WhyVisitGpgSite),
                     nameof(FeedbackViewModel.WhoAreYou)
-                }))
+                ]))
 
                 @(await Html.GovUkRadiosFor(
                     m => m.HowEasyIsThisServiceToUse,
-                    new FieldsetViewModel
+                    new()
                     {
-                        Legend = new LegendViewModel
+                        Fieldset = new()
                         {
-                            Text = "How easy was this service to use?",
-                            Classes = "govuk-fieldset__legend--m"
-                        },
-                        Classes = "govuk-!-margin-top-6"
-                    }
-                    ))
+                            Legend = new()
+                            {
+                                HtmlOrText = new("How easy was this service to use?"),
+                                Classes = ["govuk-fieldset__legend--m"]
+                            },
+                            Classes = ["govuk-!-margin-top-6"]
+                        }
+                    } 
+                ))
 
                 @(await Html.GovUkCharacterCountFor(
                     m => m.Details,
-                    labelOptions: new LabelViewModel
+                    new()
                     {
-                        Text = "How could we improve your experience?",
-                        Classes = "govuk-label--m"
-                    },
-                    formGroupOptions: new FormGroupViewModel
-                    {
-                        Classes = "govuk-!-margin-top-6"
-                    }
-                    ))
-
-                @{
-                    var howDidYouHearAboutGpgConditionalOptions =
-                        new Dictionary<HowDidYouHearAboutGpg, Conditional>
+                        Label = new()
                         {
-                            {
-                                HowDidYouHearAboutGpg.Other,
-                                new Conditional
-                                {
-                                    Html = @<text>
-                                               @(await Html.GovUkLabel(new LabelViewModel {Classes = "govuk-visually-hidden", For = nameof(FeedbackViewModel.OtherSourceText), Text = "Other source description"}))
-                                               @(await Html.GovUkTextInputFor(m => m.OtherSourceText))
-                                            </text>
-                                }
-                            }
-                        };
-                }
+                            HtmlOrText = new("How could we improve your experience?"),
+                            Classes = ["govuk-label--m"]
+                        },
+                        FormGroup = new()
+                        {
+                            Classes = ["govuk-!-margin-top-6"]
+                        }
+                    }
+                ))
 
                 @(await Html.GovUkCheckboxesFor(
                     m => m.HowDidYouHearAboutGpg,
-                    new FieldsetViewModel
+                    new()
                     {
-                        Legend = new LegendViewModel
+                        Fieldset = new()
                         {
-                            Text = "How did you hear about the gender pay gap service?",
-                            Classes = "govuk-fieldset__legend--m"
-                        },
-                        Classes = "govuk-!-margin-top-6"
-                    },
-                    new HintViewModel
-                    {
-                        Text = "Select all that apply."
-                    },
-                    conditionalOptions: howDidYouHearAboutGpgConditionalOptions
-                    ))
-
-                @{
-                    var whyVisitGpgSiteConditionalOptions =
-                        new Dictionary<WhyVisitGpgSite, Conditional>
-                        {
+                            Legend = new()
                             {
-                                WhyVisitGpgSite.Other,
-                                new Conditional
-                                {
-                                    Html = @<text>
-                                               @(await Html.GovUkLabel(new LabelViewModel {Classes = "govuk-visually-hidden", For = nameof(FeedbackViewModel.OtherReasonText), Text = "Other reason description"}))
-                                               @(await Html.GovUkTextInputFor(m => m.OtherReasonText))
-                                            </text>
-                                }
-                            }
-                        };
-                }
+                                HtmlOrText = new("How did you hear about the gender pay gap service?"),
+                                Classes = ["govuk-fieldset__legend--m"]
+                            },
+                            Classes = ["govuk-!-margin-top-6"]
+                        },
+                        Hint = new()
+                        {
+                            HtmlOrText = new("Select all that apply.")
+                        },
+                    },
+                    checkboxItemViewModels: new()
+                    {{
+                        HowDidYouHearAboutGpg.Other,
+                        new()
+                        {
+                            Conditional = new(
+                                @<text>
+                                    @(await Html.GovUkTextInputFor(
+                                        m => m.OtherSourceText,
+                                        new()
+                                        {
+                                            Label = new()
+                                            {
+                                                HtmlOrText = new("Other source description"),
+                                                Classes = ["govuk-visually-hidden"],
+                                            }
+                                        }
+                                    ))
+                                 </text>)
+                        }
+                    }}
+                ))
 
                 @(await Html.GovUkCheckboxesFor(
                     m => m.WhyVisitGpgSite,
-                    new FieldsetViewModel
+                    new()
                     {
-                        Legend = new LegendViewModel
+                        Fieldset = new()
                         {
-                            Text = "Why have you visited the site?",
-                            Classes = "govuk-fieldset__legend--m"
-                        },
-                        Classes = "govuk-!-margin-top-6"
-                    },
-                    new HintViewModel
-                    {
-                        Text = "Select all that apply."
-                    },
-                    conditionalOptions: whyVisitGpgSiteConditionalOptions
-                    ))
-
-                @{
-                    var whoAreYouConditionalOptions =
-                        new Dictionary<WhoAreYou, Conditional>
-                        {
+                            Legend = new()
                             {
-                                WhoAreYou.Other,
-                                new Conditional
-                                {
-                                    Html = @<text>
-                                               @(await Html.GovUkLabel(new LabelViewModel {Classes = "govuk-visually-hidden", For = nameof(FeedbackViewModel.OtherReasonText), Text = "Other person description"}))
-                                               @(await Html.GovUkTextInputFor(m => m.OtherPersonText))
-                                            </text>
-                                }
-                            }
-                        };
-                }
+                                HtmlOrText = new("Why have you visited the site?"),
+                                Classes = ["govuk-fieldset__legend--m"]
+                            },
+                            Classes = ["govuk-!-margin-top-6"]
+                        },
+                        Hint = new()
+                        {
+                            HtmlOrText = new("Select all that apply.")
+                        },
+                    },
+                    checkboxItemViewModels: new()
+                    {{
+                        WhyVisitGpgSite.Other,
+                        new()
+                        {
+                            Conditional = new(
+                                @<text>
+                                     @(await Html.GovUkTextInputFor(
+                                         m => m.OtherReasonText,
+                                         new()
+                                         {
+                                             Label = new()
+                                             {
+                                                 HtmlOrText = new("Other reason description"),
+                                                 Classes = ["govuk-visually-hidden"],
+                                             }
+                                         }
+                                     ))
+                                 </text>)
+                        }
+                    }}
+                ))
 
                 @(await Html.GovUkCheckboxesFor(
                     m => m.WhoAreYou,
-                    new FieldsetViewModel
+                    new()
                     {
-                        Legend = new LegendViewModel
+                        Fieldset = new()
                         {
-                            Text = "Which of these best describe you?",
-                            Classes = "govuk-fieldset__legend--m"
+                            Legend = new()
+                            {
+                                HtmlOrText = new("Which of these best describe you?"),
+                                Classes = ["govuk-fieldset__legend--m"]
+                            },
+                            Classes = ["govuk-!-margin-top-6"]
                         },
-                        Classes = "govuk-!-margin-top-6"
+                        Hint = new()
+                        {
+                            HtmlOrText = new("Select all that apply.")
+                        },
                     },
-                    new HintViewModel
-                    {
-                        Text = "Select all that apply."
-                    },
-                    conditionalOptions: whoAreYouConditionalOptions
-                    ))
+                    checkboxItemViewModels: new()
+                    {{
+                        WhoAreYou.Other,
+                        new()
+                        {
+                            Conditional = new(
+                                @<text>
+                                     @(await Html.GovUkTextInputFor(
+                                         m => m.OtherPersonText,
+                                         new()
+                                         {
+                                             Label = new()
+                                             {
+                                                 HtmlOrText = new("Other person description"),
+                                                 Classes = ["govuk-visually-hidden"],
+                                             }
+                                         }
+                                     ))
+                                 </text>)
+                        }
+                    }}
+                ))
 
                 <fieldset class="govuk-fieldset govuk-!-margin-top-6">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
@@ -174,31 +196,31 @@
                         <a href="@(Url.Action("PrivacyPolicyGet", "PrivacyPolicy"))" class="govuk-link">privacy policy</a>
                     </div>
 
-                    @(await Html.GovUkTextInput(new TextInputViewModel
+                    @(await Html.GovUkTextInput(new()
                     {
-                        Label = new LabelViewModel
+                        Label = new()
                         {
-                            Text = "Your email address (optional)"
+                            HtmlOrText = new("Your email address (optional)")
                         },
                         Name = nameof(Model.EmailAddress),
                         InputMode = "email"
                     }))
 
-                    @(await Html.GovUkTextInput(new TextInputViewModel
+                    @(await Html.GovUkTextInput(new()
                     {
-                        Label = new LabelViewModel
+                        Label = new()
                         {
-                            Text = "Your phone number (optional)"
+                            HtmlOrText = new("Your phone number (optional)")
                         },
                         Name = nameof(Model.PhoneNumber),
                         InputMode = "tel"
                     }))
                 </fieldset>
 
-                @(await Html.GovUkButton(new ButtonViewModel
+                @(await Html.GovUkButton(new()
                 {
-                    Text = "Submit",
-                    Classes = "govuk-!-margin-top-6"
+                    HtmlOrText = new("Submit"),
+                    Classes = ["govuk-!-margin-top-6"]
                 }))
 
             </div>
