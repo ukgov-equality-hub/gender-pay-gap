@@ -1,7 +1,5 @@
 ﻿@using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.Attributes
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminChangeSectorViewModel
 
 @{
@@ -9,35 +7,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.Organisation.OrganisationName,
+                HtmlOrText = new(Model.Organisation.OrganisationName),
                 Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Sector history",
+                HtmlOrText = new("Sector history"),
                 Href = Url.Action("ViewSectorHistory", "AdminOrganisationSector", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Change sector"
+                HtmlOrText = new("Change sector")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 <span class="govuk-caption-xl">Administration</span>
@@ -57,11 +50,10 @@
             @(Html.Hidden(nameof(AdminChangeSectorViewModel.Action),
                 ChangeOrganisationSectorViewModelActions.OfferNewSectorAndReason))
 
-            @(await Html.GovUkErrorSummary(ViewData.ModelState, new[]
-            {
+            @(await Html.GovUkErrorSummaryIfNeeded([
                 nameof(AdminChangeSectorViewModel.NewSector),
                 nameof(AdminChangeSectorViewModel.Reason)
-            }))
+            ]))
 
             <table class="govuk-table">
                 <tbody class="govuk-table__body">
@@ -85,77 +77,82 @@
 
                 @await Html.GovUkRadiosFor(
                     m => m.NewSector,
-                    labelOptions: new Dictionary<NewSectorTypes, LabelViewModel>
+                    new (),
+                    radioItemViewModels: new Dictionary<NewSectorTypes, RadioItemViewModel>
                     {
                         {
                             NewSectorTypes.Public,
-                            new LabelViewModel
+                            new()
                             {
-                                Text = GovUkRadioCheckboxLabelTextAttribute.GetLabelText(NewSectorTypes.Public),
-                            Classes = "govuk-!-font-size-24 govuk-!-font-weight-bold"
+                                Label = new()
+                                {
+                                    HtmlOrText = new(GovUkRadioCheckboxLabelTextAttribute.GetLabelText(NewSectorTypes.Public)),
+                                    Classes = ["govuk-!-font-size-24", "govuk-!-font-weight-bold"]
+                                },
+                                Hint = new()
+                                {
+                                    HtmlOrText = new(
+                                        @<text>
+                                             This includes:
+                                             <ul class="govuk-list govuk-list--bullet" style="color: inherit;">
+                                                 <li>Most government departments</li>
+                                                 <li>The armed forces</li>
+                                                 <li>Local authorities</li>
+                                                 <li>NHS bodies</li>
+                                                 <li>Universities</li>
+                                                 <li>Most schools, including academies and multi-academy trusts (except private and independent schools)</li>
+                                             </ul>
+                                         </text>)
+                                }
                             }
                         },
                         {
                             NewSectorTypes.Private,
-                            new LabelViewModel
+                            new()
                             {
-                                Text = GovUkRadioCheckboxLabelTextAttribute.GetLabelText(NewSectorTypes.Private),
-                                Classes = "govuk-!-font-size-24 govuk-!-font-weight-bold"
-                            }
-                        },
-                    },
-                    radioHints: new Dictionary<NewSectorTypes, HintViewModel>
-                    {
-                        {
-                            NewSectorTypes.Public,
-                            new HintViewModel
-                            {
-                                Html = @<text>
-                                           This includes:
-                                           <ul class="govuk-list govuk-list--bullet" style="color: inherit;">
-                                               <li>Most government departments</li>
-                                               <li>The armed forces</li>
-                                               <li>Local authorities</li>
-                                               <li>NHS bodies</li>
-                                               <li>Universities</li>
-                                               <li>Most schools, including academies and multi-academy trusts (except private and independent schools)</li>
-                                           </ul>
-                                        </text>
-                            }
-                        },
-                        {
-                            NewSectorTypes.Private,
-                            new HintViewModel
-                            {
-                                Html = @<text>
-                                           This includes:
-                                           <ul class="govuk-list govuk-list--bullet" style="color: inherit;">
-                                               <li>Limited companies</li>
-                                               <li>Limited liability partnerships</li>
-                                               <li>Charities</li>
-                                               <li>Independent and private schools</li>
-                                           </ul>
-                                        </text>
+                                Label = new()
+                                {
+                                    HtmlOrText = new(GovUkRadioCheckboxLabelTextAttribute.GetLabelText(NewSectorTypes.Private)),
+                                    Classes = ["govuk-!-font-size-24", "govuk-!-font-weight-bold"]
+                                },
+                                Hint = new()
+                                {
+                                    HtmlOrText = new(
+                                        @<text>
+                                             This includes:
+                                             <ul class="govuk-list govuk-list--bullet" style="color: inherit;">
+                                                 <li>Limited companies</li>
+                                                 <li>Limited liability partnerships</li>
+                                                 <li>Charities</li>
+                                                 <li>Independent and private schools</li>
+                                             </ul>
+                                         </text>)
+                                }
                             }
                         }
-                    })
+                    }
+                )
 
                 @await Html.GovUkCharacterCountFor(
                     m => m.Reason,
-                    labelOptions: new LabelViewModel
+                    new()
                     {
-                        Text = "What is the reason for this change?",
-                        Classes = "govuk-label--m"
-                    },
-                    formGroupOptions: new FormGroupViewModel
-                    {
-                        Classes = "govuk-!-margin-top-6"
-                    })
+                        Label = new()
+                        {
+                            HtmlOrText = new("What is the reason for this change?"),
+                            Classes = ["govuk-label--m"]
+                        },
+                        FormGroup = new()
+                        {
+                            Classes = ["govuk-!-margin-top-6"]
+                        }
+                    }
+                )
 
-                @(await Html.GovUkButton(new ButtonViewModel
+                @(await Html.GovUkButton(new()
                 {
-                    Text = "Continue",
-                    Classes = "govuk-!-margin-bottom-4",
+                    HtmlOrText = new("Continue"),
+                    Classes = ["govuk-!-margin-bottom-4"],
                     PreventDoubleClick = true
                 }))
 
