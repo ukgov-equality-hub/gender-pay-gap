@@ -1,7 +1,6 @@
 ﻿@using GenderPayGap.Database
 @using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.ChangeOrganisationSicCodesViewModel
 
 @{
@@ -9,35 +8,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.Organisation.OrganisationName,
+                HtmlOrText = new(Model.Organisation.OrganisationName),
                 Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "SIC codes history",
+                HtmlOrText = new("SIC codes history"),
                 Href = Url.Action("ViewSicCodesHistory", "AdminOrganisationSicCodes", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Change SIC codes"
+                HtmlOrText = new("Change SIC codes")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 @{
@@ -70,7 +64,7 @@
             </span>
         </h1>
 
-        @(await Html.GovUkErrorSummary(ViewData.ModelState))
+        @(await Html.GovUkErrorSummaryIfNeeded())
 
         <h2 class="govuk-heading-l">
             Check the new SIC codes
@@ -200,17 +194,20 @@
 
             @(await Html.GovUkCharacterCountFor(
                 m => m.Reason,
-                labelOptions: new LabelViewModel
+                new()
                 {
-                    Text = "What is the reason for this change?",
-                    Classes = "govuk-label--m"
+                    Label = new()
+                    {
+                        HtmlOrText = new("What is the reason for this change?"),
+                        Classes = ["govuk-label--m"]
+                    }
                 }
-                ))
+            ))
 
-            @(await Html.GovUkButton(new ButtonViewModel
+            @(await Html.GovUkButton(new()
             {
-                Text = "Confirm and save",
-                Classes = "govuk-!-margin-right-2 govuk-!-margin-bottom-4"
+                HtmlOrText = new("Confirm and save"),
+                Classes = ["govuk-!-margin-right-2", "govuk-!-margin-bottom-4"]
             }))
         </form>
 
@@ -222,10 +219,10 @@
                     ManuallyChangeOrganisationSicCodesActions.MakeMoreManualChanges))
                 @(CurrentState())
 
-                @(await Html.GovUkButton(new ButtonViewModel
+                @(await Html.GovUkButton(new()
                 {
-                    Classes = "govuk-button--secondary govuk-!-margin-bottom-4",
-                    Text = "Make more changes"
+                    HtmlOrText = new("Make more changes"),
+                    Classes = ["govuk-button--secondary", "govuk-!-margin-bottom-4"]
                 }))
             </form>
         }

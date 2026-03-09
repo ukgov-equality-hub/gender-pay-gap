@@ -1,7 +1,6 @@
 ﻿@using GenderPayGap.Database
 @using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.ChangeOrganisationSicCodesViewModel
 
 @{
@@ -9,36 +8,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>();
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "Admin",
-            Href = Url.Action("AdminHomePage", "AdminHomepage")
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = Model.Organisation.OrganisationName,
-            Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "SIC codes history",
-            Href = Url.Action("ViewSicCodesHistory", "AdminOrganisationSicCodes", new {id = Model.Organisation.OrganisationId})
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "Change SIC codes"
-        });
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
+    @await Html.GovUkBreadcrumbs(new()
     {
-        Crumbs = crumbs
-    }))
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Admin"),
+                Href = Url.Action("AdminHomePage", "AdminHomepage")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("SIC codes history"),
+                Href = Url.Action("ViewSicCodesHistory", "AdminOrganisationSicCodes", new {id = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("Change SIC codes")
+            }
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -53,7 +46,7 @@
             </span>
         </h1>
 
-        @(await Html.GovUkErrorSummary(ViewData.ModelState))
+        @(await Html.GovUkErrorSummaryIfNeeded())
 
         <h2 class="govuk-heading-l">
             This organisation has different SIC codes registered with Companies House
@@ -169,21 +162,24 @@
             }
             @(await Html.GovUkRadiosFor(
                 m => m.AcceptCompaniesHouseSicCodes,
-                new FieldsetViewModel
+                new()
                 {
-                    Legend = new LegendViewModel
+                    Fieldset = new()
                     {
-                        Text = "Would you like to use these SIC codes from Companies House?",
-                        Classes = "govuk-fieldset__legend--m"
-                    },
-                    Classes = "govuk-!-margin-top-6"
+                        Legend = new()
+                        {
+                            HtmlOrText = new("Would you like to use these SIC codes from Companies House?"),
+                            Classes = ["govuk-fieldset__legend--m"]
+                        },
+                        Classes = ["govuk-!-margin-top-6"]
+                    }
                 }
-                ))
+            ))
 
-            @(await Html.GovUkButton(new ButtonViewModel
+            @(await Html.GovUkButton(new()
             {
-                Text = "Continue",
-                Classes = "govuk-!-margin-bottom-4"
+                HtmlOrText = new("Continue"),
+                Classes = ["govuk-!-margin-bottom-4"]
             }))
 
             <p class="govuk-body">
