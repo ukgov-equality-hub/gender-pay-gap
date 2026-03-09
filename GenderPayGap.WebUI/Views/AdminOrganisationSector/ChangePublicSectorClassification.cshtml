@@ -1,7 +1,6 @@
 ﻿@using GenderPayGap.WebUI.Helpers
 @using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminChangePublicSectorClassificationViewModel
 
 @{
@@ -9,30 +8,25 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-{
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.OrganisationName,
+                HtmlOrText = new(Model.OrganisationName),
                 Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Change public-sector classification"
+                HtmlOrText = new("Change public-sector classification")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -47,7 +41,7 @@
             </span>
         </h1>
 
-        @(await Html.GovUkErrorSummary(ViewData.ModelState))
+        @(await Html.GovUkErrorSummaryIfNeeded())
 
         
         <form method="post" action="@Url.Action("ChangePublicSectorClassificationPost", "AdminOrganisationSector", new {id = Model.OrganisationId})">
@@ -55,29 +49,29 @@
 
             @{
                 var error = ModelErrorHelper.GetErrorMessage(ViewData.ModelState, nameof(Model.SelectedPublicSectorTypeId));
-                ErrorMessageViewModel errorMessageViewModel = error != null ? new ErrorMessageViewModel {Text = error} : null;
+                ErrorMessageViewModel errorMessageViewModel = error != null ? new ErrorMessageViewModel {HtmlOrText = new(error)} : null;
             }
             @(await Html.GovUkRadios(new RadiosViewModel
             {
                 Name = nameof(AdminChangePublicSectorClassificationViewModel.SelectedPublicSectorTypeId),
                 Fieldset = new FieldsetViewModel
                 {
-                    Legend = new LegendViewModel
+                    Legend = new()
                     {
-                        Html = @<text>
-                                   What type of public sector organisation is @(Model.OrganisationName)?
-                                </text>,
-                        Classes = "govuk-fieldset__legend--m"
+                        HtmlOrText = new(@<text>
+                                              What type of public sector organisation is @(Model.OrganisationName)?
+                                          </text>),
+                        Classes = ["govuk-fieldset__legend--m"]
                     }
                 },
-                Items = Model.PublicSectorTypes
+                RadioItems = Model.PublicSectorTypes
                         .Select(publicSectorType =>
                         {
                             string fieldName = nameof(AdminChangePublicSectorClassificationViewModel.SelectedPublicSectorTypeId);
                             int fieldValue = publicSectorType.PublicSectorTypeId;
                             string fieldId = $"{fieldName}_{fieldValue}";
 
-                            return (ItemViewModel) new RadioItemViewModel
+                            return new RadioItemViewModel
                             {
                                 Name = fieldName,
                                 Value = fieldValue.ToString(),
@@ -85,7 +79,7 @@
                                 Checked = Model.SelectedPublicSectorTypeId == fieldValue,
                                 Label = new LabelViewModel
                                 {
-                                    Text = publicSectorType.Description,
+                                    HtmlOrText = new(publicSectorType.Description),
                                     For = fieldId
                                 }
                             };
@@ -96,17 +90,20 @@
             
             @(await Html.GovUkCharacterCountFor(
                 m => m.Reason,
-                labelOptions: new LabelViewModel
+                new()
                 {
-                    Text = "What is the reason for this change?",
-                    Classes = "govuk-label--m"
+                    Label = new()
+                    {
+                        HtmlOrText = new("What is the reason for this change?"),
+                        Classes = ["govuk-label--m"]
+                    }
                 }
-                ))
+            ))
 
-            @(await Html.GovUkButton(new ButtonViewModel
+            @(await Html.GovUkButton(new()
             {
-                Text = "Confirm and save",
-                Classes = "govuk-!-margin-right-2 govuk-!-margin-bottom-4"
+                HtmlOrText = new("Confirm and save"),
+                Classes = ["govuk-!-margin-right-2", "govuk-!-margin-bottom-4"]
             }))
         </form>
 
