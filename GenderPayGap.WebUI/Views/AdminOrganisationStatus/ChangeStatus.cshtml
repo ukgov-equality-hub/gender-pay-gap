@@ -2,9 +2,7 @@
 @using GenderPayGap.Core.Helpers
 @using GenderPayGap.WebUI.Helpers
 @using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminChangeOrganisationStatusViewModel
 
 @{
@@ -12,35 +10,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.Organisation.OrganisationName,
+                HtmlOrText = new(Model.Organisation.OrganisationName),
                 Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Status history",
+                HtmlOrText = new("Status history"),
                 Href = Url.Action("ViewStatusHistory", "AdminOrganisationStatus", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Change status"
+                HtmlOrText = new("Change status")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 @{
@@ -60,7 +53,7 @@
         },
     };
 
-    var items = new List<ItemViewModel>();
+    var items = new List<RadioItemViewModel>();
 
     foreach ((OrganisationStatuses status, string hint) in statusHints)
     {
@@ -77,12 +70,12 @@
                 Checked = Model.NewStatus == status,
                 Label = new LabelViewModel
                 {
-                    Text = status.ToString(),
+                    HtmlOrText = new(status.ToString()),
                     For = fieldId
                 },
                 Hint = new HintViewModel
                 {
-                    Text = hint
+                    HtmlOrText = new(hint)
                 }
             });
         }
@@ -102,7 +95,7 @@
             </span>
         </h1>
         
-        @await Html.GovUkErrorSummary(ViewData.ModelState)
+        @await Html.GovUkErrorSummaryIfNeeded()
 
     </div>
 </div>
@@ -133,21 +126,21 @@
             <div class="govuk-form-group">
                 @{
                     string error = ModelErrorHelper.GetErrorMessage(ViewData.ModelState, nameof(Model.NewStatus));
-                    ErrorMessageViewModel radiosErrorMessageViewModel = error != null ? new ErrorMessageViewModel {Text = error} : null;
+                    ErrorMessageViewModel radiosErrorMessageViewModel = error != null ? new ErrorMessageViewModel {HtmlOrText = new(error)} : null;
                 }
                 @await Html.GovUkRadios(new RadiosViewModel
                 {
                     Name = nameof(AdminChangeOrganisationStatusViewModel.NewStatus),
                     Fieldset = new FieldsetViewModel
                     {
-                        Legend = new LegendViewModel
+                        Legend = new()
                         {
-                            Text = "Please select a new status",
-                            Classes = "govuk-fieldset__legend--m"
+                            HtmlOrText = new("Please select a new status"),
+                            Classes = ["govuk-fieldset__legend--m"]
                         },
-                        Classes = "govuk-!-margin-top-6"
+                        Classes = ["govuk-!-margin-top-6"]
                     },
-                    Items = items,
+                    RadioItems = items,
                     ErrorMessage = radiosErrorMessageViewModel
                 })
             </div>
@@ -214,13 +207,14 @@
 
                                             Label = new LabelViewModel
                                             {
-                                                Html = @<text>
-                                                           <span class="govuk-visually-hidden">
-                                                               Mark reporting year
-                                                               @(ReportingYearsHelper.FormatYearAsReportingPeriod(year.ReportingYear))
-                                                               as Out Of Scope
-                                                           </span>
-                                                        </text>
+                                                HtmlOrText = new(
+                                                    @<text>
+                                                         <span class="govuk-visually-hidden">
+                                                             Mark reporting year
+                                                             @(ReportingYearsHelper.FormatYearAsReportingPeriod(year.ReportingYear))
+                                                             as Out Of Scope
+                                                         </span>
+                                                     </text>)
                                             }
                                         })
                                     }
@@ -239,20 +233,24 @@
 
             @await Html.GovUkCharacterCountFor(
                 m => m.Reason,
-                labelOptions: new LabelViewModel
+                new()
                 {
-                    Text = "What is the reason for this change?",
-                    Classes = "govuk-label--m"
-                },
-                formGroupOptions: new FormGroupViewModel
-                {
-                    Classes = "govuk-!-margin-top-6"
-                })
+                    Label = new()
+                    {
+                        HtmlOrText = new("What is the reason for this change?"),
+                        Classes = ["govuk-label--m"]
+                    },
+                    FormGroup = new()
+                    {
+                        Classes = ["govuk-!-margin-top-6"]
+                    }
+                }
+            )
 
-            @(await Html.GovUkButton(new ButtonViewModel
+            @(await Html.GovUkButton(new()
             {
-                Text = "Continue",
-                Classes = "govuk-!-margin-bottom-4"
+                HtmlOrText = new("Continue"),
+                Classes = ["govuk-!-margin-bottom-4"]
             }))
 
             <p class="govuk-body">
