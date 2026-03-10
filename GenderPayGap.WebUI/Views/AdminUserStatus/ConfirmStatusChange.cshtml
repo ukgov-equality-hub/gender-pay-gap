@@ -1,8 +1,7 @@
 @using GenderPayGap.Core
 @using GenderPayGap.Database
 @using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminChangeUserStatusViewModel
 
 @{
@@ -10,35 +9,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.User.Fullname,
+                HtmlOrText = new(Model.User.Fullname),
                 Href = Url.Action("ViewUser", "AdminViewUser", new {id = Model.User.UserId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Status history",
+                HtmlOrText = new("Status history"),
                 Href = Url.Action("ViewStatusHistory", "AdminUserStatus", new {id = Model.User.UserId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Change status"
+                HtmlOrText = new("Change status")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 <span class="govuk-caption-xl">Administration</span>
@@ -178,10 +172,10 @@
                 }
             }
             <div class="govuk-form-group">
-                @(await Html.GovUkButton(new ButtonViewModel
+                @(await Html.GovUkButton(new()
                 {
-                    Text = "Confirm",
-                    Classes = "govuk-!-margin-bottom-4",
+                    HtmlOrText = new("Confirm"),
+                    Classes = ["govuk-!-margin-bottom-4"],
                     PreventDoubleClick = true
                 }))
 

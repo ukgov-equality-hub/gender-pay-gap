@@ -1,39 +1,38 @@
 using GenderPayGap.Core;
 using GenderPayGap.Database;
-using GovUkDesignSystem.Attributes.ValidationAttributes;
+using GovUkDesignSystemDotNet;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace GenderPayGap.WebUI.Models.Admin
+namespace GenderPayGap.WebUI.Models.Admin;
+
+public class AdminChangeUserStatusViewModel 
 {
-    public class AdminChangeUserStatusViewModel 
-    {
 
-        public ChangeUserStatusViewModelActions Action { get; set; }
+    public ChangeUserStatusViewModelActions Action { get; set; }
 
-        [GovUkValidateRequiredIf(
-            IsRequiredPropertyName = nameof(NewStatusRequired), 
-            ErrorMessageIfMissing = "Please select a new status")]
-        public UserStatuses? NewStatus { get; set; }
+    [GovUkValidateRequiredIf(
+        IsRequiredPropertyName = nameof(NewStatusRequired), 
+        ErrorMessageIfMissing = "Please select a new status")]
+    public UserStatuses? NewStatus { get; set; }
 
-        public bool NewStatusRequired => Action is ChangeUserStatusViewModelActions.OfferNewStatusAndReason;
+    public bool NewStatusRequired => Action is ChangeUserStatusViewModelActions.OfferNewStatusAndReason;
 
-        [GovUkValidateRequired(ErrorMessageIfMissing = "Please enter a reason for this change.")]
-        [GovUkValidateCharacterCount(MaxCharacters = 250, NameAtStartOfSentence = "Reason", NameWithinSentence = "Reason")]
-        public string Reason { get; set; }
+    [GovUkValidateRequired(ErrorMessageIfMissing = "Please enter a reason for this change.")]
+    [GovUkValidateCharacterCount(Limit = 250, Units = CharacterCountMaxLengthUnit.Characters, NameAtStartOfSentence = "Reason", NameWithinSentence = "Reason")]
+    public string Reason { get; set; }
 
-        [BindNever /* Output Only - only used for sending data from the Controller to the View */]
-        public User User { get; set; }
-        [BindNever /* Output Only - only used for sending data from the Controller to the View */]
-        public List<InactiveUserOrganisation> InactiveUserOrganisations { get; set; }
+    [BindNever /* Output Only - only used for sending data from the Controller to the View */]
+    public User User { get; set; }
+    [BindNever /* Output Only - only used for sending data from the Controller to the View */]
+    public List<InactiveUserOrganisation> InactiveUserOrganisations { get; set; }
 
-    }
+}
 
-    public enum ChangeUserStatusViewModelActions
-    {
+public enum ChangeUserStatusViewModelActions
+{
 
-        Unknown,
-        OfferNewStatusAndReason,
-        ConfirmStatusChange
+    Unknown,
+    OfferNewStatusAndReason,
+    ConfirmStatusChange
 
-    }
 }
