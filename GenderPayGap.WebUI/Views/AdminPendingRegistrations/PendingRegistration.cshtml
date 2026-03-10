@@ -3,9 +3,7 @@
 @using GenderPayGap.WebUI.Helpers
 @using GenderPayGap.WebUI.Models.AddOrganisation
 @using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminPendingRegistrationViewModel
 
 @{
@@ -25,40 +23,34 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Pending Registrations",
+                HtmlOrText = new("Pending Registrations"),
                 Href = Url.Action("PendingRegistrations", "AdminPendingRegistrations")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = $"{Model.UserOrganisation.User.Firstname} {Model.UserOrganisation.User.Lastname} ({Model.UserOrganisation.User.JobTitle}) - {Model.UserOrganisation.Organisation.OrganisationName}"
+                HtmlOrText = new($"{Model.UserOrganisation.User.Firstname} {Model.UserOrganisation.User.Lastname} ({Model.UserOrganisation.User.JobTitle}) - {Model.UserOrganisation.Organisation.OrganisationName}")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        @(await Html.GovUkErrorSummary(ViewData.ModelState, new[]
-        {
+        @(await Html.GovUkErrorSummaryIfNeeded([
             nameof(AdminPendingRegistrationViewModel.ApproveOrReject),
             nameof(AdminPendingRegistrationViewModel.RejectionReason),
-        }))
+        ]))
 
         <span class="govuk-caption-xl">Administration</span>
         <h1 class="govuk-heading-xl">
@@ -443,35 +435,44 @@
 
             @await Html.GovUkRadiosFor(
                 m => m.ApproveOrReject,
-                fieldsetOptions: new FieldsetViewModel
+                new()
                 {
-                    Legend = new LegendViewModel
+                    Fieldset = new()
                     {
-                        Html = @<h2 class="govuk-heading-l govuk-!-margin-bottom-2">
-                                   Would you like to approve or reject this registration request?
-                               </h2>,
+                        Legend = new()
+                        {
+                            HtmlOrText = new(@<h2 class="govuk-heading-l govuk-!-margin-bottom-2">
+                                                 Would you like to approve or reject this registration request?
+                                             </h2>),
+                        },
+                        Classes = ["govuk-!-margin-bottom-4"]
                     },
-                    Classes = "govuk-!-margin-bottom-4"
                 },
-                conditionalOptions: new Dictionary<AdminPendingRegistrationApproveOrReject, Conditional>
-                {
-                    { AdminPendingRegistrationApproveOrReject.Reject , new Conditional
+                radioItemViewModels: new Dictionary<AdminPendingRegistrationApproveOrReject, RadioItemViewModel>()
+                {{
+                    AdminPendingRegistrationApproveOrReject.Reject,
+                    new()
                     {
-                        Html = @<div>
-                                   @(await Html.GovUkCharacterCountFor(
-                                       m => m.RejectionReason,
-                                       labelOptions: new LabelViewModel
-                                       {
-                                           Text = "Reason for rejection",
-                                           Classes = "govuk-label--s"
-                                       }
-                                   ))
-                                </div>
-                    }}
-                })
+                        Conditional = new(
+                            @<div>
+                                @(await Html.GovUkCharacterCountFor(
+                                    m => m.RejectionReason,
+                                    new()
+                                    {
+                                        Label = new()
+                                        {
+                                            HtmlOrText = new("Reason for rejection"),
+                                            Classes = ["govuk-label--s"]
+                                        }
+                                    }
+                                ))
+                            </div>)
+                    }
+                }}
+            )
             
             <button class="govuk-button govuk-!-margin-bottom-4" data-module="govuk-button"
-                    id="original-button" zdisabled="disabled">
+                    id="original-button">
                 Continue
             </button>
             <button class="govuk-button govuk-button--warning govuk-!-margin-bottom-4" data-module="govuk-button"
