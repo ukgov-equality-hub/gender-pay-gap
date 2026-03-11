@@ -1,6 +1,5 @@
 ﻿@using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.ChangeOrganisationAddressViewModel
 
 @{
@@ -8,36 +7,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>();
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "Admin",
-            Href = Url.Action("AdminHomePage", "AdminHomepage")
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = Model.Organisation.OrganisationName,
-            Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new { id = Model.Organisation.OrganisationId })
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "Address history",
-            Href = Url.Action("ViewAddressHistory", "AdminOrganisationAddress", new { id = Model.Organisation.OrganisationId })
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "Change address"
-        });
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
+    @await Html.GovUkBreadcrumbs(new()
     {
-        Crumbs = crumbs
-    }))
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Admin"),
+                Href = Url.Action("AdminHomePage", "AdminHomepage")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("Address history"),
+                Href = Url.Action("ViewAddressHistory", "AdminOrganisationAddress", new {id = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("Change address")
+            }
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -52,7 +45,7 @@
             </span>
         </h1>
         
-        @(await Html.GovUkErrorSummary(ViewData.ModelState))
+        @(await Html.GovUkErrorSummaryIfNeeded())
 
         <h2 class="govuk-heading-l">
             This organisation has a different address registered with Companies House
@@ -156,40 +149,48 @@
 
             @await Html.GovUkRadiosFor(
                 m => m.AcceptCompaniesHouseAddress,
-                fieldsetOptions: new FieldsetViewModel
+                new()
                 {
-                    Legend = new LegendViewModel
+                    Fieldset = new()
                     {
-                        Text = "Would you like to use this address from Companies House?",
-                        Classes = "govuk-fieldset__legend--m"
+                        Legend = new()
+                        {
+                            HtmlOrText = new("Would you like to use this address from Companies House?"),
+                            Classes = ["govuk-fieldset__legend--m"]
+                        },
+                        Classes = ["govuk-!-margin-top-6"]
                     },
-                    Classes = "govuk-!-margin-top-6"
                 },
-                conditionalOptions: new Dictionary<AcceptCompaniesHouseAddress, Conditional>
-                {
-                    { AcceptCompaniesHouseAddress.Accept , new Conditional
+                radioItemViewModels: new Dictionary<AcceptCompaniesHouseAddress, RadioItemViewModel>
+                {{
+                    AcceptCompaniesHouseAddress.Accept ,
+                    new RadioItemViewModel
                     {
-                        Html = @<div id="reason-for-change-container">
-                                   @(await Html.GovUkCharacterCountFor(
-                                       m => m.Reason,
-                                       labelOptions: new LabelViewModel
-                                       {
-                                           Text = "What is the reason for this change?",
-                                           Classes = "govuk-label--m"
-                                       },
-                                       hintOptions: new HintViewModel
-                                       {
-                                           Text = "(Only required if you are using the address from Companies House)"
-                                       }
-                                   ))
-                                </div>
-                    }}
-                })
+                        Conditional = new(@<div id="reason-for-change-container">
+                                              @(await Html.GovUkCharacterCountFor(
+                                                  m => m.Reason,
+                                                  new()
+                                                  {
+                                                      Label = new()
+                                                      {
+                                                          HtmlOrText = new("What is the reason for this change?"),
+                                                          Classes = ["govuk-label--m"]
+                                                      },
+                                                      Hint = new()
+                                                      {
+                                                          HtmlOrText = new("(Only required if you are using the address from Companies House)")
+                                                      }
+                                                  }
+                                              ))
+                                          </div>)
+                    }
+                }}
+            )
 
-            @(await Html.GovUkButton(new ButtonViewModel
+            @(await Html.GovUkButton(new()
             {
-                Text = "Continue",
-                Classes = "govuk-!-margin-bottom-4"
+                HtmlOrText = new("Continue"),
+                Classes = ["govuk-!-margin-bottom-4"]
             }))
 
             <p class="govuk-body">

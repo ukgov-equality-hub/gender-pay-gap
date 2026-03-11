@@ -2,9 +2,7 @@
 @using GenderPayGap.Core.Helpers
 @using GenderPayGap.Database
 @using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminChangeOrganisationStatusViewModel
 
 @{
@@ -12,35 +10,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.Organisation.OrganisationName,
+                HtmlOrText = new(Model.Organisation.OrganisationName),
                 Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Status history",
+                HtmlOrText = new("Status history"),
                 Href = Url.Action("ViewStatusHistory", "AdminOrganisationStatus", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Change status"
+                HtmlOrText = new("Change status")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -250,10 +243,10 @@
                 }
             }
             <div class="govuk-form-group">
-                @(await Html.GovUkButton(new ButtonViewModel
+                @(await Html.GovUkButton(new()
                 {
-                    Text = "Confirm",
-                    Classes = "govuk-!-margin-bottom-4"
+                    HtmlOrText = new("Confirm"),
+                    Classes = ["govuk-!-margin-bottom-4"]
                 }))
 
                 <p class="govuk-body">

@@ -1,5 +1,4 @@
-﻿@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+﻿@using GovUkDesignSystemDotNet
 @model AdminChangeUserContactPreferencesViewModel
 
 @{
@@ -7,30 +6,25 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-{
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.FullName,
+                HtmlOrText = new(Model.FullName),
                 Href = Url.Action("ViewUser", "AdminViewUser", new {id = Model.UserId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Change contact preferences"
+                HtmlOrText = new("Change contact preferences")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -44,43 +38,54 @@
                 for @(Model.FullName)
             </span>
         </h1>
+        
+        @(await Html.GovUkErrorSummaryIfNeeded())
 
         <form method="post" action="@Url.Action("ChangeContactPreferencesPost", "AdminUserContactPreferences", new { id = Model.UserId })">
             @(Html.AntiForgeryToken())
             
             @(await Html.GovUkCheckboxItemFor(
                 m => m.AllowContact,
-                labelOptions: new LabelViewModel
+                new()
                 {
-                    Text = "Happy to be contacted"
+                    Label = new()
+                    {
+                        HtmlOrText = new("Happy to be contacted")
+                    }
                 }
             ))
             
             @(await Html.GovUkCheckboxItemFor(
                 m => m.SendUpdates,
-                labelOptions: new LabelViewModel
+                new()
                 {
-                    Text = "Would like to receive updates"
+                    Label = new()
+                    {
+                        HtmlOrText = new("Would like to receive updates")
+                    }
                 }
             ))
             
             @(await Html.GovUkCharacterCountFor(
                 m => m.Reason,
-                labelOptions: new LabelViewModel
+                new()
                 {
-                    Text = "What is the reason for this change?",
-                    Classes = "govuk-label--m"
-                },
-                formGroupOptions: new FormGroupViewModel
-                {
-                    Classes = "govuk-!-margin-top-6"
+                    Label = new()
+                    {
+                        HtmlOrText = new("What is the reason for this change?"),
+                        Classes = ["govuk-label--m"]
+                    },
+                    FormGroup = new()
+                    {
+                        Classes = ["govuk-!-margin-top-6"]
+                    }
                 }
             ))
 
-            @(await Html.GovUkButton(new ButtonViewModel
+            @(await Html.GovUkButton(new()
             {
-                Text = "Confirm and save",
-                Classes = "govuk-!-margin-bottom-4"
+                HtmlOrText = new("Confirm and save"),
+                Classes = ["govuk-!-margin-bottom-4"]
             }))
 
             <p class="govuk-body">

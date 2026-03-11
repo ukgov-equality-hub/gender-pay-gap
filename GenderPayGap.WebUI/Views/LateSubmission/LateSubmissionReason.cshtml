@@ -1,7 +1,5 @@
 ﻿@using GenderPayGap.Core.Helpers
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Report.LateSubmissionReasonViewModel
 
 @{
@@ -17,35 +15,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Manage Employers",
+                HtmlOrText = new("Manage Employers"),
                 Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.Organisation.OrganisationName,
+                HtmlOrText = new(Model.Organisation.OrganisationName),
                 Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = $"{formattedReportingYears} Reporting year",
-                Href = Url.Action("ReportOverview", "ReportOverview", new { encryptedOrganisationId, reportingYear = Model.ReportingYear})
+                HtmlOrText = new($"{formattedReportingYears} Reporting year"),
+                Href = Url.Action("ReportOverview", "ReportOverview", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Late submission reason"
+                HtmlOrText = new("Late submission reason")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -62,11 +55,10 @@
         </h1>
         
         
-        @(await Html.GovUkErrorSummary(ViewData.ModelState, new[]
-        {
+        @(await Html.GovUkErrorSummaryIfNeeded([
             nameof(Model.ReceivedLetterFromEhrc),
             nameof(Model.Reason)
-        }))
+        ]))
 
         <form method="post" action="@Url.Action("LateSubmissionReasonPost", "LateSubmission", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})">
             @(Html.AntiForgeryToken())
@@ -74,29 +66,32 @@
             <fieldset class="govuk-fieldset">
                 @(await Html.GovUkRadiosFor(
                     m => m.ReceivedLetterFromEhrc,
-                    fieldsetOptions: new FieldsetViewModel
+                    new()
                     {
-                        Legend = new LegendViewModel
+                        Fieldset = new()
                         {
-                            Text = "Have you received a letter about a breach of the regulations from the Equality and Human Rights Commission?",
-                            Classes = "govuk-fieldset__legend--m"
-                        },
-                        Classes = "govuk-radios--inline"
+                            Legend = new()
+                            {
+                                HtmlOrText = new("Have you received a letter about a breach of the regulations from the Equality and Human Rights Commission?"),
+                                Classes = ["govuk-fieldset__legend--m"]
+                            },
+                            Classes = ["govuk-radios--inline"]
+                        }
                     }
-                    ))
+                ))
 
                 @(await Html.GovUkCharacterCountFor(
                     m => m.Reason,
-                    labelOptions: new LabelViewModel
+                    new()
                     {
-                        Text = "Please explain why your organisation is reporting or changing your gender pay gap figures"
+                        Label = new() { HtmlOrText = new("Please explain why your organisation is reporting or changing your gender pay gap figures") }
                     }
-                    ))
+                ))
 
-                @(await Html.GovUkButton(new ButtonViewModel
+                @(await Html.GovUkButton(new()
                 {
-                    Text = "Confirm and submit",
-                    Classes = "govuk-!-margin-bottom-4"
+                    HtmlOrText = new("Confirm and submit"),
+                    Classes = ["govuk-!-margin-bottom-4"]
                 }))
                 <p class="govuk-body">
                     <a href="@Url.Action("ReportOverview", "ReportOverview", new { encryptedOrganisationId, reportingYear = Model.ReportingYear})"

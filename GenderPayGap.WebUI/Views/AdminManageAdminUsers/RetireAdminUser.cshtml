@@ -1,6 +1,5 @@
 @using GenderPayGap.Core
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminRetireAdminUserViewModel
 
 @{
@@ -8,35 +7,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Admin users",
+                HtmlOrText = new("Admin users"),
                 Href = Url.Action("ViewAdminUsers", "AdminManageAdminUsers")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.User.Fullname,
+                HtmlOrText = new(Model.User.Fullname),
                 Href = Url.Action("ViewUser", "AdminViewUser", new {id = Model.User.UserId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Retire admin user"
+                HtmlOrText = new("Retire admin user")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 <span class="govuk-caption-xl">Administration</span>
@@ -50,54 +44,59 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        
         <form method="POST" action="@Url.Action("RetireAdminUserPost", "AdminManageAdminUsers", new {userId = Model.User.UserId})">
             @(Html.AntiForgeryToken())
-            @await Html.GovUkErrorSummary(ViewData.ModelState)
+            
+            @await Html.GovUkErrorSummaryIfNeeded()
 
             <table class="govuk-table">
                 <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">User name</th>
-                        <td class="govuk-table__cell">@(Model.User.Fullname)</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">Current status</th>
-                        <td class="govuk-table__cell">@(Model.User.Status)</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">New status</th>
-                        <td class="govuk-table__cell">@(UserStatuses.Retired)</td>
-                    </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">User name</th>
+                    <td class="govuk-table__cell">@(Model.User.Fullname)</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Current status</th>
+                    <td class="govuk-table__cell">@(Model.User.Status)</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">New status</th>
+                    <td class="govuk-table__cell">@(UserStatuses.Retired)</td>
+                </tr>
                 </tbody>
             </table>
 
-            <div class="govuk-form-group">
-                @await Html.GovUkCharacterCountFor(
-                    m => m.Reason,
-                    labelOptions: new LabelViewModel
-                    {
-                        Text = "What is the reason for this change?",
-                        Classes = "govuk-label--m"
-                    },
-                    formGroupOptions: new FormGroupViewModel
-                    {
-                        Classes = "govuk-!-margin-top-6"
-                    })
-
-                @(await Html.GovUkButton(new ButtonViewModel
+            @await Html.GovUkCharacterCountFor(
+                m => m.Reason,
+                new()
                 {
-                    Text = "Continue",
-                    Classes = "govuk-!-margin-bottom-4"
-                }))
+                    Label = new()
+                    {
+                        HtmlOrText = new("What is the reason for this change?"),
+                        Classes = ["govuk-label--m"]
+                    },
+                    FormGroup = new()
+                    {
+                        Classes = ["govuk-!-margin-top-6"]
+                    }
+                }
+            )
 
-                <p class="govuk-body">
-                    <a href="@Url.Action("ViewAdminUsers", "AdminManageAdminUsers")"
-                       class="govuk-link">
-                        Cancel and return to manage admin users page
-                    </a>
-                </p>
+            @(await Html.GovUkButton(new()
+            {
+                HtmlOrText = new("Continue"),
+                Classes = ["govuk-!-margin-bottom-4"]
+            }))
 
-            </div>
+            <p class="govuk-body">
+                <a href="@Url.Action("ViewAdminUsers", "AdminManageAdminUsers")"
+                   class="govuk-link">
+                    Cancel and return to manage admin users page
+                </a>
+            </p>
+
         </form>
+        
     </div>
 </div>

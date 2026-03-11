@@ -1,6 +1,5 @@
 ﻿@using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminOrganisationCompanyNumberViewModel
 
 @{
@@ -8,30 +7,25 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-{
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.Organisation.OrganisationName,
+                HtmlOrText = new(Model.Organisation.OrganisationName),
                 Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Change company number"
+                HtmlOrText = new("Change company number")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 
@@ -67,21 +61,24 @@
 
             @(await Html.GovUkRadiosFor(
                 m => m.ChangeOrRemove,
-                new FieldsetViewModel
+                new()
                 {
-                    Legend = new LegendViewModel
+                    Fieldset = new()
                     {
-                        Text = "What would you like to do?",
-                        Classes = "govuk-fieldset__legend--m"
+                        Legend = new()
+                        {
+                            HtmlOrText = new ("What would you like to do?"),
+                            Classes = ["govuk-fieldset__legend--m"]
+                        }
                     }
                 }
             ))
 
             <div class="govuk-form-group">
-                @(await Html.GovUkButton(new ButtonViewModel
+                @(await Html.GovUkButton(new()
                 {
-                    Text = "Continue",
-                    Classes = "govuk-!-margin-bottom-4"
+                    HtmlOrText = new("Continue"),
+                    Classes = ["govuk-!-margin-bottom-4"]
                 }))
 
                 <p class="govuk-body">

@@ -1,5 +1,4 @@
-﻿@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+﻿@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.ChangeOrganisationAddressViewModel
 
 @{
@@ -7,36 +6,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>();
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "Admin",
-            Href = Url.Action("AdminHomePage", "AdminHomepage")
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = Model.Organisation.OrganisationName,
-            Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "Address history",
-            Href = Url.Action("ViewAddressHistory", "AdminOrganisationAddress", new {id = Model.Organisation.OrganisationId})
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "Change address"
-        });
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
+    @await Html.GovUkBreadcrumbs(new()
     {
-        Crumbs = crumbs
-    }))
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Admin"),
+                Href = Url.Action("AdminHomePage", "AdminHomepage")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("Address history"),
+                Href = Url.Action("ViewAddressHistory", "AdminOrganisationAddress", new {id = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("Change address")
+            }
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -157,10 +150,10 @@
                 </tbody>
             </table>
 
-            @(await Html.GovUkButton(new ButtonViewModel
+            @(await Html.GovUkButton(new()
             {
-                Text = "Confirm and save",
-                Classes = "govuk-!-margin-bottom-4"
+                HtmlOrText = new("Confirm and save"),
+                Classes = ["govuk-!-margin-bottom-4"]
             }))
 
             <p class="govuk-body">

@@ -1,37 +1,31 @@
 ﻿@using GenderPayGap.Database
 @using GenderPayGap.WebUI.Models.AdminReferenceData
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminSicSectionUploadCheckViewModel
 @{
     ViewBag.Title = "Upload new SIC sections - Reference Data - Administration - Gender pay gap service";
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Reference Data",
+                HtmlOrText = new("Reference Data"),
                 Href = Url.Action("ReferenceData", "AdminReferenceData")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "SIC sections"
+                HtmlOrText = new("SIC sections")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -42,7 +36,7 @@
             Update SIC sections
         </h1>
 
-        @(await Html.GovUkErrorSummary(ViewData.ModelState))
+        @(await Html.GovUkErrorSummaryIfNeeded())
 
         <p class="govuk-body">Please review the changes you are about to make</p>
 
@@ -176,10 +170,10 @@
         @if (!Model.AddsEditsDeletesSet.AnyChanges)
         {
             <p class="govuk-body govuk-!-margin-top-4">
-                @(await Html.GovUkButton(new ButtonViewModel
+                @(await Html.GovUkButton(new()
                 {
-                    Text = "Confirm and continue",
-                    Classes = "govuk-!-margin-bottom-1",
+                    HtmlOrText = new("Confirm and continue"),
+                    Classes = ["govuk-!-margin-bottom-1"],
                     Disabled = true
                 }))
 
@@ -196,17 +190,20 @@
 
                 @(await Html.GovUkCharacterCountFor(
                     m => m.Reason,
-                    labelOptions: new LabelViewModel
+                    new()
                     {
-                        Text = "What is the reason for this change?",
-                        Classes = "govuk-label--m"
+                        Label = new()
+                        {
+                            HtmlOrText = new("What is the reason for this change?"),
+                            Classes = ["govuk-label--m"]
+                        }
                     }
-                    ))
+                ))
 
-                @(await Html.GovUkButton(new ButtonViewModel
+                @(await Html.GovUkButton(new()
                 {
-                    Text = "Confirm and continue",
-                    Classes = "govuk-!-margin-bottom-4"
+                    HtmlOrText = new("Confirm and continue"),
+                    Classes = ["govuk-!-margin-bottom-4"]
                 }))
             </form>
         }

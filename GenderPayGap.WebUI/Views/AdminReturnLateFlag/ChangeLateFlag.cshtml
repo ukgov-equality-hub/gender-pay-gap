@@ -1,5 +1,4 @@
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminReturnLateFlagViewModel
 
 @{
@@ -7,30 +6,25 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.Return.Organisation.OrganisationName,
+                HtmlOrText = new(Model.Return.Organisation.OrganisationName),
                 Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Return.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Change late flag"
+                HtmlOrText = new("Change late flag")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -45,7 +39,7 @@
             </span>
         </h1>
 
-        @(await Html.GovUkErrorSummary(ViewData.ModelState))
+        @(await Html.GovUkErrorSummaryIfNeeded())
 
         <table class="govuk-table">
             <tbody class="govuk-table__body">
@@ -71,20 +65,24 @@
 
                 @await Html.GovUkCharacterCountFor(
                     m => m.Reason,
-                    labelOptions: new LabelViewModel
+                    new()
                     {
-                        Text = "What is the reason for this change?",
-                        Classes = "govuk-label--m"
-                    },
-                    formGroupOptions: new FormGroupViewModel
-                    {
-                        Classes = "govuk-!-margin-top-6"
-                    })
+                        Label = new()
+                        {
+                            HtmlOrText = new("What is the reason for this change?"),
+                            Classes = ["govuk-label--m"]
+                        },
+                        FormGroup = new()
+                        {
+                            Classes = ["govuk-!-margin-top-6"]
+                        }
+                    }
+                )
 
-                @(await Html.GovUkButton(new ButtonViewModel
+                @(await Html.GovUkButton(new()
                 {
-                    Text = "Confirm",
-                    Classes = "govuk-!-margin-bottom-4",
+                    HtmlOrText = new("Confirm"),
+                    Classes = ["govuk-!-margin-bottom-4"],
                     PreventDoubleClick = true
                 }))
 

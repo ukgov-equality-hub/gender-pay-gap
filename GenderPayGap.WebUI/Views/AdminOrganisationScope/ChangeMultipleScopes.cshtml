@@ -2,8 +2,7 @@
 @using GenderPayGap.Core.Helpers
 @using GenderPayGap.Database
 @using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminChangeMultipleScopesViewModel
 
 @{
@@ -11,35 +10,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-        {
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.Organisation.OrganisationName,
+                HtmlOrText = new(Model.Organisation.OrganisationName),
                 Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Scope history",
+                HtmlOrText = new("Scope history"),
                 Href = Url.Action("ViewScopeHistory", "AdminOrganisationScope", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Change scope"
+                HtmlOrText = new("Change scope")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -54,7 +48,7 @@
             </span>
         </h1>
         
-        @await Html.GovUkErrorSummary(ViewData.ModelState)
+        @(await Html.GovUkErrorSummaryIfNeeded())
 
         @if (Model.Organisation.Status == OrganisationStatuses.Retired || Model.Organisation.Status == OrganisationStatuses.Retired)
         {
@@ -146,22 +140,23 @@
                             <td class="govuk-table__cell">
                                 @if (year.CurrentScope != ScopeStatuses.InScope)
                                 {
-                                    @await Html.GovUkRadioItem(new RadioItemViewModel
+                                    @await Html.GovUkRadioItem(new()
                                     {
                                         Id = Html.IdFor(m => m.Years[i].NewScope),
                                         Name = Html.NameFor(m => m.Years[i].NewScope),
                                         Checked = year.NewScope == ScopeStatuses.InScope,
                                         Value = ScopeStatuses.InScope.ToString(),
 
-                                        Label = new LabelViewModel
+                                        Label = new()
                                         {
-                                            Html = @<text>
-                                                       <span class="govuk-visually-hidden">
-                                                           Mark reporting year
-                                                           @(ReportingYearsHelper.FormatYearAsReportingPeriod(year.ReportingYear))
-                                                           as In Scope
-                                                       </span>
-                                                    </text>
+                                            HtmlOrText = new(
+                                                @<text>
+                                                     <span class="govuk-visually-hidden">
+                                                         Mark reporting year
+                                                         @(ReportingYearsHelper.FormatYearAsReportingPeriod(year.ReportingYear))
+                                                         as In Scope
+                                                     </span>
+                                                 </text>)
                                         }
                                     })
                                 }
@@ -169,22 +164,23 @@
                             <td class="govuk-table__cell">
                                 @if (year.CurrentScope != ScopeStatuses.OutOfScope)
                                 {
-                                    @await Html.GovUkRadioItem(new RadioItemViewModel
+                                    @await Html.GovUkRadioItem(new()
                                     {
                                         Id = Html.IdFor(m => m.Years[i].NewScope),
                                         Name = Html.NameFor(m => m.Years[i].NewScope),
                                         Checked = year.NewScope == ScopeStatuses.OutOfScope,
                                         Value = ScopeStatuses.OutOfScope.ToString(),
 
-                                        Label = new LabelViewModel
+                                        Label = new()
                                         {
-                                            Html = @<text>
-                                                       <span class="govuk-visually-hidden">
-                                                           Mark reporting year
-                                                           @(ReportingYearsHelper.FormatYearAsReportingPeriod(year.ReportingYear))
-                                                           as Out Of Scope
-                                                       </span>
-                                                    </text>
+                                            HtmlOrText = new(
+                                                @<text>
+                                                     <span class="govuk-visually-hidden">
+                                                         Mark reporting year
+                                                         @(ReportingYearsHelper.FormatYearAsReportingPeriod(year.ReportingYear))
+                                                         as Out Of Scope
+                                                     </span>
+                                                 </text>)
                                         }
                                     })
                                 }
@@ -199,12 +195,13 @@
 
                                     Label = new LabelViewModel
                                     {
-                                        Html = @<text>
-                                                   <span class="govuk-visually-hidden">
-                                                       Do not change the scope of reporting year
-                                                       @(ReportingYearsHelper.FormatYearAsReportingPeriod(year.ReportingYear))
-                                                   </span>
-                                                </text>
+                                        HtmlOrText = new(
+                                            @<text>
+                                                 <span class="govuk-visually-hidden">
+                                                     Do not change the scope of reporting year
+                                                     @(ReportingYearsHelper.FormatYearAsReportingPeriod(year.ReportingYear))
+                                                 </span>
+                                             </text>)
                                     }
                                 })
                             </td>
@@ -221,20 +218,24 @@
 
             @await Html.GovUkCharacterCountFor(
                 m => m.Reason,
-                labelOptions: new LabelViewModel
+                new()
                 {
-                    Text = "What is the reason for this change?",
-                    Classes = "govuk-label--m"
-                },
-                formGroupOptions: new FormGroupViewModel
-                {
-                    Classes = "govuk-!-margin-top-6"
-                })
+                    Label = new()
+                    {
+                        HtmlOrText = new("What is the reason for this change?"),
+                        Classes = ["govuk-label--m"]
+                    },
+                    FormGroup = new()
+                    {
+                        Classes = ["govuk-!-margin-top-6"]
+                    }
+                }
+            )
 
-            @(await Html.GovUkButton(new ButtonViewModel
+            @(await Html.GovUkButton(new()
             {
-                Text = "Confirm",
-                Classes = "govuk-!-margin-bottom-4",
+                HtmlOrText = new("Confirm"),
+                Classes = ["govuk-!-margin-bottom-4"],
                 PreventDoubleClick = true
             }))
 

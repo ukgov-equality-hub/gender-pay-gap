@@ -1,7 +1,6 @@
 ﻿@using GenderPayGap.Database
 @using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.ChangeOrganisationSicCodesViewModel
 
 @{
@@ -9,35 +8,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-{
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.Organisation.OrganisationName,
+                HtmlOrText = new(Model.Organisation.OrganisationName),
                 Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "SIC codes history",
+                HtmlOrText = new("SIC codes history"),
                 Href = Url.Action("ViewSicCodesHistory", "AdminOrganisationSicCodes", new {id = Model.Organisation.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Change SIC codes"
+                HtmlOrText = new("Change SIC codes")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 @{
@@ -72,7 +66,7 @@
             </span>
         </h1>
 
-        @(await Html.GovUkErrorSummary(ViewData.ModelState))
+        @(await Html.GovUkErrorSummaryIfNeeded())
 
 
         <h2 class="govuk-heading-m">SIC codes to add</h2>
@@ -128,26 +122,39 @@
 
             @(await Html.GovUkTextInputFor(
                 m => m.SicCodeIdToChange,
-                labelOptions: new LabelViewModel
+                new()
                 {
-                    Text = "New SIC code to add"
-                },
-                hintOptions: new HintViewModel
-                {
-                    Html = @<text>
-                               See <a href="http://resources.companieshouse.gov.uk/sic/" target="_blank" rel="noopener" class="govuk-link">Companies House<span class="govuk-visually-hidden">(opens in a new window)</span></a> for the official list of SIC codes
-                            </text>
-                },
-                classes: "govuk-input--width-10 govuk-!-margin-right-2 govuk-!-margin-bottom-2",
-                textInputAppendix: new TextInputAppendixViewModel
-                {
-                    Html = @<text>
-                               <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0"
-                                       style="width: auto;"
-                                       data-module="govuk-button">
-                                   Add SIC code
-                               </button>
-                            </text>
+                    Label = new()
+                    {
+                        HtmlOrText = new("New SIC code to add")
+                    },
+                    Hint = new()
+                    {
+                        HtmlOrText = new(
+                            @<text>
+                                 See
+                                 <a href="http://resources.companieshouse.gov.uk/sic/"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="govuk-link">
+                                     Companies House
+                                     <span class="govuk-visually-hidden">(opens in a new window)</span>
+                                 </a>
+                                 for the official list of SIC codes
+                             </text>)
+                    },
+                    Classes = ["govuk-input--width-10", "govuk-!-margin-right-2", "govuk-!-margin-bottom-2"],
+                    Suffix = new()
+                    {
+                        HtmlOrText = new(@<text>
+                                              <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0"
+                                                      style="width: auto;"
+                                                      data-module="govuk-button">
+                                                  Add SIC code
+                                              </button>
+                                          </text>),
+                        Attributes = new() {{ "style", "border: none;" }}
+                    }
                 }
             ))
         </form>
@@ -261,10 +268,10 @@
             @(Html.Hidden(nameof(ChangeOrganisationSicCodesViewModel.Action),
                 ManuallyChangeOrganisationSicCodesActions.ManualChangeContinue))
             @(CurrentState())
-            @(await Html.GovUkButton(new ButtonViewModel
+            @(await Html.GovUkButton(new()
             {
-                Text = "Continue",
-                Classes = "govuk-!-margin-bottom-4"
+                HtmlOrText = new("Continue"),
+                Classes = ["govuk-!-margin-bottom-4"]
             }))
         </form>
             

@@ -1,6 +1,5 @@
 @using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.ChangeOrganisationNameViewModel
 
 @{
@@ -8,36 +7,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>();
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "Admin",
-            Href = Url.Action("AdminHomePage", "AdminHomepage")
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = Model.Organisation.OrganisationName,
-            Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new { id = Model.Organisation.OrganisationId })
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "Name history",
-            Href = Url.Action("ViewNameHistory", "AdminOrganisationName", new { id = Model.Organisation.OrganisationId })
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "Change name"
-        });
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
+    @await Html.GovUkBreadcrumbs(new()
     {
-        Crumbs = crumbs
-    }))
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Admin"),
+                Href = Url.Action("AdminHomePage", "AdminHomepage")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("Name history"),
+                Href = Url.Action("ViewNameHistory", "AdminOrganisationName", new {id = Model.Organisation.OrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new("Change name")
+            }
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -56,37 +49,42 @@
             @(Html.AntiForgeryToken())
             @(Html.HiddenFor(m => m.Action))
 
-            @(await Html.GovUkErrorSummary(ViewData.ModelState, new[]
-            {
+            @(await Html.GovUkErrorSummaryIfNeeded([
                 nameof(ChangeOrganisationNameViewModel.Reason),
-            }))
+            ]))
 
             <fieldset class="govuk-fieldset">
 
                 @(await Html.GovUkTextInputFor(
                     m => m.Name,
-                    labelOptions: new LabelViewModel { Text = "What is their name?" },
-                    formGroupOptions: new FormGroupViewModel { Classes = "govuk-!-margin-bottom-3" },
-                    autocomplete: "organization"
+                    new()
+                    {
+                        Label = new() { HtmlOrText = new("What is their name?") },
+                        FormGroup = new() { Classes = ["govuk-!-margin-bottom-3"] },
+                        Autocomplete = "organization"
+                    }
                 ))
             </fieldset>
 
             @(await Html.GovUkCharacterCountFor(
                 m => m.Reason,
-                labelOptions: new LabelViewModel
+                new()
                 {
-                    Text = "What is the reason for this change?",
-                },
-                formGroupOptions: new FormGroupViewModel
-                {
-                    Classes = "govuk-!-margin-top-4"
+                    Label = new()
+                    {
+                        HtmlOrText = new("What is the reason for this change?"),
+                    },
+                    FormGroup = new()
+                    {
+                        Classes = ["govuk-!-margin-top-4"]
+                    }
                 }
             ))
 
-            @(await Html.GovUkButton(new ButtonViewModel
+            @(await Html.GovUkButton(new()
             {
-                Text = "Continue",
-                Classes = "govuk-!-margin-bottom-4"
+                HtmlOrText = new("Confirm and save"),
+                Classes = ["govuk-!-margin-bottom-4"]
             }))
 
             <p class="govuk-body">

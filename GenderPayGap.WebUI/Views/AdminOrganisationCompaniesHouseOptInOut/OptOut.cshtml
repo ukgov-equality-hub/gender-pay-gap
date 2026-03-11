@@ -1,6 +1,5 @@
 @using GenderPayGap.Database
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminChangeCompaniesHouseOptInOutViewModel
 
 @{
@@ -8,30 +7,25 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>();
-        crumbs.Add(new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
         {
-            Text = "Admin",
-            Href = Url.Action("AdminHomePage", "AdminHomepage")
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = Model.Organisation.OrganisationName,
-            Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new { id = Model.Organisation.OrganisationId })
-        });
-
-        crumbs.Add(new CrumbViewModel
-        {
-            Text = "Opt out of Companies House synchronisation"
-        });
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+            Crumbs = [
+                new()
+                {
+                HtmlOrText = new("Admin"),
+                Href = Url.Action("AdminHomePage", "AdminHomepage")
+                },
+                new()
+                {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.Organisation.OrganisationId})
+                },
+                new()
+                {
+                HtmlOrText = new("Opt out of Companies House synchronisation")
+                }
+            ]
+        })
 }
 
 <div class="govuk-grid-row">
@@ -46,7 +40,7 @@
             </span>
         </h1>
 
-        @(await Html.GovUkErrorSummary(ViewData.ModelState))
+        @(await Html.GovUkErrorSummaryIfNeeded())
 
         <h2 class="govuk-heading-l">
             Opting out of synchronisation
@@ -87,22 +81,26 @@
         <form method="POST" action="@Url.Action("OptOut", "AdminOrganisationCompaniesHouseOptInOut", new { id = Model.Organisation.OrganisationId })">
             @(Html.AntiForgeryToken())
 
-            @await Html.GovUkCharacterCountFor(
+            @(await Html.GovUkCharacterCountFor(
                 m => m.Reason,
-                labelOptions: new LabelViewModel
+                new()
                 {
-                    Text = "What is the reason for this change?",
-                    Classes = "govuk-label--m"
-                },
-                formGroupOptions: new FormGroupViewModel
-                {
-                    Classes = "govuk-!-margin-top-8"
-                })
+                    Label = new()
+                    {
+                        HtmlOrText = new("What is the reason for this change?"),
+                        Classes = ["govuk-label--m"]
+                    },
+                    FormGroup = new()
+                    {
+                        Classes = ["govuk-!-margin-top-8"]
+                    }
+                }
+            ))
 
-            @(await Html.GovUkButton(new ButtonViewModel
+            @(await Html.GovUkButton(new()
             {
-                Text = "Confirm",
-                Classes = "govuk-!-margin-bottom-4",
+                HtmlOrText = new("Confirm"),
+                Classes = ["govuk-!-margin-bottom-4"],
                 PreventDoubleClick = true
             }))
 

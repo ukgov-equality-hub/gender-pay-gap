@@ -1,8 +1,7 @@
 @using GenderPayGap.Core
 @using GenderPayGap.Core.Helpers
 @using GenderPayGap.WebUI.Models.Admin
-@using GovUkDesignSystem
-@using GovUkDesignSystem.GovUkDesignSystemComponents
+@using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminChangeScopeViewModel
 
 @{
@@ -10,35 +9,30 @@
 }
 
 @section BeforeMain {
-    @{
-        var crumbs = new List<CrumbViewModel>
-{
-            new CrumbViewModel
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
             {
-                Text = "Admin",
+                HtmlOrText = new("Admin"),
                 Href = Url.Action("AdminHomePage", "AdminHomepage")
             },
-            new CrumbViewModel
+            new()
             {
-                Text = Model.OrganisationName,
+                HtmlOrText = new(Model.OrganisationName),
                 Href = Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Scope history",
+                HtmlOrText = new("Scope history"),
                 Href = Url.Action("ViewScopeHistory", "AdminOrganisationScope", new {id = Model.OrganisationId})
             },
-            new CrumbViewModel
+            new()
             {
-                Text = "Change scope"
+                HtmlOrText = new("Change scope")
             }
-        };
-    }
-
-    @(await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
-    {
-        Crumbs = crumbs
-    }))
+        ]
+    })
 }
 
 <div class="govuk-grid-row">
@@ -56,11 +50,10 @@
         <form method="POST" action="@Url.Action("ChangeScopeForYearPost", "AdminOrganisationScope", new { id = Model.OrganisationId, year = Model.ReportingYear })">
             @(Html.AntiForgeryToken())
 
-            @(await Html.GovUkErrorSummary(ViewData.ModelState, new[]
-            {
+            @(await Html.GovUkErrorSummaryIfNeeded([
                 nameof(AdminChangeScopeViewModel.NewScopeStatus),
                 nameof(AdminChangeScopeViewModel.Reason)
-            }))
+            ]))
 
             <table class="govuk-table">
                 <tbody class="govuk-table__body">
@@ -99,15 +92,19 @@
                 {
                     @await Html.GovUkRadiosFor(
                         m => m.NewScopeStatus,
-                        new FieldsetViewModel
+                        new()
                         {
-                            Legend = new LegendViewModel
+                            Fieldset = new()
                             {
-                                Text = "Please select a new scope",
-                                Classes = "govuk-fieldset__legend--m"
-                            },
-                            Classes = "govuk-!-margin-top-6"
-                        })
+                                Legend = new()
+                                {
+                                    HtmlOrText = new("Please select a new scope"),
+                                    Classes = ["govuk-fieldset__legend--m"]
+                                },
+                                Classes = ["govuk-!-margin-top-6"]
+                            }
+                        }
+                    )
                 }
                 else
                 {
@@ -116,20 +113,24 @@
 
                 @await Html.GovUkCharacterCountFor(
                     m => m.Reason,
-                    labelOptions: new LabelViewModel
+                    new()
                     {
-                        Text = "What is the reason for this change?",
-                        Classes = "govuk-label--m"
-                    },
-                    formGroupOptions: new FormGroupViewModel
-                    {
-                        Classes = "govuk-!-margin-top-6"
-                    })
+                        Label = new()
+                        {
+                            HtmlOrText = new("What is the reason for this change?"),
+                            Classes = ["govuk-label--m"]
+                        },
+                        FormGroup = new()
+                        {
+                            Classes = ["govuk-!-margin-top-6"]
+                        }
+                    }
+                )
 
-                @(await Html.GovUkButton(new ButtonViewModel
+                @(await Html.GovUkButton(new()
                 {
-                    Text = "Confirm",
-                    Classes = "govuk-!-margin-bottom-4",
+                    HtmlOrText = new("Confirm"),
+                    Classes = ["govuk-!-margin-bottom-4"],
                     PreventDoubleClick = true
                 }))
 
