@@ -1,12 +1,10 @@
-@using GenderPayGap.Core
 @using GenderPayGap.Core.Helpers
-@using GenderPayGap.WebUI.Helpers
 @using GenderPayGap.WebUI.Models.ViewReports
 @using GovUkDesignSystemDotNet
 @model GenderPayGap.Database.ActionPlan
 
 @{
-    string reportingYearFormatted = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    string reportingYearFormatted = ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear);
     ViewBag.Title = $"{Model.Organisation.OrganisationName} action plan for {reportingYearFormatted} reporting year";
 }
 
@@ -45,7 +43,7 @@
         <h1 class="govuk-heading-l">
             @(Model.Organisation.OrganisationName)
             <br/>
-            Action plan @ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear)
+            Action plan @ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear)
         </h1>
 
         @(await Html.PartialAsync("../ViewReports/ActionPlanForYearContent", new ActionPlanForYearContentViewModel

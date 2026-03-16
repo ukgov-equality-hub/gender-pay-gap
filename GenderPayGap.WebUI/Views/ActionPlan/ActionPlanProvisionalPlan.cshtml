@@ -5,7 +5,7 @@
 
 @{
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
-    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear);
 
     ViewBag.Title = $"Preview and publish your action plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service - GOV.UK";
 }
@@ -55,7 +55,7 @@
             You can log out and come back to it at any time.
         </p>
         <p class="govuk-body">
-            When you publish your plan, it will be publicly visible on this service.
+            When you publish your plan, it will be available to the public along with your gender pay gap data.
             You will still be able to edit it.
         </p>
         
@@ -91,7 +91,7 @@
         <h1 class="govuk-heading-l">
             @(Model.Organisation.OrganisationName)
             <br/>
-            Action plan @ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear)
+            Action plan @ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear)
         </h1>
 
         @(await Html.PartialAsync("../ViewReports/ActionPlanForYearContent", new ActionPlanForYearContentViewModel
