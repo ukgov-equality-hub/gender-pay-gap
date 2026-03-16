@@ -6,7 +6,7 @@
 
 @{
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
-    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear);
 
     string selectActionsTo;
     switch (Model.ActionTag)
@@ -15,7 +15,7 @@
             selectActionsTo = "Select actions to reduce your gender pay gap";
             break;
         case ActionTag.Menopause:
-            selectActionsTo = "Select actions to support women experiencing menopause";
+            selectActionsTo = "Select actions to support employees experiencing menopause";
             break;
         default:
             throw new ArgumentOutOfRangeException();
@@ -70,7 +70,7 @@
         <ul class="govuk-list govuk-list--bullet">
             <li>
                 <b>New or in progress</b>
-                – this means you will be working on it for the first time or building on something you are already doing
+                – this means you will be working on it for the first time or adding to existing practices
             </li>
             <li>
                 <b>Embedded</b>
@@ -79,6 +79,7 @@
         </ul>
         <p class="govuk-body">
             You must select at least one action that is ‘new or in progress’.
+            You can select more than one action.
         </p>
         <div class="govuk-inset-text">
             For each action you select, you must add further details.
@@ -115,7 +116,7 @@
                             </div>
                             <div class="govuk-task-list__status">
                                 @if (actionInActionPlan?.NewStatus == ActionStatus.NewOrInProgress ||
-                                     actionInActionPlan?.NewStatus == ActionStatus.Completed)
+                                     actionInActionPlan?.NewStatus == ActionStatus.Embedded)
                                 {
                                     @await Html.GovUkTag(new()
                                     {

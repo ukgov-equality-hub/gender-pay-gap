@@ -4,7 +4,7 @@
 
 @{
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
-    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear);
 
     ViewBag.Title = $"Create your action plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service - GOV.UK";
 }
@@ -46,15 +46,20 @@
         </h1>
 
         <p class="govuk-body">
-            From April 2027, organisations with over 250 employees must submit an action
-            plan with their gender pay gap report. This must show how you will:
+            From April 2026, employers with over 250 employees have the option to produce and submit a
+            voluntary action plan with their gender pay gap data.
+            These are due to become mandatory from April 2027.
+        </p>
+        <p class="govuk-body">
+            Your plan shows the steps you are taking to:
         </p>
         <ul class="govuk-list govuk-list--bullet">
-            <li>reduce your gender pay gap</li>
-            <li>support women experiencing menopause</li>
+            <li>reduce your organisation’s gender pay gap</li>
+            <li>support employees experiencing menopause</li>
         </ul>
         <div class="govuk-inset-text">
-            <a href="#" class="govuk-link">
+            <a href="https://www.gov.uk/government/publications/creating-an-action-plan-guidance-for-employers"
+               class="govuk-link">
                 Read more about creating an action plan on GOV.UK
             </a>
         </div>
@@ -66,9 +71,24 @@
             Make sure you:
         </p>
         <ul class="govuk-list govuk-list--bullet">
-            <li>understand the issues in your organisation</li>
-            <li>know which actions you will be selecting</li>
-            <li>have prepared your supporting text</li>
+            <li>
+                <a href="https://www.gov.uk/government/publications/creating-an-action-plan-guidance-for-employers/step-1-understand-the-issues-in-your-organisation"
+                   class="govuk-link">
+                    understand the issues in your organisation
+                </a>
+            </li>
+            <li>
+                <a href="https://www.gov.uk/government/publications/creating-an-action-plan-guidance-for-employers/step-2-choose-your-actions"
+                   class="govuk-link">
+                    know which actions you will be selecting
+                </a>
+            </li>
+            <li>
+                <a href="https://www.gov.uk/government/publications/creating-an-action-plan-guidance-for-employers/step-3-write-a-supporting-narrative"
+                   class="govuk-link">
+                    have prepared your supporting text
+                </a>
+            </li>
         </ul>
 
         <p class="govuk-body">

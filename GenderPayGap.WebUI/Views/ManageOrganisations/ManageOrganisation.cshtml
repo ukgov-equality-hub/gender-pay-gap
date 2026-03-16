@@ -59,7 +59,7 @@
             
             <div class="block-for-reporting-year @(hideReportingYear ? "govuk-visually-hidden" : null)">
                 <h3 class="govuk-heading-m govuk-!-font-size-27 govuk-!-margin-top-8">
-                    Reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriod(reportingYear))
+                    Reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
                 </h3>
                 
                 <div class="govuk-inset-text govuk-!-padding-top-1 govuk-!-padding-bottom-1 govuk-!-margin-top-0">
@@ -210,7 +210,7 @@
                                 @if (Model.IsActionPlanOptional(reportingYear))
                                 {
                                     <div id="@(actionPlanHintId)" class="govuk-task-list__hint">
-                                        Optional for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriod(reportingYear))
+                                        Optional for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
                                     </div>
                                 }
                             </div>

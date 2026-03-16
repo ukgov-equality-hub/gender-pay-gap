@@ -5,7 +5,7 @@
 
 @{
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
-    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear);
 
     ViewBag.Title = $"Action Plan task list - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service - GOV.UK";
 }
@@ -54,7 +54,7 @@
         </p>
         <ul class="govuk-list govuk-list--bullet">
             <li>one must address your gender pay gap</li>
-            <li>one must support women experiencing menopause</li>
+            <li>one must support employees experiencing menopause</li>
         </ul>
         <p class="govuk-body">
             You can also add a supporting narrative with any background information.
@@ -80,7 +80,7 @@
                     <a href="@(Url.Action("ActionPlanSelectActionsMenopauseGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
                        class="govuk-link govuk-task-list__link"
                        aria-describedby="overall-task-list-2-status">
-                        Select actions to support women experiencing menopause
+                        Select actions to support employees experiencing menopause
                     </a>
                 </div>
                 <div class="govuk-task-list__status" id="overall-task-list-2-status">
@@ -108,7 +108,7 @@
                         <a href="@(Url.Action("ActionPlanResponsiblePersonGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
                            class="govuk-link govuk-task-list__link"
                            aria-describedby="overall-task-list-3-status">
-                            Responsible person
+                            Add your employer’s responsible person
                         </a>
                     </div>
                     <div class="govuk-task-list__status" id="overall-task-list-3-status">

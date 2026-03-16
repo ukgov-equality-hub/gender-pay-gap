@@ -134,7 +134,7 @@ namespace GenderPayGap.Core
         [Display(Name = "New or in progress")]
         NewOrInProgress = 1,
         [Display(Name = "Embedded")]
-        Completed = 2,
+        Embedded = 2,
     }
     public static class ActionStatusExtensions
     {
@@ -152,7 +152,7 @@ namespace GenderPayGap.Core
             return actionStatus switch
             {
                 ActionStatus.NewOrInProgress => "govuk-tag--green",
-                ActionStatus.Completed => "govuk-tag--yellow",
+                ActionStatus.Embedded => "govuk-tag--yellow",
                 ActionStatus.DoNotAddToPlan => "govuk-tag--blue",
                 _ => "govuk-tag--blue"
             };

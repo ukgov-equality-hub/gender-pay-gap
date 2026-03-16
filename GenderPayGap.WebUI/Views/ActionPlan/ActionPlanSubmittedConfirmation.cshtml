@@ -4,7 +4,7 @@
 
 @{
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
-    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear);
 
     ViewBag.Title = $"Action Plan published - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service - GOV.UK";
 }
@@ -47,7 +47,7 @@
         </div>
         
         <p class="govuk-body">
-            Your action plan has now been published on the Gender pay gap service.
+            Your action plan has now been published on the gender pay gap service.
         </p>
         <p class="govuk-body">
             <a href="@(Url.Action("ActionPlanForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = Model.ReportingYear}))"

@@ -5,7 +5,7 @@
 
 @{
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
-    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear);
 
     ViewBag.Title = $"Discard draft action plan - reporting year {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service - GOV.UK";
 
@@ -92,7 +92,7 @@
 
         <p class="govuk-body">
             <a class="govuk-link" href="@Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})">
-                Cancel and return to action plan for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear))
+                Cancel and return to action plan for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear))
             </a>
         </p>
         <p class="govuk-body">
