@@ -443,7 +443,7 @@
                                 new ReportStatusBadgeViewModel
                                 {
                                     ReportStatusTag = ReportStatusTagHelper.GetReportStatusTag(Model.Organisation, reportingYear),
-                                    ReportSubmittedDate = returnForYear?.Modified,
+                                    ReportSubmittedDate = Model.Organisation.GetLatestGpgReturnSubmittedDateWithMaterialChanges(reportingYear),
                                     DeadlineDate = ReportingYearsHelper.GetDeadline(Model.Organisation.SectorType, reportingYear)
                                 })
                         </td>

@@ -142,7 +142,7 @@ namespace GenderPayGap.WebUI.BackgroundJobs.ScheduledJobs
                 CurrentName = ret.Organisation?.OrganisationName,
                 SubmittedAfterTheDeadline = ret.IsLateSubmission,
                 DueDate = ret.GetDueDate(),
-                DateSubmitted = ret.Modified
+                DateSubmitted = ret.Organisation?.GetLatestGpgReturnSubmittedDateWithMaterialChanges(ret.ReportingYear) ?? ret.Modified
             };
         }
 

@@ -279,7 +279,7 @@
                                             new ReportStatusBadgeViewModel
                                             {
                                                 ReportStatusTag = reportStatusTag,
-                                                ReportSubmittedDate = returnForYear?.Modified,
+                                                ReportSubmittedDate = organisation.GetLatestGpgReturnSubmittedDateWithMaterialChanges(Model.ReportingYear),
                                                 DeadlineDate = ReportingYearsHelper.GetDeadline(organisation.SectorType, Model.ReportingYear)
                                             })
                                     </td>

@@ -231,6 +231,60 @@ namespace GenderPayGap.Database
             return GetReturnForYearAsOfDate(reportingYear, asOfDate) != null;
         }
 
+        public DateTime? GetLatestGpgReturnSubmittedDateWithMaterialChanges(int reportingYear)
+        {
+            List<Return> submittedAndRetiredReturnsForYear =
+                Returns
+                    .Where(r => r.ReportingYear == reportingYear)
+                    .Where(r => r.Status == ReturnStatuses.Submitted || r.Status == ReturnStatuses.Retired)
+                    .OrderBy(r => r.Modified)
+                    .ToList();
+
+            Return previousReturn = null;
+            Return latestReturnWithMaterialChanges = null;
+
+            foreach (Return thisReturn in submittedAndRetiredReturnsForYear)
+            {
+                if (DoesReturnMakeAMaterialChange(thisReturn, previousReturn))
+                {
+                    latestReturnWithMaterialChanges = thisReturn;
+                }
+                
+                previousReturn = thisReturn;
+            }
+            
+            return latestReturnWithMaterialChanges?.Modified;
+        }
+
+        private bool DoesReturnMakeAMaterialChange(Return thisReturn, Return previousReturn)
+        {
+            if (previousReturn == null)
+            {
+                // If this is the first Return of the year, then it must include a material change (figures)
+                return true;
+            }
+
+            bool isMaterialChange =
+                thisReturn.DiffMeanHourlyPayPercent != previousReturn.DiffMeanHourlyPayPercent
+                || thisReturn.DiffMedianHourlyPercent != previousReturn.DiffMedianHourlyPercent
+
+                || thisReturn.DiffMeanBonusPercent != previousReturn.DiffMeanBonusPercent
+                || thisReturn.DiffMedianBonusPercent != previousReturn.DiffMedianBonusPercent
+                || thisReturn.MaleMedianBonusPayPercent != previousReturn.MaleMedianBonusPayPercent
+                || thisReturn.FemaleMedianBonusPayPercent != previousReturn.FemaleMedianBonusPayPercent
+
+                || thisReturn.MaleLowerPayBand != previousReturn.MaleLowerPayBand
+                || thisReturn.FemaleLowerPayBand != previousReturn.FemaleLowerPayBand
+                || thisReturn.MaleMiddlePayBand != previousReturn.MaleMiddlePayBand
+                || thisReturn.FemaleMiddlePayBand != previousReturn.FemaleMiddlePayBand
+                || thisReturn.MaleUpperPayBand != previousReturn.MaleUpperPayBand
+                || thisReturn.FemaleUpperPayBand != previousReturn.FemaleUpperPayBand
+                || thisReturn.MaleUpperQuartilePayBand != previousReturn.MaleUpperQuartilePayBand
+                || thisReturn.FemaleUpperQuartilePayBand != previousReturn.FemaleUpperQuartilePayBand;
+
+            return isMaterialChange;
+        }
+        
         #endregion
         
         /// <summary>
