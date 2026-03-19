@@ -126,6 +126,22 @@
                 </div>
             </li>
         </ul>
+        
+        @if (Model.ActionPlan != null &&
+             !Model.ActionPlan.HasAtLeastTwoNewOrInProgressActions() &&
+             Model.ActionPlan.SingleSelectedActionHasBothGenderPayGapAndMenopauseTags())
+        {
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-visually-hidden">Warning</span>
+                    You must select at least two "New or in progress" actions.
+                    <br/>
+                    The action "@(Model.ActionPlan.GetNewOrInProgressActions()[0].ActionDetails.Name)"
+                    appears on both the Gender Pay Gap and Menopause pages, but only counts as one action.
+                </strong>
+            </div>
+        }
 
         @if (Model.ActionPlan?.Status == ActionPlanStatus.Draft)
         {
