@@ -145,10 +145,11 @@
 
             <div id="@(nameof(Model.SupportingText))--wrapper">
                 @(
-                await Html.GovUkTextareaFor(
+                await Html.GovUkCharacterCountFor(
                     m => m.SupportingText,
                     new()
                     {
+                        Rows = 12,
                         Label = new LabelViewModel
                         {
                             HtmlOrText = new HtmlOrText("Supporting text"),
@@ -182,6 +183,9 @@
 
                                      <div class="govuk-hint">
                                          The information you write here will be published alongside the data you report on the gender pay gap service.
+                                     </div>
+                                     <div class="govuk-hint">
+                                         You can write up to 100 words. You cannot upload files or add links.
                                      </div>
                                  </text>)
                         }
