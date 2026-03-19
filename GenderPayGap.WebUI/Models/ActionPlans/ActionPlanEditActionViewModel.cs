@@ -28,5 +28,6 @@ public class ActionPlanEditActionViewModel
 
     public bool StatusRequired => !string.IsNullOrWhiteSpace(SupportingText);
     
+    [GovUkValidateCharacterCount(Limit = 100, Units = CharacterCountMaxLengthUnit.Words, NameAtStartOfSentence = "Supporting text", NameWithinSentence = "supporting text")]
     public string SupportingText { get; set; }
 }

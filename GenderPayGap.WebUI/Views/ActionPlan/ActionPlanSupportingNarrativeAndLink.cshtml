@@ -63,11 +63,20 @@
               action="@(Url.Action("ActionPlanSupportingNarrativeAndLinkPost", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))">
             @Html.AntiForgeryToken()
 
-            @(await Html.GovUkTextareaFor(
+            @(await Html.GovUkCharacterCountFor(
                 m => m.SupportingNarrative,
                 new()
                 {
-                    Label = new() {HtmlOrText = new HtmlOrText("Supporting narrative"), Classes = ["govuk-label--m"]},
+                    Rows = 24,
+                    Label = new()
+                    {
+                        HtmlOrText = new HtmlOrText("Supporting narrative"),
+                        Classes = ["govuk-label--m"]
+                    },
+                    Hint = new()
+                    {
+                        HtmlOrText = new("You can write up to 200 words. You cannot upload files.")
+                    }
                 }
             ))
 
