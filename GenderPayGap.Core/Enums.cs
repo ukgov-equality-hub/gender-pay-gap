@@ -85,46 +85,42 @@ namespace GenderPayGap.Core
 
     public enum Actions
     {
-        // 1. Make job adverts inclusive
-        MakeJobAdvertsInclusive = 1,
-        // 2. Encourage applications from diverse candidates
-        EncourageApplicationsFromDiverseCandidates = 2,
+        // 1. Make job descriptions inclusive
+        MakeJobDescriptionsInclusive = 1,
+        // 2. Encourage applications from a range of candidates
+        EncourageApplicationsFromARangeOfCandidates = 2,
         // 3. Reduce unconscious bias in CV screening
-        ReduceUnconsciousBiasInCVScreening = 3,
-        // 4. Run structured interviews
-        RunStructuredInterviews = 4,
-        // 5. Ensure interview outcomes are fair
-        EnsureInterviewOutcomesAreFair = 5,
-        // 6. Promote flexible working arrangements in job adverts
-        PromoteFlexibleWorkingArrangementsInJobAdverts = 6,
+        ReduceUnconsciousBiasInCvScreening = 3,
+        // 4. Use fair and structured interview techniques
+        UseFairAndStructuredInterviewTechniques = 4,
+        // 5. Advertise leave policies in job adverts
+        AdvertiseLeavePoliciesInJobAdverts = 5,
+        // 6. Advertise flexible working arrangements in job adverts
+        AdvertiseFlexibleWorkingArrangementsInJobAdverts = 6,
         // 7. Increase transparency for pay, promotion and rewards
         IncreaseTransparencyForPayPromotionAndRewards = 7,
-        // 8. Automatically put forward employees for promotion
-        AutomaticallyPutForwardEmployeesForPromotion = 8,
+        // 8. Automatically consider eligible employees for promotion
+        AutomaticallyConsiderEligibleEmployeesForPromotion = 8,
         // 9. Encourage employee development through actionable steps
         EncourageEmployeeDevelopmentThroughActionableSteps = 9,
-        // 10. Offer internships, mentoring and other development programmes
-        OfferInternshipsMentoringAndOtherDevelopmentProgrammes = 10,
+        // 10. Offer mentoring sponsorship and other development programmes
+        OfferMentoringSponsorshipAndOtherDevelopmentProgrammes = 10,
         // 11. Set targets to improve gender representation
         SetTargetsToImproveGenderRepresentation = 11,
-        // 12. Appoint diversity leads or taskforces
-        AppointDiversityLeadsOrTaskforces = 12,
-        // 13. Support staff to take parental leave
-        SupportStaffToTakeParentalLeave = 13,
-        // 14. Analyse your data to understand your pay gap and staff needs
-        AnalyseDataToUnderstandPayGapAndStaffNeeds = 14,
-        // 15. Measure outcomes of equality initiatives
-        MeasureOutcomesOfEqualityInitiatives = 15,
-        // 16. Train line managers to support employees experiencing menopause
-        TrainLineManagersToSupportEmployeesExperiencingMenopause = 16,
+        // 14. Enhance and promote flexible working and leave policies
+        EnhanceAndPromoteFlexibleWorkingAndLeavePolicies = 14,
+        // 16. Train managers to support employees experiencing menopause
+        TrainManagersToSupportEmployeesExperiencingMenopause = 16,
         // 17. Offer occupational health advice to employees experiencing menopause
         OfferOccupationalHealthAdviceForMenopause = 17,
-        // 18. Set up menopause networks and support groups
-        SetUpMenopauseNetworksAndSupportGroups = 18,
-        // 19. Offer workplace adjustments to employees experiencing menopause
+        // 18. Set up menopause support groups and networks
+        SetUpMenopauseSupportGroupsAndNetworks = 18,
+        // 19. Offer workplace adjustments for employees experiencing menopause
         OfferWorkplaceAdjustmentsForMenopause = 19,
         // 20. Conduct a menopause risk assessment for your workplace
-        ConductMenopauseRiskAssessmentForWorkplace = 20
+        ConductMenopauseRiskAssessmentForWorkplace = 20,
+        // 21. Review policies and procedures to meet the needs of employees experiencing menopause,
+        ReviewPoliciesProceduresMenopause = 21,
     }
 
     public enum ActionStatus : byte
@@ -134,7 +130,7 @@ namespace GenderPayGap.Core
         [Display(Name = "New or in progress")]
         NewOrInProgress = 1,
         [Display(Name = "Embedded")]
-        Completed = 2,
+        Embedded = 2,
     }
     public static class ActionStatusExtensions
     {
@@ -152,7 +148,7 @@ namespace GenderPayGap.Core
             return actionStatus switch
             {
                 ActionStatus.NewOrInProgress => "govuk-tag--green",
-                ActionStatus.Completed => "govuk-tag--yellow",
+                ActionStatus.Embedded => "govuk-tag--yellow",
                 ActionStatus.DoNotAddToPlan => "govuk-tag--blue",
                 _ => "govuk-tag--blue"
             };

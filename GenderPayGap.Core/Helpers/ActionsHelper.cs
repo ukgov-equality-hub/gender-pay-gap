@@ -11,10 +11,10 @@ public enum ActionCategories
     DevelopingAndPromotingStaff = 2,
     [Display(Name = "Building diversity into your organisation")]
     BuildingDiversityIntoYourOrganisation = 3,
-    [Display(Name = "Analysing your data")]
-    AnalysingYourData = 4,
-    [Display(Name = "Supporting staff during menopause")]
-    SupportingStaffDuringMenopause = 5,
+    [Display(Name = "Increasing transparency")]
+    IncreasingTransparency = 4,
+    [Display(Name = "Supporting employees experiencing menopause")]
+    SupportingEmployeesExperiencingMenopause = 5,
 }
 
 public static class ActionCategoriesExtensions
@@ -59,6 +59,7 @@ public class ActionDetails
     public List<ActionTag> Tags { get; set; }
     public string Name { get; set; }
     public string Summary { get; set; }
+    public string GuidanceUrl { get; set; }
 }
 
 public static class ActionsHelper
@@ -66,83 +67,79 @@ public static class ActionsHelper
     public static readonly Dictionary<Actions, ActionDetails> DictionaryOfAllActions = new()
     {
         {
-            Actions.MakeJobAdvertsInclusive, new()
+            Actions.MakeJobDescriptionsInclusive, new()
             {
-                Action = Actions.MakeJobAdvertsInclusive,
+                Action = Actions.MakeJobDescriptionsInclusive,
                 Category = ActionCategories.RecruitingStaff,
                 Tags = [ActionTag.GenderPayGap],
-                Name = "Make job adverts inclusive",
-                Summary = "Inclusive job adverts attract diverse talent by using neutral language, listing only essential requirements, and highlighting equal opportunities."
+                Name = "Make job descriptions inclusive",
+                Summary = "Inclusive job descriptions can attract diverse talent by using neutral language, listing only essential requirements, and highlighting equal opportunities.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/make-job-descriptions-inclusive/make-job-descriptions-inclusive",
             }
         },
         {
-            Actions.EncourageApplicationsFromDiverseCandidates, new()
+            Actions.EncourageApplicationsFromARangeOfCandidates, new()
             {
-                Action = Actions.EncourageApplicationsFromDiverseCandidates,
+                Action = Actions.EncourageApplicationsFromARangeOfCandidates,
                 Category = ActionCategories.RecruitingStaff,
                 Tags = [ActionTag.GenderPayGap],
-                Name = "Encourage applications from diverse candidates",
-                Summary = "Actively seeking applications from underrepresented groups ensures a broader candidate pool for all roles."
+                Name = "Encourage applications from a range of candidates",
+                Summary = "Actively seeking applications from under-represented groups can ensure a broader range of applicants for all roles.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/encourage-applications-from-a-range-of-candidates/encourage-applications-from-a-range-of-candidates",
             }
         },
         {
-            Actions.ReduceUnconsciousBiasInCVScreening, new()
+            Actions.ReduceUnconsciousBiasInCvScreening, new()
             {
-                Action = Actions.ReduceUnconsciousBiasInCVScreening,
+                Action = Actions.ReduceUnconsciousBiasInCvScreening,
                 Category = ActionCategories.RecruitingStaff,
                 Tags = [ActionTag.GenderPayGap],
                 Name = "Reduce unconscious bias in CV screening",
-                Summary = "Using structured, skill-based screening minimises bias and boosts diversity in hiring."
+                Summary = "Using structured, skill-based screening can minimise bias and boost diversity in hiring.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/reduce-unconscious-bias-in-cv-screening/reduce-unconscious-bias-in-cv-screening",
             }
         },
         {
-            Actions.RunStructuredInterviews, new()
+            Actions.UseFairAndStructuredInterviewTechniques, new()
             {
-                Action = Actions.RunStructuredInterviews,
+                Action = Actions.UseFairAndStructuredInterviewTechniques,
                 Category = ActionCategories.RecruitingStaff,
                 Tags = [ActionTag.GenderPayGap],
-                Name = "Run structured interviews",
-                Summary = "Running structured interviews ensures fair, objective hiring. Standardised questions and scoring helps reduce bias and promotes equal opportunity."
+                Name = "Use fair and structured interview techniques",
+                Summary = "Structured interviews support fair, objective hiring. Standardised questions and scoring helps reduce bias and promotes equal opportunity.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/use-fair-and-structured-interview-techniques/use-fair-and-structured-interview-techniques",
             }
         },
         {
-            Actions.EnsureInterviewOutcomesAreFair, new()
+            Actions.AdvertiseLeavePoliciesInJobAdverts, new()
             {
-                Action = Actions.EnsureInterviewOutcomesAreFair,
+                Action = Actions.AdvertiseLeavePoliciesInJobAdverts,
                 Category = ActionCategories.RecruitingStaff,
                 Tags = [ActionTag.GenderPayGap],
-                Name = "Ensure interview outcomes are fair",
-                Summary = "Implementing structured interviews with trained assessors leads to objective, consistent, and evidence-based decisions"
+                Name = "Advertise leave policies in job adverts",
+                Summary = "Advertise parental, carer, and compassionate leave policies widely to ensure all prospective employees know the entitlements they would be eligible for.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/advertise-leave-policies-in-job-adverts/advertise-leave-policies-in-job-adverts",
             }
         },
         {
-            Actions.PromoteFlexibleWorkingArrangementsInJobAdverts, new()
+            Actions.AdvertiseFlexibleWorkingArrangementsInJobAdverts, new()
             {
-                Action = Actions.PromoteFlexibleWorkingArrangementsInJobAdverts,
+                Action = Actions.AdvertiseFlexibleWorkingArrangementsInJobAdverts,
                 Category = ActionCategories.RecruitingStaff,
                 Tags = [ActionTag.GenderPayGap, ActionTag.Menopause],
-                Name = "Promote flexible working arrangements in job adverts",
-                Summary = "Flexible work policies aid work-life balance, especially for those with caring roles. Advertising flexibility attracts a wider, more diverse talent pool."
+                Name = "Advertise flexible working arrangements in job adverts",
+                Summary = "Flexible working policies can aid work-life balance, especially for people with caring roles. Advertising flexibility can attract a wider, more diverse group of applicants."
             }
         },
         {
-            Actions.IncreaseTransparencyForPayPromotionAndRewards, new()
+            Actions.AutomaticallyConsiderEligibleEmployeesForPromotion, new()
             {
-                Action = Actions.IncreaseTransparencyForPayPromotionAndRewards,
+                Action = Actions.AutomaticallyConsiderEligibleEmployeesForPromotion,
                 Category = ActionCategories.DevelopingAndPromotingStaff,
                 Tags = [ActionTag.GenderPayGap],
-                Name = "Increase transparency for pay, promotion and rewards",
-                Summary = "Transparency in pay, promotion, and bonus policies ensures everyone understands how decisions are made."
-            }
-        },
-        {
-            Actions.AutomaticallyPutForwardEmployeesForPromotion, new()
-            {
-                Action = Actions.AutomaticallyPutForwardEmployeesForPromotion,
-                Category = ActionCategories.DevelopingAndPromotingStaff,
-                Tags = [ActionTag.GenderPayGap],
-                Name = "Automatically put forward employees for promotion",
-                Summary = "Automatically considering all eligible employees for promotion gives them the choice to opt-out rather than opt-in."
+                Name = "Automatically consider eligible employees for promotion",
+                Summary = "Automatically considering all eligible employees for promotion gives them the choice to opt-out rather than opt-in.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/automatically-consider-eligible-employees-for-promotion/automatically-consider-eligible-employees-for-promotion",
             }
         },
         {
@@ -152,17 +149,19 @@ public static class ActionsHelper
                 Category = ActionCategories.DevelopingAndPromotingStaff,
                 Tags = [ActionTag.GenderPayGap],
                 Name = "Encourage employee development through actionable steps",
-                Summary = "Asking employees for advice instead of feedback can aid skill development, and benefit organisations with low female progression and retention."
+                Summary = "Giving all employees clear and actionable advice on how to develop may benefit organisations with low rates of progression and retention for women.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/encourage-employee-development-through-actionable-steps/encourage-employee-development-through-actionable-steps",
             }
         },
         {
-            Actions.OfferInternshipsMentoringAndOtherDevelopmentProgrammes, new()
+            Actions.OfferMentoringSponsorshipAndOtherDevelopmentProgrammes, new()
             {
-                Action = Actions.OfferInternshipsMentoringAndOtherDevelopmentProgrammes,
+                Action = Actions.OfferMentoringSponsorshipAndOtherDevelopmentProgrammes,
                 Category = ActionCategories.DevelopingAndPromotingStaff,
                 Tags = [ActionTag.GenderPayGap],
-                Name = "Offer internships, mentoring and other development programmes",
-                Summary = "Providing development programmes, such as internships, gives employees a formal channel for advice, support, and advocacy."
+                Name = "Offer mentoring, sponsorship and other development programmes",
+                Summary = "Providing development programmes, such as mentoring, gives employees a formal channel for advice and support.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/offer-mentoring-sponsorship-and-other-development-programmes/offer-mentoring-sponsorship-and-other-development-programmes",
             }
         },
         {
@@ -172,97 +171,96 @@ public static class ActionsHelper
                 Category = ActionCategories.BuildingDiversityIntoYourOrganisation,
                 Tags = [ActionTag.GenderPayGap],
                 Name = "Set targets to improve gender representation",
-                Summary = "Setting specific, monitorable internal targets gives your organisation clear steps to boost gender representation and equality."
+                Summary = "Setting specific internal targets that you can monitor using data gives your organisation clear steps to improve gender representation and equality.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/set-targets-to-improve-gender-representation/set-targets-to-improve-gender-representation",
             }
         },
         {
-            Actions.AppointDiversityLeadsOrTaskforces, new()
+            Actions.IncreaseTransparencyForPayPromotionAndRewards, new()
             {
-                Action = Actions.AppointDiversityLeadsOrTaskforces,
-                Category = ActionCategories.BuildingDiversityIntoYourOrganisation,
+                Action = Actions.IncreaseTransparencyForPayPromotionAndRewards,
+                Category = ActionCategories.IncreasingTransparency,
                 Tags = [ActionTag.GenderPayGap],
-                Name = "Appoint diversity leads or taskforces",
-                Summary = "Appointing equality leads or committees to scrutinise hiring and progression policies ensures organisational accountability."
+                Name = "Increase transparency for pay, promotion and rewards",
+                Summary = "Transparency in pay, promotion, and bonus policies helps ensure everyone understands how decisions are made.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/increase-transparency-for-pay-promotion-and-rewards/increase-transparency-for-pay-promotion-and-rewards",
             }
         },
         {
-            Actions.SupportStaffToTakeParentalLeave, new()
+            Actions.EnhanceAndPromoteFlexibleWorkingAndLeavePolicies, new()
             {
-                Action = Actions.SupportStaffToTakeParentalLeave,
-                Category = ActionCategories.BuildingDiversityIntoYourOrganisation,
+                Action = Actions.EnhanceAndPromoteFlexibleWorkingAndLeavePolicies,
+                Category = ActionCategories.IncreasingTransparency,
                 Tags = [ActionTag.GenderPayGap],
-                Name = "Support staff to take parental leave",
-                Summary = "Promoting clear and accessible parental leave policies boosts gender equality and helps employees balance family life with work."
+                Name = "Enhance and promote flexible working and leave policies",
+                Summary = "Enhance and promote leave policies and flexible working so employees know their entitlements and how to use them.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/enhance-and-promote-flexible-working-and-leave-policies/enhance-and-promote-flexible-working-and-leave-policies",
             }
         },
         {
-            Actions.AnalyseDataToUnderstandPayGapAndStaffNeeds, new()
+            Actions.TrainManagersToSupportEmployeesExperiencingMenopause, new()
             {
-                Action = Actions.AnalyseDataToUnderstandPayGapAndStaffNeeds,
-                Category = ActionCategories.AnalysingYourData,
-                Tags = [ActionTag.GenderPayGap],
-                Name = "Analyse your data to understand your pay gap and staff needs",
-                Summary = "Analysing pay data can help you understand your gender pay gap's scale and drivers, and choose effective actions to close the gap."
-            }
-        },
-        {
-            Actions.MeasureOutcomesOfEqualityInitiatives, new()
-            {
-                Action = Actions.MeasureOutcomesOfEqualityInitiatives,
-                Category = ActionCategories.AnalysingYourData,
-                Tags = [ActionTag.GenderPayGap],
-                Name = "Measure outcomes of equality initiatives",
-                Summary = "Tracking equality initiative outcomes can measure changes and see if you're making progress towards your goals."
-            }
-        },
-        {
-            Actions.TrainLineManagersToSupportEmployeesExperiencingMenopause, new()
-            {
-                Action = Actions.TrainLineManagersToSupportEmployeesExperiencingMenopause,
-                Category = ActionCategories.SupportingStaffDuringMenopause,
+                Action = Actions.TrainManagersToSupportEmployeesExperiencingMenopause,
+                Category = ActionCategories.SupportingEmployeesExperiencingMenopause,
                 Tags = [ActionTag.Menopause],
-                Name = "Train line managers to support employees experiencing menopause",
-                Summary = "Line manager training on the menopause and its effects can help organisations to better support employees experiencing the menopause."
+                Name = "Train managers to support employees experiencing menopause",
+                Summary = "Manager training can help organisations support employees experiencing menopause.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/train-managers-to-support-employees-experiencing-menopause/train-managers-to-support-employees-experiencing-menopause",
             }
         },
         {
             Actions.OfferOccupationalHealthAdviceForMenopause, new()
             {
                 Action = Actions.OfferOccupationalHealthAdviceForMenopause,
-                Category = ActionCategories.SupportingStaffDuringMenopause,
+                Category = ActionCategories.SupportingEmployeesExperiencingMenopause,
                 Tags = [ActionTag.Menopause],
                 Name = "Offer occupational health advice to employees experiencing menopause",
-                Summary = "Supporting employees with specialised occupational health advice can help them manage symptoms, access support, and work more comfortably."
+                Summary = "Giving employees specialised occupational health advice can help them manage menopause symptoms, get support and work more comfortably.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/offer-occupational-health-advice-for-employees-experiencing-menopause/offer-occupational-health-advice-for-employees-experiencing-menopause",
             }
         },
         {
-            Actions.SetUpMenopauseNetworksAndSupportGroups, new()
+            Actions.SetUpMenopauseSupportGroupsAndNetworks, new()
             {
-                Action = Actions.SetUpMenopauseNetworksAndSupportGroups,
-                Category = ActionCategories.SupportingStaffDuringMenopause,
+                Action = Actions.SetUpMenopauseSupportGroupsAndNetworks,
+                Category = ActionCategories.SupportingEmployeesExperiencingMenopause,
                 Tags = [ActionTag.Menopause],
-                Name = "Set up menopause networks and support groups",
-                Summary = "Accessible menopause support groups within your organisation can help provide peer support, information, and guidance."
+                Name = "Set up menopause support groups and networks",
+                Summary = "Menopause support groups in your organisation can help provide peer support, information and guidance.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/set-up-menopause-support-groups-and-networks/set-up-menopause-support-groups-and-networks",
             }
         },
         {
             Actions.OfferWorkplaceAdjustmentsForMenopause, new()
             {
                 Action = Actions.OfferWorkplaceAdjustmentsForMenopause,
-                Category = ActionCategories.SupportingStaffDuringMenopause,
+                Category = ActionCategories.SupportingEmployeesExperiencingMenopause,
                 Tags = [ActionTag.Menopause],
                 Name = "Offer workplace adjustments to employees experiencing menopause",
-                Summary = "Personalised workplace adjustments help support employees experiencing menopause and wider women's health conditions."
+                Summary = "Personalised workplace adjustments for employees experiencing menopause can support their wellbeing and ability to work.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/offer-workplace-adjustments-for-employees-experiencing-menopause/offer-workplace-adjustments-for-employees-experiencing-menopause",
             }
         },
         {
             Actions.ConductMenopauseRiskAssessmentForWorkplace, new()
             {
                 Action = Actions.ConductMenopauseRiskAssessmentForWorkplace,
-                Category = ActionCategories.SupportingStaffDuringMenopause,
+                Category = ActionCategories.SupportingEmployeesExperiencingMenopause,
                 Tags = [ActionTag.Menopause],
                 Name = "Conduct a menopause risk assessment for your workplace",
-                Summary = "Workplace risk assessments on menopause and women's health can identify necessary adaptations to support employee wellbeing."
+                Summary = "Menopause risk assessments can identify workplace adjustments to help support your employees' wellbeing.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/conduct-a-menopause-risk-assessment-for-your-workplace/conduct-a-menopause-risk-assessment-for-your-workplace",
+            }
+        },
+        {
+            Actions.ReviewPoliciesProceduresMenopause, new()
+            {
+                Action = Actions.ReviewPoliciesProceduresMenopause,
+                Category = ActionCategories.SupportingEmployeesExperiencingMenopause,
+                Tags = [ActionTag.Menopause],
+                Name = "Review policies and procedures to meet the needs of employees experiencing menopause",
+                Summary = "Ensure your organisation’s policies align with the needs of employees experiencing menopause by reviewing your policies and procedures.",
+                GuidanceUrl = "https://www.gov.uk/government/publications/review-policies-and-procedures-to-meet-the-needs-of-employees-experiencing-menopause/review-policies-and-procedures-to-meet-the-needs-of-employees-experiencing-menopause",
             }
         }
     };

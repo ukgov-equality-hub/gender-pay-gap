@@ -182,7 +182,7 @@ public class ActionPlanController: Controller
                     break;
 
                 case ActionStatus.NewOrInProgress:
-                case ActionStatus.Completed:
+                case ActionStatus.Embedded:
                     if (actionInDraftActionPlan == null)
                     {
                         actionInDraftActionPlan = new ActionInActionPlan

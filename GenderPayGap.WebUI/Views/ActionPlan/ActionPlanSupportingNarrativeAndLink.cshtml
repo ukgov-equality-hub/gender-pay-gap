@@ -4,7 +4,7 @@
 
 @{
     string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
-    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear);
 
     ViewBag.Title = $"Supporting narrative and link - Action plan {formattedReportingYears} - {Model.Organisation.OrganisationName} - Gender pay gap service - GOV.UK";
 }
@@ -63,11 +63,20 @@
               action="@(Url.Action("ActionPlanSupportingNarrativeAndLinkPost", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))">
             @Html.AntiForgeryToken()
 
-            @(await Html.GovUkTextareaFor(
+            @(await Html.GovUkCharacterCountFor(
                 m => m.SupportingNarrative,
                 new()
                 {
-                    Label = new() {HtmlOrText = new HtmlOrText("Supporting narrative"), Classes = ["govuk-label--m"]},
+                    Rows = 24,
+                    Label = new()
+                    {
+                        HtmlOrText = new HtmlOrText("Supporting narrative"),
+                        Classes = ["govuk-label--m"]
+                    },
+                    Hint = new()
+                    {
+                        HtmlOrText = new("You can write up to 200 words. You cannot upload files.")
+                    }
                 }
             ))
 
@@ -103,7 +112,7 @@
 
         <p class="govuk-body">
             <a class="govuk-link" href="@Url.Action("ActionPlanTaskListGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})">
-                Cancel and return to action plan for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear))
+                Cancel and return to action plan for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear))
             </a>
         </p>
         <p class="govuk-body">

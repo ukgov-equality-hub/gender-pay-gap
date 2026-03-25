@@ -32,7 +32,7 @@ public partial class ActionPlan
         .Any(aiap => aiap.ActionDetails.Tags.Contains(ActionTag.GenderPayGap));
     
     public bool HasAnyCompletedGenderPayGapActions() => ActionsInActionPlans
-        .Where(a => a.NewStatus == ActionStatus.Completed)
+        .Where(a => a.NewStatus == ActionStatus.Embedded)
         .Any(aiap => aiap.ActionDetails.Tags.Contains(ActionTag.GenderPayGap));
     
     public bool HasAtLeastOneNewOrInProgressMenopauseAction() => ActionsInActionPlans
@@ -40,7 +40,7 @@ public partial class ActionPlan
         .Any(aiap => aiap.ActionDetails.Tags.Contains(ActionTag.Menopause));
 
     public bool HasAnyCompletedMenopauseActions() => ActionsInActionPlans
-        .Where(a => a.NewStatus == ActionStatus.Completed)
+        .Where(a => a.NewStatus == ActionStatus.Embedded)
         .Any(aiap => aiap.ActionDetails.Tags.Contains(ActionTag.Menopause));
     
     public bool HasAtLeastTwoNewOrInProgressActions() => ActionsInActionPlans
@@ -112,6 +112,6 @@ public partial class ActionPlan
 
     public List<ActionInActionPlan> GetNewOrInProgressActions() => ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.NewOrInProgress).ToList();
 
-    public List<ActionInActionPlan> GetCompletedActions() => ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.Completed).ToList();
+    public List<ActionInActionPlan> GetCompletedActions() => ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.Embedded).ToList();
 
 }

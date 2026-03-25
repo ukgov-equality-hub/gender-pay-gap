@@ -1,4 +1,5 @@
 @using GenderPayGap.Core
+@using GenderPayGap.Core.Helpers
 @using GenderPayGap.Database
 @using GenderPayGap.WebUI.Helpers
 @using GenderPayGap.WebUI.Models.ViewReports
@@ -16,15 +17,15 @@
         </a>
     </li>
     <li>
-        <a href="#actions-planned"
+        <a href="#planned-actions"
            class="govuk-link">
-            Actions planned
+            Planned actions
         </a>
     </li>
     <li>
-        <a href="#actions-completed"
+        <a href="#embedded-actions"
            class="govuk-link">
-            Actions completed
+            Embedded actions
         </a>
     </li>
     <li>
@@ -47,17 +48,25 @@
     </summary>
     <div class="govuk-details__text">
         <p class="govuk-body">
-            Any employer who has a headcount of 250 or more on their ‘snapshot date’ at
-            the end of the financial year must submit an action plan outlining how they
-            intend to address the gender pay gap and to support employees going through
-            menopause.
+            Employers with 250 or more employees can submit a voluntary action plan outlining how they intend to
+            address their gender pay gap and support employees experiencing menopause.
+            These are due to be mandatory from April 2027.
         </p>
         <p class="govuk-body">
-            Employers review actions from our database, identify any they already routinely
-            do, and choose some new actions to focus on. You can also
-            <a href="#"
+            To create their action plan, employers review a list of evidence-informed actions recommended by the government.
+            They identify any they already routinely do (‘embedded actions’), and choose some new actions to focus on (‘planned actions’).
+            They must choose at least 2 planned actions.
+        </p>
+        <p class="govuk-body">
+            You can
+            <a href="https://www.gov.uk/government/collections/action-plans-list-of-actions"
                class="govuk-link">
-                see the full list of actions in our database</a>.
+                see the full list of actions
+            </a>
+            and
+            <a href="https://www.gov.uk/government/publications/creating-an-action-plan-guidance-for-employers"
+               class="govuk-link">
+                guidance for employers on creating an action plan</a>.
         </p>
         <p class="govuk-body">
             For more detail on the process, see the
@@ -71,28 +80,30 @@
 @if (!string.IsNullOrWhiteSpace(Model.ActionPlan?.SupportingNarrative))
 {
     <p class="govuk-body govuk-!-margin-bottom-2">
-        @(Model.Organisation.OrganisationName) said:
+        @(Model.Organisation.OrganisationName) submitted the following supporting narrative with their action plan:
     </p>
     <partial name="../ViewReports/UserGeneratedFormattedText" model="@(new UserGeneratedFormattedTextViewModel(Model.ActionPlan?.SupportingNarrative))" />
 }
 @if (UriSanitiser.IsValidHttpOrHttpsLink(Model.ActionPlan?.LinkToReport))
 {
     <p class="govuk-body">
-        Read more about
+        Read
         <a href="@(Model.ActionPlan?.LinkToReport)"
            target="_blank"
            class="govuk-link">
-            what @(Model.Organisation.OrganisationName) says about their action plan (opens in a new window)
+            @(Model.Organisation.OrganisationName)’s equality policies or strategy (opens their website in a new window)
         </a>
     </p>
 }
 
 <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-<h2 id="actions-planned" class="govuk-heading-m">
-    2. Actions planned
+<h2 id="planned-actions" class="govuk-heading-m">
+    2. Planned actions
 </h2>
 <p class="govuk-body">
-    @(Model.Organisation.OrganisationName) has committed to embedding these actions:
+    @(Model.Organisation.OrganisationName) has committed to  working on these actions in the
+    @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear))
+    reporting year:
 </p>
 
 @{
@@ -119,16 +130,16 @@
 }
 
 <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-<h2 id="actions-completed" class="govuk-heading-m">
-    3. Actions already completed
+<h2 id="embedded-actions" class="govuk-heading-m">
+    3. Embedded actions
 </h2>
 <p class="govuk-body">
-    This section explains what @(Model.Organisation.OrganisationName) have already done and plan to do on workplace equality.
+    @(Model.Organisation.OrganisationName) has indicated that the following actions are already an established part of their working practice.
 </p>
 
 @{
     List<ActionInActionPlan> completedActions = Model.ActionPlan != null
-        ? Model.ActionPlan.ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.Completed).ToList()
+        ? Model.ActionPlan.ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.Embedded).ToList()
         : [];
 }
 @if (completedActions.Any())
