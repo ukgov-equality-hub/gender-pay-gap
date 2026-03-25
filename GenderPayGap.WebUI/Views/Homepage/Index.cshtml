@@ -16,14 +16,11 @@
             <h1 class="govuk-heading-xl hero-banner-content govuk-!-margin-top-6 govuk-!-margin-bottom-6">
                 Gender pay gap service
             </h1>
-            <p class="govuk-body hero-banner-content govuk-!-margin-bottom-7">
+            <p class="govuk-body hero-banner-content govuk-!-margin-bottom-6">
                 The gender pay gap is the difference between the average pay of men and women in an organisation.
             </p>
-            <h2 class="govuk-heading-m hero-banner-content govuk-!-font-size-27">
-                Search and compare gender pay gap data
-            </h2>
             <p class="govuk-body hero-banner-content">
-                You can search and compare gender pay gap data if you are looking for data about a specific company or sector.
+                Search and compare gender pay gap data for a specific company or sector.
             </p>
             <partial name="Parts/SearchByOrganisation"/>
             <p class="govuk-body hero-banner-content govuk-!-margin-top-3">
@@ -47,14 +44,10 @@
         <h3 class="govuk-heading-m">
             Gender pay gap reporting: guidance for employers
         </h3>
-    </div>
-</div>
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
         <p class="govuk-body">
             Any employer with 250 or more employees on a specific date each year must report their gender pay gap data.
         </p>
-        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
+        <ul class="govuk-list govuk-list--bullet">
             <li>
                 <a href="https://www.gov.uk/government/publications/gender-pay-gap-reporting-guidance-for-employers/who-needs-to-report"
                    class="govuk-link">
@@ -92,23 +85,48 @@
                 </a>
             </li>
         </ul>
-    </div>
-</div>
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
         <h3 class="govuk-heading-m">
             Submit your gender pay gap data
         </h3>
-    </div>
-</div>
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
         <ul class="govuk-list govuk-list--bullet">
             <li>
                 <a href="@(Global.StartUrl ?? Url.Action("ManageOrganisationsGet", "ManageOrganisations"))"
                    class="govuk-link">
                     Report your gender pay gap data
+                </a>
+            </li>
+        </ul>
+
+        <h3 class="govuk-heading-m govuk-!-margin-top-7">
+            Creating an action plan: guidance for employers
+        </h3>
+        <p class="govuk-body">
+            Action plans show the steps employers are taking to reduce their gender pay gap and support employees experiencing menopause.
+        </p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+                <a href="https://www.gov.uk/government/publications/creating-an-action-plan-guidance-for-employers"
+                   class="govuk-link">
+                    Creating an action plan: guidance for employers
+                </a>
+            </li>
+            <li>
+                <a href="https://www.gov.uk/government/collections/action-plans-list-of-actions"
+                   class="govuk-link">
+                    Action plans: list of actions
+                </a>
+            </li>
+        </ul>
+
+        <h3 class="govuk-heading-m">
+            Submit your action plan
+        </h3>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+                <a href="@(Global.StartUrlActionPlans ?? Url.Action("ManageOrganisationsGet", "ManageOrganisations"))"
+                   class="govuk-link">
+                    Submit your action plan
                 </a>
             </li>
         </ul>
