@@ -107,6 +107,10 @@ namespace GenderPayGap.Core
             Config.GetAppSettingBool("UseStartUrl")
                 ? "https://www.gov.uk/report-gender-pay-gap-data"
                 : null;
+        public static string StartUrlActionPlans =>
+            Config.GetAppSettingBool("UseStartUrl")
+                ? "https://www.gov.uk/government/publications/creating-an-action-plan-guidance-for-employers/step-4-submit-your-action-plan"
+                : null;
         public static string DoneUrl => "https://www.gov.uk/done/report-gender-pay-gap-data";
         public static int MaxCompareBasketCount => 500; // Maximum number of employers you can add to the compare basket
         public static int EditableReportCount => 4; // Specifies how many reports an employer can edit
