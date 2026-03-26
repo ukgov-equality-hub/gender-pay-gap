@@ -34,7 +34,7 @@ public enum ActionTag
 {
     [Display(Name = "Select actions to reduce your gender pay gap")]
     GenderPayGap,
-    [Display(Name = "Select actions to support women experiencing menopause")]
+    [Display(Name = "Select actions to support employees experiencing menopause")]
     Menopause
 }
 

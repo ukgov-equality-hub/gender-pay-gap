@@ -442,33 +442,31 @@ public class ActionPlanController: Controller
         {
             if (!actionPlan.HasAtLeastOneNewOrInProgressGenderPayGapAction())
             {
-                string errorMessage = $"You must select at least one action from the page \"{ActionTag.GenderPayGap.GetDisplayName()}\"";
+                string errorMessage = $"You must select at least one ‘new or in progress’ action from the page ‘{ActionTag.GenderPayGap.GetDisplayName()}’";
                 if (actionPlan.HasAnyCompletedGenderPayGapActions())
                 {
-                    errorMessage += ". Actions that are already fully embedded do not count for this purpose. "
-                                    + "Your plan must have actions with which you can make further progress.";
+                    errorMessage += ". Actions you have selected as ‘embedded’ do not count towards your action plan";
                 }
                 
                 ModelState.AddModelError("edit-action-plan-link", errorMessage);
             }
             if (!actionPlan.HasAtLeastOneNewOrInProgressMenopauseAction())
             {
-                string errorMessage = $"You must select at least one action from the page \"{ActionTag.Menopause.GetDisplayName()}\"";
+                string errorMessage = $"You must select at least one ‘new or in progress’ action from the page ‘{ActionTag.Menopause.GetDisplayName()}’";
                 if (actionPlan.HasAnyCompletedMenopauseActions())
                 {
-                    errorMessage += ". Actions that are already fully embedded do not count for this purpose. "
-                                    + "Your plan must have actions with which you can make further progress.";
+                    errorMessage += ". Actions you have selected as ‘embedded’ do not count towards your action plan";
                 }
                 
                 ModelState.AddModelError("edit-action-plan-link", errorMessage);
             }
             if (!actionPlan.HasAtLeastTwoNewOrInProgressActions())
             {
-                string errorMessage = $"You must select at least two \"New or in progress\" actions";
+                string errorMessage = $"You must select at least 2 ‘new or in progress’ actions";
                 if (actionPlan.SingleSelectedActionHasBothGenderPayGapAndMenopauseTags())
                 {
-                    errorMessage += $". The action \"{actionPlan.GetNewOrInProgressActions()[0].ActionDetails.Name}\" "
-                                    + "appears on both the Gender Pay Gap and Menopause pages, but only counts as one action";
+                    errorMessage += $". The action ‘{actionPlan.GetNewOrInProgressActions()[0].ActionDetails.Name}’ "
+                                    + "appears on both the gender pay gap and menopause pages, but only counts in one category";
                 }
                 
                 ModelState.AddModelError("edit-action-plan-link", errorMessage);
