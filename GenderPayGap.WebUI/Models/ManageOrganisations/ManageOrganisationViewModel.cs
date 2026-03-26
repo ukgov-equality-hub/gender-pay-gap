@@ -62,6 +62,13 @@ namespace GenderPayGap.WebUI.Models.ManageOrganisations
             return users;
         }
 
+        public bool ShowDeadline(int reportingYear)
+        {
+            int firstReportingYearToShowDeadline = GetFirstReportingYearToShow();
+            bool showDeadline = reportingYear >= firstReportingYearToShowDeadline;
+            return showDeadline;
+        }
+
         public bool HasDraftGpgReport(int reportingYear)
         {
             return allDraftReturns.Any(d => d.SnapshotYear == reportingYear);
@@ -122,11 +129,16 @@ namespace GenderPayGap.WebUI.Models.ManageOrganisations
             return IsScopeDeclared(reportingYear) || !RequiredToDeclareScope(reportingYear) || IsInScope(reportingYear);
         }
 
-        public TagViewModel GetScopeStatusTag(int reportingYear)
+        public string GetScopeStatusText(int reportingYear)
         {
-            string scopeStatusText = Organisation.GetScopeStatusForYear(reportingYear).IsInScopeVariant()
+            return Organisation.GetScopeStatusForYear(reportingYear).IsInScopeVariant()
                 ? "Required to report"
                 : "Not required to report";
+        }
+
+        public TagViewModel GetScopeStatusTag(int reportingYear)
+        {
+            string scopeStatusText = GetScopeStatusText(reportingYear);
             
             return new TagViewModel
             {

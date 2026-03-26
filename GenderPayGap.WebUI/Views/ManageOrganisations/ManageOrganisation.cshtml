@@ -65,28 +65,41 @@
                 <div class="govuk-inset-text govuk-!-padding-top-1 govuk-!-padding-bottom-1 govuk-!-margin-top-0">
                     <dl class="govuk-summary-list"
                         style="width: unset;">
-                        <div class="govuk-summary-list__row">
+                        @if (Model.ShowDeadline(reportingYear))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key"
+                                    style="width: 170px;">
+                                    Deadline
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <span class="govuk-!-margin-right-2">
+                                        @Model.GetDeadlineDateFormatted(reportingYear)
+                                    </span>
+
+                                    <span>
+                                        @Model.GetDeadlineRelativeDaysIfNeeded(reportingYear)
+                                    </span>
+                                </dd>
+                            </div>
+                        }
+                        <div class="govuk-summary-list__row"
+                             style="border: none;">
                             <dt class="govuk-summary-list__key"
-                                style="width: 150px;">
-                                Deadline
+                                style="width: 170px;">
+                                Reporting status
                             </dt>
-                            <dd class="govuk-summary-list__value">
-                                <span class="govuk-!-margin-right-2">
-                                    @Model.GetDeadlineDateFormatted(reportingYear)
-                                </span>
-                                
-                                <span>
-                                    @Model.GetDeadlineRelativeDaysIfNeeded(reportingYear)
-                                </span>
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key"
-                                style="width: 150px;">
-                                Status
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @(await Html.GovUkTag(Model.GetOverallStatusTagForYear(reportingYear)))
+                            <dd class="govuk-summary-list__value"
+                                style="line-height: 1.5;">
+                                @(Model.GetScopeStatusText(reportingYear))
+                                @if (ReportingYearsHelper.CanChangeScope(Model.Organisation.SectorType, reportingYear))
+                                {
+                                    <br/>
+                                    <a href="@(Url.Action("DeclareScopeForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear}))"
+                                       class="govuk-link">
+                                        Think this is wrong?
+                                    </a>
+                                }
                             </dd>
                         </div>
                     </dl>
