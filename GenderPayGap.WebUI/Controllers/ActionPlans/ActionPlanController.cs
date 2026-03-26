@@ -473,12 +473,6 @@ public class ActionPlanController: Controller
                 
                 ModelState.AddModelError("edit-action-plan-link", errorMessage);
             }
-            if (!actionPlan.HasCompletedSupportingNarrative())
-            {
-                ModelState.AddModelError(
-                    "edit-action-plan-link",
-                    $"You must enter a supporting narrative");
-            }
             if (!UriSanitiser.IsValidHttpOrHttpsLink(actionPlan.LinkToReport))
             {
                 ModelState.AddModelError(
