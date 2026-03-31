@@ -79,11 +79,12 @@
                 <div class="govuk-task-list__name-and-hint">
                     <a href="@(Url.Action("ActionPlanSelectActionsMenopauseGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
                        class="govuk-link govuk-task-list__link"
-                       aria-describedby="overall-task-list-2-status">
+                       aria-describedby="action-plan-task-list--menopause-actions--status">
                         Select actions to support employees experiencing menopause
                     </a>
                 </div>
-                <div class="govuk-task-list__status" id="overall-task-list-2-status">
+                <div class="govuk-task-list__status"
+                     id="action-plan-task-list--menopause-actions--status">
                     @(await Html.GovUkTag(Model.GetMenopauseActionsStatusTag()))
                 </div>
             </li>
@@ -92,11 +93,12 @@
                 <div class="govuk-task-list__name-and-hint">
                     <a href="@(Url.Action("ActionPlanSupportingNarrativeAndLinkGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
                        class="govuk-link govuk-task-list__link"
-                       aria-describedby="overall-task-list-3-status">
+                       aria-describedby="action-plan-task-list--supporting-narrative--status">
                         Add your supporting narrative
                     </a>
                 </div>
-                <div class="govuk-task-list__status" id="overall-task-list-3-status">
+                <div class="govuk-task-list__status"
+                     id="action-plan-task-list--supporting-narrative--status">
                     @(await Html.GovUkTag(Model.GetSupportingNarrativeStatusTag()))
                 </div>
             </li>
@@ -107,11 +109,12 @@
                     <div class="govuk-task-list__name-and-hint">
                         <a href="@(Url.Action("ActionPlanResponsiblePersonGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear}))"
                            class="govuk-link govuk-task-list__link"
-                           aria-describedby="overall-task-list-3-status">
+                           aria-describedby="action-plan-task-list--responsible-person--status">
                             Add your employer’s responsible person
                         </a>
                     </div>
-                    <div class="govuk-task-list__status" id="overall-task-list-3-status">
+                    <div class="govuk-task-list__status"
+                         id="action-plan-task-list--responsible-person--status">
                         @(await Html.GovUkTag(Model.GetResponsiblePersonStatusTag()))
                     </div>
                 </li>

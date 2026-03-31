@@ -57,7 +57,8 @@
                 reportingYearsHidden++;
             }
             
-            <div class="block-for-reporting-year @(hideReportingYear ? "govuk-visually-hidden" : null)">
+            <div class="block-for-reporting-year"
+                 style="@(hideReportingYear ? "display: none;" : null)">
                 <h3 class="govuk-heading-m govuk-!-font-size-27 govuk-!-margin-top-8">
                     Reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
                 </h3>
@@ -144,12 +145,18 @@
                                    class="govuk-link govuk-task-list__link"
                                    aria-describedby="@((Model.ShowCovidMessage(reportingYear) ? gpgReportHintId : "")) @(gpgReportStatusId)">
                                     Gender Pay Gap report
+                                    <span class="govuk-visually-hidden">
+                                        for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
+                                    </span>
                                 </a>
                             }
                             else
                             {
                                 <span aria-describedby="@((Model.ShowCovidMessage(reportingYear) ? gpgReportHintId : "")) @(gpgReportStatusId)">
                                     Gender Pay Gap report
+                                    <span class="govuk-visually-hidden">
+                                        for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
+                                    </span>
                                 </span>
                             }
 
@@ -198,12 +205,18 @@
                                        class="govuk-link govuk-task-list__link"
                                        aria-describedby="@((Model.IsActionPlanOptional(reportingYear) ? actionPlanHintId : "")) @(actionPlanStatusId)">
                                         Action Plan
+                                        <span class="govuk-visually-hidden">
+                                            for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
+                                        </span>
                                     </a>
                                 }
                                 else
                                 {
                                     <span aria-describedby="@((Model.IsActionPlanOptional(reportingYear) ? actionPlanHintId : "")) @(actionPlanStatusId)">
                                         Action Plan
+                                        <span class="govuk-visually-hidden">
+                                            for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
+                                        </span>
                                     </span>
                                 }
                                 
@@ -238,7 +251,7 @@
             document.getElementById("see-more-reporting-years-link").addEventListener("click", function (e) {
                 e.preventDefault();
                 document.querySelectorAll(".block-for-reporting-year").forEach(function (block) {
-                    block.classList.remove("govuk-visually-hidden");
+                    block.style.display = 'block';
                 })
                 document.getElementById("see-more-reporting-years-block").style.display = "none";
             })

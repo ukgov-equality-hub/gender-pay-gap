@@ -11,7 +11,7 @@
 <html lang="en" class="govuk-template govuk-template--rebranded">
 <head>
     <meta charset="utf-8" />
-    <title>@(ViewBag.Title ?? "Gender pay gap service")</title>
+    <title>@(ViewData.ModelState.IsValid ? "" : "Error: ")@(ViewBag.Title ?? "Gender pay gap service")</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#1d70b8">
     <link rel="icon" sizes="48x48" href="/assets/rebrand/images/favicon.ico">
