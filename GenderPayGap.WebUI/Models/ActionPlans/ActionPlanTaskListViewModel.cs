@@ -11,7 +11,7 @@ public class ActionPlanTaskListViewModel
 
     public TagViewModel GetGenderPayGapActionsStatusTag()
     {
-        if (ActionPlan != null && ActionPlan.HasAtLeastOneNewOrInProgressMenopauseAction())
+        if (ActionPlan != null && ActionPlan.HasAtLeastOneNewOrInProgressGenderPayGapAction())
         {
             return new TagViewModel
             {
