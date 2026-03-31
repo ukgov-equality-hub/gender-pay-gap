@@ -24,7 +24,7 @@ public class ActionPlanTaskListViewModel
         {
             return new TagViewModel
             {
-                HtmlOrText = new("In progress"),
+                HtmlOrText = new("Incomplete"),
                 Classes = ["govuk-tag--yellow"]
             };
         }
@@ -51,7 +51,7 @@ public class ActionPlanTaskListViewModel
         {
             return new TagViewModel
             {
-                HtmlOrText = new("In progress"),
+                HtmlOrText = new("Incomplete"),
                 Classes = ["govuk-tag--yellow"]
             };
         }
@@ -88,7 +88,7 @@ public class ActionPlanTaskListViewModel
         {
             return new TagViewModel
             {
-                HtmlOrText = new("In progress"),
+                HtmlOrText = new("Incomplete"),
                 Classes = ["govuk-tag--yellow"],
             };
         }
@@ -120,7 +120,7 @@ public class ActionPlanTaskListViewModel
         {
             return new TagViewModel
             {
-                HtmlOrText = new("In progress"),
+                HtmlOrText = new("Incomplete"),
                 Classes = ["govuk-tag--yellow"],
             };
         }
