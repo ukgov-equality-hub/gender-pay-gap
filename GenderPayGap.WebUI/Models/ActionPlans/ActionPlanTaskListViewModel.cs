@@ -11,7 +11,7 @@ public class ActionPlanTaskListViewModel
 
     public TagViewModel GetGenderPayGapActionsStatusTag()
     {
-        if (ActionPlan != null && ActionPlan.HasAtLeastOneNewOrInProgressMenopauseAction())
+        if (ActionPlan != null && ActionPlan.HasAtLeastOneNewOrInProgressGenderPayGapAction())
         {
             return new TagViewModel
             {
@@ -24,7 +24,7 @@ public class ActionPlanTaskListViewModel
         {
             return new TagViewModel
             {
-                HtmlOrText = new("In progress"),
+                HtmlOrText = new("Incomplete"),
                 Classes = ["govuk-tag--yellow"]
             };
         }
@@ -51,7 +51,7 @@ public class ActionPlanTaskListViewModel
         {
             return new TagViewModel
             {
-                HtmlOrText = new("In progress"),
+                HtmlOrText = new("Incomplete"),
                 Classes = ["govuk-tag--yellow"]
             };
         }
@@ -68,7 +68,7 @@ public class ActionPlanTaskListViewModel
         bool hasSupportingNarrative = !string.IsNullOrWhiteSpace(ActionPlan?.SupportingNarrative);
         bool hasLinkToReport = !string.IsNullOrWhiteSpace(ActionPlan?.LinkToReport);
 
-        if (hasSupportingNarrative && hasLinkToReport)
+        if (hasLinkToReport)
         {
             return new TagViewModel
             {
@@ -88,7 +88,7 @@ public class ActionPlanTaskListViewModel
         {
             return new TagViewModel
             {
-                HtmlOrText = new("In progress"),
+                HtmlOrText = new("Incomplete"),
                 Classes = ["govuk-tag--yellow"],
             };
         }
@@ -120,7 +120,7 @@ public class ActionPlanTaskListViewModel
         {
             return new TagViewModel
             {
-                HtmlOrText = new("In progress"),
+                HtmlOrText = new("Incomplete"),
                 Classes = ["govuk-tag--yellow"],
             };
         }
