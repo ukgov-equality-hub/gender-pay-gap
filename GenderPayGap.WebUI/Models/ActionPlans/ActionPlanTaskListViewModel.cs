@@ -68,7 +68,7 @@ public class ActionPlanTaskListViewModel
         bool hasSupportingNarrative = !string.IsNullOrWhiteSpace(ActionPlan?.SupportingNarrative);
         bool hasLinkToReport = !string.IsNullOrWhiteSpace(ActionPlan?.LinkToReport);
 
-        if (hasSupportingNarrative && hasLinkToReport)
+        if (hasLinkToReport)
         {
             return new TagViewModel
             {
