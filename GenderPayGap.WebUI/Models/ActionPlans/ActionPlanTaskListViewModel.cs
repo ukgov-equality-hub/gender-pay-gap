@@ -1,6 +1,4 @@
-﻿using GenderPayGap.Core;
-using GenderPayGap.Core.Helpers;
-using GenderPayGap.Database;
+﻿using GenderPayGap.Database;
 using GovUkDesignSystemDotNet;
 
 namespace GenderPayGap.WebUI.Models.ActionPlans;
@@ -13,15 +11,21 @@ public class ActionPlanTaskListViewModel
 
     public TagViewModel GetGenderPayGapActionsStatusTag()
     {
-        List<Actions> gpgActions = ActionsHelper.ListOfGenderPayGapActions.Select(a => a.Action).ToList();
-        
-        if (ActionPlan != null &&
-            ActionPlan.GetNewOrInProgressActions().Any(aiap => gpgActions.Contains(aiap.Action)))
+        if (ActionPlan != null && ActionPlan.HasAtLeastOneNewOrInProgressMenopauseAction())
         {
             return new TagViewModel
             {
                 HtmlOrText = new("Complete"),
                 Classes = ["govuk-tag--green"]
+            };
+        }
+
+        if (ActionPlan != null && ActionPlan.HasAnyGenderPayGapActions())
+        {
+            return new TagViewModel
+            {
+                HtmlOrText = new("In progress"),
+                Classes = ["govuk-tag--yellow"]
             };
         }
 
@@ -34,15 +38,21 @@ public class ActionPlanTaskListViewModel
 
     public TagViewModel GetMenopauseActionsStatusTag()
     {
-        List<Actions> menopauseActions = ActionsHelper.ListOfMenopauseActions.Select(a => a.Action).ToList();
-        
-        if (ActionPlan != null &&
-            ActionPlan.GetNewOrInProgressActions().Any(aiap => menopauseActions.Contains(aiap.Action)))
+        if (ActionPlan != null && ActionPlan.HasAtLeastOneNewOrInProgressMenopauseAction())
         {
             return new TagViewModel
             {
                 HtmlOrText = new("Complete"),
                 Classes = ["govuk-tag--green"]
+            };
+        }
+
+        if (ActionPlan != null && ActionPlan.HasAnyMenopauseActions())
+        {
+            return new TagViewModel
+            {
+                HtmlOrText = new("In progress"),
+                Classes = ["govuk-tag--yellow"]
             };
         }
 
@@ -79,7 +89,7 @@ public class ActionPlanTaskListViewModel
             return new TagViewModel
             {
                 HtmlOrText = new("In progress"),
-                Classes = ["govuk-tag--blue"],
+                Classes = ["govuk-tag--yellow"],
             };
         }
     }
@@ -111,7 +121,7 @@ public class ActionPlanTaskListViewModel
             return new TagViewModel
             {
                 HtmlOrText = new("In progress"),
-                Classes = ["govuk-tag--blue"],
+                Classes = ["govuk-tag--yellow"],
             };
         }
     }

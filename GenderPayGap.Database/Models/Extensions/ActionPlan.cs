@@ -6,8 +6,6 @@ using GenderPayGap.Extensions;
 
 namespace GenderPayGap.Database;
 
-[Serializable]
-[DebuggerDisplay("{OrganisationName},{Status}")]
 public partial class ActionPlan
 {
 
@@ -35,12 +33,18 @@ public partial class ActionPlan
         .Where(a => a.NewStatus == ActionStatus.Embedded)
         .Any(aiap => aiap.ActionDetails.Tags.Contains(ActionTag.GenderPayGap));
     
+    public bool HasAnyGenderPayGapActions() => ActionsInActionPlans
+        .Any(aiap => aiap.ActionDetails.Tags.Contains(ActionTag.GenderPayGap));
+    
     public bool HasAtLeastOneNewOrInProgressMenopauseAction() => ActionsInActionPlans
         .Where(a => a.NewStatus == ActionStatus.NewOrInProgress)
         .Any(aiap => aiap.ActionDetails.Tags.Contains(ActionTag.Menopause));
 
     public bool HasAnyCompletedMenopauseActions() => ActionsInActionPlans
         .Where(a => a.NewStatus == ActionStatus.Embedded)
+        .Any(aiap => aiap.ActionDetails.Tags.Contains(ActionTag.Menopause));
+    
+    public bool HasAnyMenopauseActions() => ActionsInActionPlans
         .Any(aiap => aiap.ActionDetails.Tags.Contains(ActionTag.Menopause));
     
     public bool HasAtLeastTwoNewOrInProgressActions() => ActionsInActionPlans
