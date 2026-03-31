@@ -468,7 +468,7 @@ else
                                         Classes = ["govuk-button--secondary", "govuk-!-margin-bottom-0"],
                                         PreventDoubleClick = true
                                     }))
-                                    <a href="#"
+                                    <a href="#" @* This href="#" is ok because it's replaced with a javascript action below *@
                                        class="govuk-link"
                                        style="display: none">
                                         Impersonate user <span class="govuk-visually-hidden">@(user.Fullname)</span>
