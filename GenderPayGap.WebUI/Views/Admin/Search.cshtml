@@ -41,7 +41,7 @@
                 <div id="search-query-hint" class="govuk-hint govuk-!-margin-top-0">
                     <ul class="govuk-list govuk-!-margin-bottom-0">
                         <li class="govuk-hint">
-                            <span class="govuk-!-font-weight-bold">Organisations:</span> search by current name, previous name, employer reference or company number
+                            <span class="govuk-!-font-weight-bold">Organisations:</span> search by current name, previous name or company number
                         </li>
                         <li class="govuk-hint">
                             <span class="govuk-!-font-weight-bold">Users:</span> search by name or email address
@@ -76,7 +76,9 @@
                                 <input class="govuk-radios__input" id="changed-name" name="orderBy" type="radio" value="relevance"
                                        @{if (Model.OrderBy == "relevance") { <text> checked </text>}}
                                        onchange="submitSearchForm();">
-                                <label class="govuk-label govuk-radios__label" for="changed-name">
+                                <label for="changed-name"
+                                       class="govuk-label govuk-radios__label"
+                                       style="max-width: unset">
                                     By relevance
                                 </label>
                             </div>
@@ -84,7 +86,9 @@
                                 <input class="govuk-radios__input" id="changed-name-2" name="orderBy" type="radio" value="alphabetically"
                                        @{if (Model.OrderBy == "alphabetically") { <text> checked </text>}}
                                        onchange="submitSearchForm();">
-                                <label class="govuk-label govuk-radios__label" for="changed-name-2">
+                                <label for="changed-name-2"
+                                       class="govuk-label govuk-radios__label"
+                                       style="max-width: unset">
                                     Alphabetically
                                 </label>
                             </div>
