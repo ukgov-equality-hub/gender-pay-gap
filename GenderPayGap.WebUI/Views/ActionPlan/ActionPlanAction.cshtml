@@ -15,7 +15,7 @@
     {
         case ActionTag.GenderPayGap:
             urlOfActionsList = Url.Action("ActionPlanSelectActionsGenderPayGapGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear});
-            selectActionsTo = "reduce your gender pay gap";
+            selectActionsTo = "address your gender pay gap";
             formPostUrl = Url.Action("ActionPlanGenderPayGapActionPost", "ActionPlan", new {encryptedOrganisationId, reportingYear = Model.ReportingYear, whichAction = Model.Action});
             break;
         case ActionTag.Menopause:
@@ -123,7 +123,7 @@
                         new()
                         {
                             Label = new() { HtmlOrText = new("New or in progress") },
-                            Hint = new() { HtmlOrText = new("This means you will be working on it for the first time or adding to existing practices") }
+                            Hint = new() { HtmlOrText = new("This means you will be working on it for the first time or building on something you are already doing") }
                         }
                     },
                     {
@@ -165,14 +165,14 @@
                                          </div>
                                          <ul class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
                                              <li>why your organisation has chosen this action</li>
-                                             <li>how you will track and demonstrate that this action is improving gender equality in your organisation</li>
+                                             <li>how you will track and understand that this action is improving gender equality in your organisation</li>
                                          </ul>
                                      </div>
 
                                      <div id="@(nameof(Model.SupportingText))--@(nameof(ActionStatus.Embedded))" style="display: none;">
                                          <div class="govuk-hint govuk-!-margin-bottom-2">
                                              You can use this section to add further details about how your organisation
-                                             made this action an established part of their working practice.
+                                             made this action an established part of your working practice.
                                              This might include:
                                          </div>
                                          <ul class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
@@ -182,7 +182,7 @@
                                      </div>
 
                                      <div class="govuk-hint">
-                                         The information you write here will be published alongside the data you report on the gender pay gap service.
+                                         The information you write here will be published as part of your action plan on the gender pay gap service.
                                      </div>
                                      <div class="govuk-hint">
                                          You can write up to 100 words. You cannot upload files or add links.

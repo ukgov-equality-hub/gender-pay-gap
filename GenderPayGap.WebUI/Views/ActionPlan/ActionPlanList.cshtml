@@ -12,7 +12,7 @@
     switch (Model.ActionTag)
     {
         case ActionTag.GenderPayGap:
-            selectActionsTo = "Select actions to reduce your gender pay gap";
+            selectActionsTo = "Select actions to address your gender pay gap";
             break;
         case ActionTag.Menopause:
             selectActionsTo = "Select actions to support employees experiencing menopause";
@@ -70,7 +70,7 @@
         <ul class="govuk-list govuk-list--bullet">
             <li>
                 <b>New or in progress</b>
-                – this means you will be working on it for the first time or adding to existing practices
+                – this means you will be working on it for the first time or building on something you are already doing
             </li>
             <li>
                 <b>Embedded</b>
@@ -82,7 +82,8 @@
             You can select more than one action.
         </p>
         <div class="govuk-inset-text">
-            For each action you select, you must add further details.
+            For each action you select, you will be asked to provide further details on why your organisation has
+            chosen this action and how you will monitor its impact.
         </div>
 
         @foreach (ActionCategories actionCategory in Enum.GetValues(typeof(ActionCategories)))
