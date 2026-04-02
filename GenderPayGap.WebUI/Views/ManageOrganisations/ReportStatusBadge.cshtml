@@ -37,18 +37,14 @@
             
         case ReportStatusTag.Due:
             reportTagHtml = @<text>
-                                Due on
-                                <span class="employer-reports-page--visually-hidden-on-desktop"><br/></span>
-                                @Model.DeadlineDate.ToString("d MMMM yyyy")@(Model.HasDraft ? ", draft created" : "")
+                                Due@(Model.HasDraft ? ", draft created" : "")
                              </text>;
             reportTagColour = "govuk-tag--blue";
             break;
         case ReportStatusTag.Overdue:
             int daysOverdue = (int)(VirtualDateTime.Now.Date.Subtract(Model.DeadlineDate).TotalDays);
             reportTagHtml = @<text>
-                                @(daysOverdue)
-                                @(daysOverdue == 1 ? "day" : "days")
-                                overdue@(Model.HasDraft ? ", draft created" : "")
+                                Overdue@(Model.HasDraft ? ", draft created" : "")
                              </text>;
             reportTagColour = "govuk-tag--red";
             break;
