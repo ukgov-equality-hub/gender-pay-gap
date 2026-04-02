@@ -32,7 +32,7 @@ public static class ActionCategoriesExtensions
 
 public enum ActionTag
 {
-    [Display(Name = "Select actions to reduce your gender pay gap")]
+    [Display(Name = "Select actions to address your gender pay gap")]
     GenderPayGap,
     [Display(Name = "Select actions to support employees experiencing menopause")]
     Menopause
