@@ -50,10 +50,10 @@
 
 
 <form method="post" action="@Url.Action("ReportLinkToWebsitePost", "ReportLinkToWebsite", new { encryptedOrganisationId, reportingYear = Model.ReportingYear})">
+    @(Html.AntiForgeryToken())
     
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @(Html.AntiForgeryToken())
             @{ await Html.RenderPartialAsync("../Components/StatusMessages/StatusMessages", new StatusMessagesViewModel()); }
             @(await Html.GovUkErrorSummary(ViewData.ModelState))
             

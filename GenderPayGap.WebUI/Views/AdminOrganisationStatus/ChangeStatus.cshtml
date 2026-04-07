@@ -101,12 +101,11 @@
 </div>
 
 <form method="POST" action="@Url.Action("ChangeStatusPost", "AdminOrganisationStatus", new {id = Model.Organisation.OrganisationId})">
+    @(Html.AntiForgeryToken())
     
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-
-            @(Html.AntiForgeryToken())
-
+            
             @(Html.Hidden(nameof(AdminChangeOrganisationStatusViewModel.Action),
                 ChangeOrganisationStatusViewModelActions.OfferNewStatusAndReason))
 
