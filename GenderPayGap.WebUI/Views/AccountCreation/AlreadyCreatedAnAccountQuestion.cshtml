@@ -11,7 +11,8 @@
         @(await Html.GovUkErrorSummaryIfNeeded())
 
         <form method="POST" action="@Url.Action("AlreadyCreatedAnAccountQuestionPost", "AccountCreation")">
-
+            @(Html.AntiForgeryToken())
+            
             @await Html.GovUkRadiosFor(
                 m => m.HaveYouAlreadyCreatedYourUserAccount,
                 new RadiosViewModel
