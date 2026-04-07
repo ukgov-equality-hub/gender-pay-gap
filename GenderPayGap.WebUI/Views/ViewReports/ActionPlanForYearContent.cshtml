@@ -5,6 +5,20 @@
 @using GenderPayGap.WebUI.Models.ViewReports
 @model GenderPayGap.WebUI.Models.ViewReports.ActionPlanForYearContentViewModel
 
+@{
+    List<ActionInActionPlan> embeddedActions = Model.ActionPlan?.GetCompletedActions() ?? [];
+    bool hasEmbeddedActions = embeddedActions.Any();
+    
+    int nextSectionNumber = 3;
+
+    if (hasEmbeddedActions)
+    {
+        nextSectionNumber++;
+    }
+
+    int aboutOrganisationSectionNumber = nextSectionNumber;
+}
+
 
 <h2 class="govuk-heading-m">
     Contents
@@ -22,12 +36,15 @@
             Planned actions
         </a>
     </li>
-    <li>
-        <a href="#embedded-actions"
-           class="govuk-link">
-            Embedded actions
-        </a>
-    </li>
+    @if (hasEmbeddedActions)
+    {
+        <li>
+            <a href="#embedded-actions"
+               class="govuk-link">
+                Embedded actions
+            </a>
+        </li>
+    }
     <li>
         <a href="#about"
            class="govuk-link">
@@ -137,22 +154,17 @@
     }
 }
 
-<hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-<h2 id="embedded-actions" class="govuk-heading-m">
-    3. Embedded actions
-</h2>
-<p class="govuk-body">
-    @(Model.Organisation.OrganisationName) has indicated that the following actions are already an established part of their working practice.
-</p>
-
-@{
-    List<ActionInActionPlan> completedActions = Model.ActionPlan != null
-        ? Model.ActionPlan.ActionsInActionPlans.Where(a => a.NewStatus == ActionStatus.Embedded).ToList()
-        : [];
-}
-@if (completedActions.Any())
+@if (embeddedActions.Any())
 {
-    foreach (ActionInActionPlan actionInActionPlan in completedActions)
+    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+    <h2 id="embedded-actions" class="govuk-heading-m">
+        3. Embedded actions
+    </h2>
+    <p class="govuk-body">
+        @(Model.Organisation.OrganisationName) has indicated that the following actions are already an established part of their working practice.
+    </p>
+
+    foreach (ActionInActionPlan actionInActionPlan in embeddedActions)
     {
         <h3 class="govuk-heading-s govuk-!-margin-bottom-2">
             @(actionInActionPlan.ActionDetails.Name)
@@ -170,19 +182,10 @@
         }
     }
 }
-else
-{
-    <p class="govuk-body">
-        @(Model.Organisation.OrganisationName) has not marked any of our actions on workplace equality as "Completed".
-    </p>
-    <p class="govuk-body">
-        It is optional for employers to mark actions as "Completed".
-    </p>
-}
 
 <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 <h2 id="about" class="govuk-heading-m">
-    4. About @(Model.Organisation.OrganisationName)
+    @(aboutOrganisationSectionNumber). About @(Model.Organisation.OrganisationName)
 </h2>
 
 <dl class="govuk-summary-list">

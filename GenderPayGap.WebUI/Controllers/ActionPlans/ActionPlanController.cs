@@ -428,7 +428,10 @@ public class ActionPlanController: Controller
 
         if (actionPlan == null)
         {
-            throw new PageNotFoundException();
+            ModelState.AddModelError(
+                "edit-action-plan-link",
+                "You must add actions to your action plan before publishing it"
+            );
         }
         else if (actionPlan.Status == ActionPlanStatus.Submitted)
         {
@@ -436,7 +439,6 @@ public class ActionPlanController: Controller
                 "edit-action-plan-link",
                 "This action plan has already been published. Please make some changes before trying to publish it again"
             );
-            return View("ActionPlanProvisionalPlan", actionPlan);
         }
         else
         {
@@ -483,24 +485,24 @@ public class ActionPlanController: Controller
                     "edit-action-plan-link",
                     $"You must enter the details of the person responsible for your organisation's action plan");
             }
-
-            if (!ModelState.IsValid)
-            {
-                var viewModel = new ActionPlanPreviewViewModel
-                {
-                    Organisation = organisation,
-                    ReportingYear = reportingYear,
-                    ActionPlan = actionPlan,
-                };
-        
-                return View("ActionPlanProvisionalPlan", viewModel);
-            }
-            
-            actionPlan.SubmitActionPlan();
-            dataRepository.SaveChanges();
-
-            return RedirectToAction("ActionPlanSubmittedConfirmationGet", new {encryptedOrganisationId, reportingYear = reportingYear});
         }
+
+        if (!ModelState.IsValid)
+        {
+            var viewModel = new ActionPlanPreviewViewModel
+            {
+                Organisation = organisation,
+                ReportingYear = reportingYear,
+                ActionPlan = actionPlan,
+            };
+    
+            return View("ActionPlanProvisionalPlan", viewModel);
+        }
+        
+        actionPlan.SubmitActionPlan();
+        dataRepository.SaveChanges();
+
+        return RedirectToAction("ActionPlanSubmittedConfirmationGet", new {encryptedOrganisationId, reportingYear = reportingYear});
     }
 
     [HttpGet("{encryptedOrganisationId}/reporting-year-{reportingYear}/action-plan/submitted-confirmation")]
