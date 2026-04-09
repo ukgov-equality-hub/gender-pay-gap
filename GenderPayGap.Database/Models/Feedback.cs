@@ -16,6 +16,9 @@ namespace GenderPayGap.Database.Models
         [JsonProperty]
         public DifficultyTypes? Difficulty { get; set; }
 
+        [JsonProperty]
+        public DifficultyTypes? DifficultyActionPlan { get; set; }
+
         #endregion
 
         [MaxLength(2000)]
@@ -23,8 +26,11 @@ namespace GenderPayGap.Database.Models
         public string Details { get; set; }
 
         [JsonProperty]
+        public string YourName { get; set; }
+        [JsonProperty]
         public string EmailAddress { get; set; }
         [JsonProperty]
+        [Obsolete]
         public string PhoneNumber { get; set; }
 
         [JsonProperty]
@@ -68,7 +74,7 @@ namespace GenderPayGap.Database.Models
 
         #endregion
 
-        #region WhyVisitGpgSite
+        #region WhyVisitSite
 
         [JsonProperty]
         public bool? FindOutAboutGpg { get; set; }
@@ -83,7 +89,17 @@ namespace GenderPayGap.Database.Models
         public bool? ViewSpecificOrganisationGpg { get; set; }
 
         [JsonProperty]
+        [Obsolete]
         public bool? ActionsToCloseGpg { get; set; }
+
+        [JsonProperty]
+        public bool? WhyVisitSite_FindOutMoreAboutCreatingAnActionPlan { get; set; }
+
+        [JsonProperty]
+        public bool? WhyVisitSite_CreateAnActionPlanForMyOrganisation { get; set; }
+
+        [JsonProperty]
+        public bool? WhyVisitSite_LookAtActionPlansForOrganisationsOrSectors { get; set; }
 
         [JsonProperty]
         public bool? OtherReason { get; set; }
@@ -100,7 +116,13 @@ namespace GenderPayGap.Database.Models
         public bool? EmployeeInterestedInOrganisationData { get; set; }
 
         [JsonProperty]
+        public bool? WhoAreYou_EmployeeInterestedInOrganisationActionPlan { get; set; }
+
+        [JsonProperty]
         public bool? ManagerInvolvedInGpgReport { get; set; }
+
+        [JsonProperty]
+        public bool? WhoAreYou_EmployeeResponsibleForSubmittingActionPlan { get; set; }
 
         [JsonProperty]
         public bool? ResponsibleForReportingGpg { get; set; }
@@ -131,7 +153,8 @@ namespace GenderPayGap.Database.Models
         Easy = 1,
         Neutral = 2,
         Difficult = 3,
-        VeryDifficult = 4
+        VeryDifficult = 4,
+        NotApplicable = 5,
 
     }
 }
