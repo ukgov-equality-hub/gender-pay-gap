@@ -142,6 +142,21 @@
                     }
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__header">
+                            Name
+                        </th>
+                        <td class="govuk-table__cell">
+                            @if (string.IsNullOrWhiteSpace(Model.FeedbackToCategorise.YourName))
+                            {
+                                <span class="govuk-hint">(none)</span>
+                            }
+                            else
+                            {
+                                @(Model.FeedbackToCategorise.YourName)
+                            }
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">
                             Email address
                         </th>
                         <td class="govuk-table__cell">
