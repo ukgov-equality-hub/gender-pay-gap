@@ -331,6 +331,9 @@ namespace GenderPayGap.Database.Migrations
                     b.Property<int?>("Difficulty")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("DifficultyActionPlan")
+                        .HasColumnType("integer");
+
                     b.Property<string>("EmailAddress")
                         .HasColumnType("text");
 
@@ -405,6 +408,24 @@ namespace GenderPayGap.Database.Migrations
 
                     b.Property<bool?>("ViewSpecificOrganisationGpg")
                         .HasColumnType("boolean");
+
+                    b.Property<bool?>("WhoAreYou_EmployeeInterestedInOrganisationActionPlan")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("WhoAreYou_EmployeeResponsibleForSubmittingActionPlan")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("WhyVisitSite_CreateAnActionPlanForMyOrganisation")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("WhyVisitSite_FindOutMoreAboutCreatingAnActionPlan")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("WhyVisitSite_LookAtActionPlansForOrganisationsOrSectors")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("YourName")
+                        .HasColumnType("text");
 
                     b.HasKey("FeedbackId");
 
