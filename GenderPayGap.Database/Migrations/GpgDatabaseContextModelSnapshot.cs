@@ -325,8 +325,8 @@ namespace GenderPayGap.Database.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.Property<string>("Details")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
 
                     b.Property<int?>("Difficulty")
                         .HasColumnType("integer");
@@ -368,22 +368,22 @@ namespace GenderPayGap.Database.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("OtherPersonText")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
 
                     b.Property<bool?>("OtherReason")
                         .HasColumnType("boolean");
 
                     b.Property<string>("OtherReasonText")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
 
                     b.Property<bool?>("OtherSource")
                         .HasColumnType("boolean");
 
                     b.Property<string>("OtherSourceText")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
 
                     b.Property<bool?>("PersonInterestedInGeneralGpg")
                         .HasColumnType("boolean");
