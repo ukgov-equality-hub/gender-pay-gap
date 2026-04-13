@@ -36,53 +36,6 @@
     })
 }
 
-@{
-    var statusHints = new Dictionary<OrganisationStatuses, string>
-    {
-        {
-            OrganisationStatuses.Active,
-            "An organisation should be Active if it is trading."
-        },
-        {
-            OrganisationStatuses.Retired,
-            "An organisation should be Retired if it has ceased trading. It will remain searchable and submissions will remain visible."
-        },
-        {
-            OrganisationStatuses.Deleted,
-            "An organisation should be Deleted if it was created by mistake / there was no reason for it to ever exist in the service. Any submissions will no longer be shown in the public viewing service."
-        },
-    };
-
-    var items = new List<RadioItemViewModel>();
-
-    foreach ((OrganisationStatuses status, string hint) in statusHints)
-    {
-        if (Model.Organisation.Status != status)
-        {
-            string fieldName = $"GovUk_Radio_{nameof(AdminChangeOrganisationStatusViewModel.NewStatus)}";
-            string fieldId = $"{fieldName}_{status}";
-
-            items.Add(new RadioItemViewModel
-            {
-                Name = fieldName,
-                Value = status.ToString(),
-                Id = fieldId,
-                Checked = Model.NewStatus == status,
-                Label = new LabelViewModel
-                {
-                    HtmlOrText = new(status.ToString()),
-                    For = fieldId
-                },
-                Hint = new HintViewModel
-                {
-                    HtmlOrText = new(hint)
-                }
-            });
-        }
-    }
-
-}
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         
@@ -124,24 +77,58 @@
 
             <div class="govuk-form-group">
                 @{
-                    string error = ModelErrorHelper.GetErrorMessage(ViewData.ModelState, nameof(Model.NewStatus));
-                    ErrorMessageViewModel radiosErrorMessageViewModel = error != null ? new ErrorMessageViewModel {HtmlOrText = new(error)} : null;
+                    List<OrganisationStatuses> allStatuses = [OrganisationStatuses.Active, OrganisationStatuses.Retired, OrganisationStatuses.Deleted];
+                    List<OrganisationStatuses> statusesToShow = allStatuses.Except([Model.Organisation.Status]).ToList();
                 }
-                @await Html.GovUkRadios(new RadiosViewModel
-                {
-                    Name = nameof(AdminChangeOrganisationStatusViewModel.NewStatus),
-                    Fieldset = new FieldsetViewModel
+                @await Html.GovUkRadiosFor(
+                    m => m.NewStatus,
+                    new()
                     {
-                        Legend = new()
+                        Fieldset = new FieldsetViewModel
                         {
-                            HtmlOrText = new("Please select a new status"),
-                            Classes = ["govuk-fieldset__legend--m"]
+                            Legend = new()
+                            {
+                                HtmlOrText = new("Please select a new status"),
+                                Classes = ["govuk-fieldset__legend--m"]
+                            },
+                            Classes = ["govuk-!-margin-top-6"]
                         },
-                        Classes = ["govuk-!-margin-top-6"]
                     },
-                    RadioItems = items,
-                    ErrorMessage = radiosErrorMessageViewModel
-                })
+                    radioItemViewModels: new()
+                    {
+                        {
+                            OrganisationStatuses.Active,
+                            new()
+                            {
+                                Hint = new HintViewModel
+                                {
+                                    HtmlOrText = new("An organisation should be Active if it is trading.")
+                                }
+                            }
+                        },
+                        {
+                            OrganisationStatuses.Retired,
+                            new()
+                            {
+                                Hint = new HintViewModel
+                                {
+                                    HtmlOrText = new("An organisation should be Retired if it has ceased trading. It will remain searchable and submissions will remain visible.")
+                                }
+                            }
+                        },
+                        {
+                            OrganisationStatuses.Deleted,
+                            new()
+                            {
+                                Hint = new HintViewModel
+                                {
+                                    HtmlOrText = new("An organisation should be Deleted if it was created by mistake / there was no reason for it to ever exist in the service. Any submissions will no longer be shown in the public viewing service.")
+                                }
+                            }
+                        },
+                    },
+                    overrideEnumValues: statusesToShow
+                )
             </div>
 
         </div>
