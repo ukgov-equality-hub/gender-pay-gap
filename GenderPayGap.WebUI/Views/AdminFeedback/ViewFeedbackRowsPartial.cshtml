@@ -34,7 +34,7 @@
                             </td>
                         </tr>
                         <tr class="govuk-table__row" id="feedback-row-@(feedback.FeedbackId)">
-                            <td class="govuk-table__cell" rowspan="7" style="border-bottom-width: 2px;">
+                            <td class="govuk-table__cell" rowspan="9" style="border-bottom-width: 2px;">
                                 <span style="white-space: nowrap">
                                     @(feedback.CreatedDate.ToString("d MMM yyyy"))
                                 </span>
@@ -48,7 +48,7 @@
                             <td class="govuk-table__cell">
                                 @(feedback.Details)
                             </td>
-                            <td class="govuk-table__cell" rowspan="7" style="border-bottom-width: 2px;">
+                            <td class="govuk-table__cell" rowspan="9" style="border-bottom-width: 2px;">
                                 <form method="post"
                                       action="@Url.Action("CategoriseFeedbackPost", "AdminFeedback", new {feedbackId = feedback.FeedbackId})"
                                       style="align-items: center; display: flex; flex-direction: column;">
@@ -76,12 +76,20 @@
                                 </form>
                             </td>
                         </tr>
-                            <tr class="govuk-table__row">
+                        <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__header">
-                                Difficulty
+                                How easy was it to submit your gender pay gap data?
                             </th>
                             <td class="govuk-table__cell">
                                 @(feedback.Difficulty)
+                            </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">
+                                How easy was it to create your action plan?
+                            </th>
+                            <td class="govuk-table__cell">
+                                @(feedback.DifficultyActionPlan)
                             </td>
                         </tr>
                         <tr class="govuk-table__row">
@@ -166,6 +174,21 @@
                                     <span>I wanted to know what action other organisations are taking to close the gender pay gap.</span>
                                     <br/>
                                 }
+                                @if (feedback.WhyVisitSite_FindOutMoreAboutCreatingAnActionPlan == true)
+                                {
+                                    <span>Find out more about creating an action plan.</span>
+                                    <br/>
+                                }
+                                @if (feedback.WhyVisitSite_CreateAnActionPlanForMyOrganisation == true)
+                                {
+                                    <span>Create an action plan for my organisation.</span>
+                                    <br/>
+                                }
+                                @if (feedback.WhyVisitSite_LookAtActionPlansForOrganisationsOrSectors == true)
+                                {
+                                    <span>Look at action plans for specific organisations or sectors.</span>
+                                    <br/>
+                                }
                                 @if (feedback.OtherReason == true)
                                 {
                                     <span>Other: @(feedback.OtherReasonText)</span>
@@ -183,14 +206,24 @@
                                     <span>An employee interested in your organisation’s gender pay gap data.</span>
                                     <br/>
                                 }
+                                @if (feedback.WhoAreYou_EmployeeInterestedInOrganisationActionPlan == true)
+                                {
+                                    <span>An employee interested in your organisation’s action plan.</span>
+                                    <br/>
+                                }
                                 @if (feedback.ManagerInvolvedInGpgReport == true)
                                 {
                                     <span>A manager involved in gender pay gap reporting or diversity and inclusion.</span>
                                     <br/>
                                 }
+                                @if (feedback.WhoAreYou_EmployeeResponsibleForSubmittingActionPlan == true)
+                                {
+                                    <span>Employee responsible for submitting my organisation’s action plan.</span>
+                                    <br/>
+                                }
                                 @if (feedback.ResponsibleForReportingGpg == true)
                                 {
-                                    <span>A person responsible for reporting your organisation’s gender pay gap.</span>
+                                    <span>Employee responsible for submitting my organisation’s data.</span>
                                     <br/>
                                 }
                                 @if (feedback.PersonInterestedInGeneralGpg == true)
@@ -208,6 +241,14 @@
                                     <span>Other: @(feedback.OtherPersonText)</span>
                                     <br/>
                                 }
+                            </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">
+                                Name
+                            </th>
+                            <td class="govuk-table__cell">
+                                @(feedback.YourName)
                             </td>
                         </tr>
                         <tr class="govuk-table__row">

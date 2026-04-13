@@ -27,19 +27,19 @@ namespace GenderPayGap.WebUI.Controllers.SendFeedback
         {
             var model = new FeedbackViewModel();
 
-            PrePopulateEmailAndPhoneNumberFromLoggedInUser(model);
+            PrePopulateNameAndEmailFromLoggedInUser(model);
 
             return View("SendFeedback", model);
         }
 
-        private void PrePopulateEmailAndPhoneNumberFromLoggedInUser(FeedbackViewModel model)
+        private void PrePopulateNameAndEmailFromLoggedInUser(FeedbackViewModel model)
         {
             if (User.Identity.IsAuthenticated)
             {
                 User user = ControllerHelper.GetGpgUserFromAspNetUser(User, dataRepository);
 
+                model.YourName = user.Fullname;
                 model.EmailAddress = user.EmailAddress;
-                model.PhoneNumber = user.ContactPhoneNumber;
             }
         }
 
@@ -66,8 +66,12 @@ namespace GenderPayGap.WebUI.Controllers.SendFeedback
         private Feedback ConvertFeedbackViewModelIntoFeedbackDatabaseModel(FeedbackViewModel feedbackViewModel)
         {
             return new Feedback {
-                Difficulty = feedbackViewModel.HowEasyIsThisServiceToUse.HasValue
-                    ? (DifficultyTypes)(int) feedbackViewModel.HowEasyIsThisServiceToUse.Value
+                Difficulty = feedbackViewModel.HowEasyWasItToSubmitYourGenderPayGapData.HasValue
+                    ? (DifficultyTypes)(int) feedbackViewModel.HowEasyWasItToSubmitYourGenderPayGapData.Value
+                    : (DifficultyTypes?) null,
+                
+                DifficultyActionPlan = feedbackViewModel.HowEasyWasItToCreateYourActionPlan.HasValue
+                    ? (DifficultyTypes)(int) feedbackViewModel.HowEasyWasItToCreateYourActionPlan.Value
                     : (DifficultyTypes?) null,
                 
                 NewsArticle = feedbackViewModel.HowDidYouHearAboutGpg?.Contains(HowDidYouHearAboutGpg.NewsArticle),
@@ -85,12 +89,16 @@ namespace GenderPayGap.WebUI.Controllers.SendFeedback
                 ReportOrganisationGpgData = feedbackViewModel.WhyVisitGpgSite?.Contains(WhyVisitGpgSite.ReportOrganisationGpgData),
                 CloseOrganisationGpg = feedbackViewModel.WhyVisitGpgSite?.Contains(WhyVisitGpgSite.CloseOrganisationGpg),
                 ViewSpecificOrganisationGpg = feedbackViewModel.WhyVisitGpgSite?.Contains(WhyVisitGpgSite.ViewSpecificOrganisationGpg),
-                ActionsToCloseGpg = feedbackViewModel.WhyVisitGpgSite?.Contains(WhyVisitGpgSite.ActionsToCloseGpg),
+                WhyVisitSite_FindOutMoreAboutCreatingAnActionPlan = feedbackViewModel.WhyVisitGpgSite?.Contains(WhyVisitGpgSite.FindOutMoreAboutCreatingAnActionPlan),
+                WhyVisitSite_CreateAnActionPlanForMyOrganisation = feedbackViewModel.WhyVisitGpgSite?.Contains(WhyVisitGpgSite.CreateAnActionPlanForMyOrganisation),
+                WhyVisitSite_LookAtActionPlansForOrganisationsOrSectors = feedbackViewModel.WhyVisitGpgSite?.Contains(WhyVisitGpgSite.LookAtActionPlansForOrganisationsOrSectors),
                 OtherReason = feedbackViewModel.WhyVisitGpgSite?.Contains(WhyVisitGpgSite.Other),
                 OtherReasonText = feedbackViewModel.OtherReasonText,
 
                 EmployeeInterestedInOrganisationData = feedbackViewModel.WhoAreYou?.Contains(WhoAreYou.EmployeeInterestedInOrganisationData),
+                WhoAreYou_EmployeeInterestedInOrganisationActionPlan = feedbackViewModel.WhoAreYou?.Contains(WhoAreYou.EmployeeInterestedInOrganisationActionPlan),
                 ManagerInvolvedInGpgReport = feedbackViewModel.WhoAreYou?.Contains(WhoAreYou.ManagerInvolvedInGpgReport),
+                WhoAreYou_EmployeeResponsibleForSubmittingActionPlan = feedbackViewModel.WhoAreYou?.Contains(WhoAreYou.EmployeeResponsibleForSubmittingActionPlan),
                 ResponsibleForReportingGpg = feedbackViewModel.WhoAreYou?.Contains(WhoAreYou.ResponsibleForReportingGpg),
                 PersonInterestedInGeneralGpg = feedbackViewModel.WhoAreYou?.Contains(WhoAreYou.PersonInterestedInGeneralGpg),
                 PersonInterestedInSpecificOrganisationGpg = feedbackViewModel.WhoAreYou?.Contains(WhoAreYou.PersonInterestedInSpecificOrganisationGpg),
@@ -98,8 +106,8 @@ namespace GenderPayGap.WebUI.Controllers.SendFeedback
                 OtherPersonText = feedbackViewModel.OtherPersonText,
 
                 Details = TruncateDetails(feedbackViewModel.Details),
+                YourName = feedbackViewModel.YourName,
                 EmailAddress = feedbackViewModel.EmailAddress,
-                PhoneNumber = feedbackViewModel.PhoneNumber,
                 
                 CreatedDate = VirtualDateTime.Now
             };

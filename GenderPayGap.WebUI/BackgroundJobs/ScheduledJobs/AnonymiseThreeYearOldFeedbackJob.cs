@@ -41,6 +41,7 @@ namespace GenderPayGap.WebUI.BackgroundJobs.ScheduledJobs
             feedback.OtherSourceText = Anonymise(feedback.OtherSourceText);
             feedback.OtherReasonText = Anonymise(feedback.OtherReasonText);
             feedback.OtherPersonText = Anonymise(feedback.OtherPersonText);
+            feedback.YourName = Anonymise(feedback.YourName);
             feedback.EmailAddress = Anonymise(feedback.EmailAddress);
             feedback.PhoneNumber = Anonymise(feedback.PhoneNumber);
             feedback.Details = Anonymise(feedback.Details);

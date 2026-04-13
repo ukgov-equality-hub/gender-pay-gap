@@ -24,21 +24,39 @@
             <div class="govuk-form-group">
 
                 @(await Html.GovUkErrorSummaryIfNeeded([
-                    nameof(FeedbackViewModel.HowEasyIsThisServiceToUse),
-                    nameof(FeedbackViewModel.HowDidYouHearAboutGpg),
-                    nameof(FeedbackViewModel.WhyVisitGpgSite),
-                    nameof(FeedbackViewModel.WhoAreYou)
+                    nameof(FeedbackViewModel.HowEasyWasItToSubmitYourGenderPayGapData),
+                    nameof(FeedbackViewModel.HowEasyWasItToCreateYourActionPlan),
+                    nameof(FeedbackViewModel.OtherSourceText),
+                    nameof(FeedbackViewModel.OtherReasonText),
+                    nameof(FeedbackViewModel.OtherPersonText),
+                    nameof(FeedbackViewModel.Details),
                 ]))
 
                 @(await Html.GovUkRadiosFor(
-                    m => m.HowEasyIsThisServiceToUse,
+                    m => m.HowEasyWasItToSubmitYourGenderPayGapData,
                     new()
                     {
                         Fieldset = new()
                         {
                             Legend = new()
                             {
-                                HtmlOrText = new("How easy was this service to use?"),
+                                HtmlOrText = new("How easy was it to submit your gender pay gap data?"),
+                                Classes = ["govuk-fieldset__legend--m"]
+                            },
+                            Classes = ["govuk-!-margin-top-6"]
+                        }
+                    } 
+                ))
+
+                @(await Html.GovUkRadiosFor(
+                    m => m.HowEasyWasItToCreateYourActionPlan,
+                    new()
+                    {
+                        Fieldset = new()
+                        {
+                            Legend = new()
+                            {
+                                HtmlOrText = new("How easy was it to create your action plan?"),
                                 Classes = ["govuk-fieldset__legend--m"]
                             },
                             Classes = ["govuk-!-margin-top-6"]
@@ -60,47 +78,6 @@
                             Classes = ["govuk-!-margin-top-6"]
                         }
                     }
-                ))
-
-                @(await Html.GovUkCheckboxesFor(
-                    m => m.HowDidYouHearAboutGpg,
-                    new()
-                    {
-                        Fieldset = new()
-                        {
-                            Legend = new()
-                            {
-                                HtmlOrText = new("How did you hear about the gender pay gap service?"),
-                                Classes = ["govuk-fieldset__legend--m"]
-                            },
-                            Classes = ["govuk-!-margin-top-6"]
-                        },
-                        Hint = new()
-                        {
-                            HtmlOrText = new("Select all that apply.")
-                        },
-                    },
-                    checkboxItemViewModels: new()
-                    {{
-                        HowDidYouHearAboutGpg.Other,
-                        new()
-                        {
-                            Conditional = new(
-                                @<text>
-                                    @(await Html.GovUkTextInputFor(
-                                        m => m.OtherSourceText,
-                                        new()
-                                        {
-                                            Label = new()
-                                            {
-                                                HtmlOrText = new("Other source description"),
-                                                Classes = ["govuk-visually-hidden"],
-                                            }
-                                        }
-                                    ))
-                                 </text>)
-                        }
-                    }}
                 ))
 
                 @(await Html.GovUkCheckboxesFor(
@@ -185,6 +162,47 @@
                     }}
                 ))
 
+                @(await Html.GovUkCheckboxesFor(
+                    m => m.HowDidYouHearAboutGpg,
+                    new()
+                    {
+                        Fieldset = new()
+                        {
+                            Legend = new()
+                            {
+                                HtmlOrText = new("How did you hear about the gender pay gap service?"),
+                                Classes = ["govuk-fieldset__legend--m"]
+                            },
+                            Classes = ["govuk-!-margin-top-6"]
+                        },
+                        Hint = new()
+                        {
+                            HtmlOrText = new("Select all that apply.")
+                        },
+                    },
+                    checkboxItemViewModels: new()
+                    {{
+                        HowDidYouHearAboutGpg.Other,
+                        new()
+                        {
+                            Conditional = new(
+                                @<text>
+                                    @(await Html.GovUkTextInputFor(
+                                        m => m.OtherSourceText,
+                                        new()
+                                        {
+                                            Label = new()
+                                            {
+                                                HtmlOrText = new("Other source description"),
+                                                Classes = ["govuk-visually-hidden"],
+                                            }
+                                        }
+                                    ))
+                                 </text>)
+                        }
+                    }}
+                ))
+
                 <fieldset class="govuk-fieldset govuk-!-margin-top-6">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                         Can we contact you?
@@ -200,20 +218,20 @@
                     {
                         Label = new()
                         {
-                            HtmlOrText = new("Your email address (optional)")
+                            HtmlOrText = new("Your name (optional)")
                         },
-                        Name = nameof(Model.EmailAddress),
-                        InputMode = "email"
+                        Name = nameof(Model.YourName),
                     }))
 
                     @(await Html.GovUkTextInput(new()
                     {
                         Label = new()
                         {
-                            HtmlOrText = new("Your phone number (optional)")
+                            HtmlOrText = new("Your email address (optional)")
                         },
-                        Name = nameof(Model.PhoneNumber),
-                        InputMode = "tel"
+                        Name = nameof(Model.EmailAddress),
+                        InputMode = "email",
+                        Autocomplete = "email",
                     }))
                 </fieldset>
 
@@ -241,7 +259,8 @@
             <li>use an assistive technology, such as a screen reader, and cannot access all or part of the service</li>
         </ul>
         <p class="govuk-body">
-            We cannot give case-by-case guidance on how you should calculate your gender pay gap or interpret the regulations.
+            We cannot give case-by-case guidance on how you should calculate your gender pay gap, create an action plan,
+            or interpret the regulations.
         </p>
 
     </div>

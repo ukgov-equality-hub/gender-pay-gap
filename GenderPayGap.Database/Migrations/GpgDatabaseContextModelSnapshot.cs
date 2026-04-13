@@ -325,10 +325,13 @@ namespace GenderPayGap.Database.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.Property<string>("Details")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
 
                     b.Property<int?>("Difficulty")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("DifficultyActionPlan")
                         .HasColumnType("integer");
 
                     b.Property<string>("EmailAddress")
@@ -365,22 +368,22 @@ namespace GenderPayGap.Database.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("OtherPersonText")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
 
                     b.Property<bool?>("OtherReason")
                         .HasColumnType("boolean");
 
                     b.Property<string>("OtherReasonText")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
 
                     b.Property<bool?>("OtherSource")
                         .HasColumnType("boolean");
 
                     b.Property<string>("OtherSourceText")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
 
                     b.Property<bool?>("PersonInterestedInGeneralGpg")
                         .HasColumnType("boolean");
@@ -405,6 +408,24 @@ namespace GenderPayGap.Database.Migrations
 
                     b.Property<bool?>("ViewSpecificOrganisationGpg")
                         .HasColumnType("boolean");
+
+                    b.Property<bool?>("WhoAreYou_EmployeeInterestedInOrganisationActionPlan")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("WhoAreYou_EmployeeResponsibleForSubmittingActionPlan")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("WhyVisitSite_CreateAnActionPlanForMyOrganisation")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("WhyVisitSite_FindOutMoreAboutCreatingAnActionPlan")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("WhyVisitSite_LookAtActionPlansForOrganisationsOrSectors")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("YourName")
+                        .HasColumnType("text");
 
                     b.HasKey("FeedbackId");
 
