@@ -12,20 +12,20 @@ public class FeedbackViewModel
 
     public List<HowDidYouHearAboutGpg> HowDidYouHearAboutGpg { get; set; } = [];
 
-    [GovUkValidateCharacterCount(Limit = 2000, Units = CharacterCountMaxLengthUnit.Characters, NameAtStartOfSentence = "Other source", NameWithinSentence = "other source")]
+    [GovUkValidateCharacterCount(Limit = 500, Units = CharacterCountMaxLengthUnit.Words, NameAtStartOfSentence = "Other source", NameWithinSentence = "other source")]
     public string OtherSourceText { get; set; }
 
     public List<WhyVisitGpgSite> WhyVisitGpgSite { get; set; } = [];
 
-    [GovUkValidateCharacterCount(Limit = 2000, Units = CharacterCountMaxLengthUnit.Characters, NameAtStartOfSentence = "Other reason", NameWithinSentence = "other reason")]
+    [GovUkValidateCharacterCount(Limit = 500, Units = CharacterCountMaxLengthUnit.Words, NameAtStartOfSentence = "Other reason", NameWithinSentence = "other reason")]
     public string OtherReasonText { get; set; }
 
     public List<WhoAreYou> WhoAreYou { get; set; } = [];
 
-    [GovUkValidateCharacterCount(Limit = 2000, Units = CharacterCountMaxLengthUnit.Characters, NameAtStartOfSentence = "Other person", NameWithinSentence = "other person")]
+    [GovUkValidateCharacterCount(Limit = 500, Units = CharacterCountMaxLengthUnit.Words, NameAtStartOfSentence = "Other person", NameWithinSentence = "other person")]
     public string OtherPersonText { get; set; }
 
-    [GovUkValidateCharacterCount(Limit = 2000, Units = CharacterCountMaxLengthUnit.Characters, NameAtStartOfSentence = "Details", NameWithinSentence = "details")]
+    [GovUkValidateCharacterCount(Limit = 500, Units = CharacterCountMaxLengthUnit.Words, NameAtStartOfSentence = "Details", NameWithinSentence = "details")]
     public string Details { get; set; }
 
     public string YourName { get; set; }

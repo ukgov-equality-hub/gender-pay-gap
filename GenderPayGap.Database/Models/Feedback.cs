@@ -21,7 +21,7 @@ namespace GenderPayGap.Database.Models
 
         #endregion
 
-        [MaxLength(2000)]
+        [MaxLength(5000)]
         [JsonProperty]
         public string Details { get; set; }
 
@@ -68,7 +68,7 @@ namespace GenderPayGap.Database.Models
         [JsonProperty]
         public bool? OtherSource { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(5000)]
         [JsonProperty]
         public string OtherSourceText { get; set; }
 
@@ -104,7 +104,7 @@ namespace GenderPayGap.Database.Models
         [JsonProperty]
         public bool? OtherReason { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(5000)]
         [JsonProperty]
         public string OtherReasonText { get; set; }
 
@@ -136,7 +136,7 @@ namespace GenderPayGap.Database.Models
         [JsonProperty]
         public bool? OtherPerson { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(5000)]
         [JsonProperty]
         public string OtherPersonText { get; set; }
 
