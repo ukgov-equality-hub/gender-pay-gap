@@ -17,7 +17,6 @@
     int sectionNumberActionPlan = 0;
     
     int sectionNumberPreviousGpgReports = 0;
-    string previousGpgReportsTitle;
     
     int sectionNumberAboutEmployer = 0;
     
@@ -28,12 +27,7 @@
     {
         showSectionLatestGpgReport = true;
         sectionNumberLatestGpgReport = nextSectionNumber;
-        previousGpgReportsTitle = "History of gender pay gap reports and action plans";
         nextSectionNumber++;
-    }
-    else
-    {
-        previousGpgReportsTitle = "Gender pay gap reports and action plans";
     }
 
     if (Model.Organisation.HasSubmittedAnyActionPlans())
@@ -139,15 +133,15 @@
                 <li>
                     <a href="#action-plan"
                        class="govuk-link">
-                        Action plan
+                        Latest action plan
                     </a>
                 </li>
             }
             
             <li>
-                <a href="#previous-reports-and-action-plans"
+                <a href="#all-reports-and-action-plans"
                    class="govuk-link">
-                    @(previousGpgReportsTitle)
+                    All gender pay gap reports and action plans
                 </a>
             </li>
             <li>
@@ -166,19 +160,24 @@
             </summary>
             <div class="govuk-details__text">
                 <p>
-                    Any employer who has a headcount of 250 or more on their ‘snapshot date’ at
+                    Any employer with 250 or more employees on their ‘snapshot date’ at
                     the end of the financial year must submit both:
                 </p>
                 <ul class="govuk-list--bullet">
-                    <li>a gender pay gap report showing their breakdown of pay by gender</li>
-                    <li>an action plan outlining how they intend to address the gender pay gap and support employees going through menopause</li>
+                    <li>
+                        a gender pay gap report showing their breakdown of pay and bonuses by gender
+                    </li>
+                    <li>
+                        an action plan outlining how they intend to address the gender pay gap and support employees
+                        experiencing menopause – these are voluntary for the 2026 to 2027 reporting year
+                    </li>
                 </ul>
                 <p>
                     For more detail, see the
                     <a href="https://www.gov.uk/government/collections/gender-pay-gap-reporting-and-creating-an-action-plan-guidance-for-employers"
                        target="_blank"
                        class="govuk-link">
-                        gender pay gap and action plan guidance (opens in a new window)</a>.
+                        gender pay gap and action plan guidance for employers (opens in a new window)</a>.
                 </p>
             </div>
         </details>
@@ -234,17 +233,20 @@
                     <a href="@(Url.Action("GenderPayGapReportForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = latestSubmittedGpgReport.ReportingYear}))#pay-quarters"
                        class="govuk-button govuk-button--secondary headline-figures-box">
                         <div class="headline-figures-box--title">
-                            Women in the highest paid quarter
+                            Women made up
                         </div>
-                        <div class="headline-figures-box--value-row">
+                        <div class="headline-figures-box--value-row" style="margin: 2px 0;">
                             <div class="headline-figures-box--value">
                                 @(latestSubmittedGpgReport.FemaleUpperQuartilePayBand.Value.ToString("0.0"))%
                             </div>
                         </div>
+                        <div class="headline-figures-box--title" style="padding-bottom: 7px;">
+                            of employees in the highest paid quarter
+                        </div>
                         <div class="headline-figures-box--follow-on-text">
                             and
                             @(latestSubmittedGpgReport.FemaleLowerPayBand.Value.ToString("0.0"))%
-                            of the lowest paid quarter
+                            of those in the lowest paid quarter
                         </div>
                     </a>
                 }
@@ -287,7 +289,7 @@
             <p class="govuk-body">
                 <a href="@(Url.Action("GenderPayGapReportForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = latestSubmittedGpgReport.ReportingYear}))"
                    class="govuk-link">
-                    View the full Gender pay report
+                    View the full gender pay gap report
                 </a>
             </p>
         }
@@ -299,13 +301,14 @@
             <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible"/>
             <h2 class="govuk-heading-m" id="action-plan">
                 @(sectionNumberActionPlan).
-                Taking action to address pay gaps and support employees
+                Latest action plan
+                (@(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(latestActionPlan.ReportingYear)))
             </h2>
             
             @if (!string.IsNullOrWhiteSpace(latestActionPlan.SupportingNarrative))
             {
                 <p class="govuk-body govuk-!-margin-bottom-2">
-                    @(Model.Organisation.OrganisationName) said:
+                    @(Model.Organisation.OrganisationName) submitted the following supporting narrative with their action plan:
                 </p>
                 <div class="govuk-inset-text govuk-!-margin-top-2">
                     @(latestActionPlan.SupportingNarrative)
@@ -319,7 +322,7 @@
                     <a href="@(latestActionPlan.LinkToReport)"
                        target="_blank"
                        class="govuk-link">
-                        what @(Model.Organisation.OrganisationName) says about their action plan (opens in a new window)
+                        this organisation’s equality policies or strategy on their website (opens in a new window)
                     </a>
                 </p>
             }
@@ -335,14 +338,17 @@
                 </summary>
                 <div class="govuk-details__text">
                     <p class="govuk-body">
-                        Employers with 250 or more employees can submit a voluntary action plan outlining how they intend to
-                        address their gender pay gap and support employees experiencing menopause.
-                        These are due to be mandatory from April 2027.
+                        Employers with 250 or more employees can produce and publish a voluntary action plan alongside
+                        their gender pay gap data. Their plan shows the steps they are taking to address their
+                        gender pay gap and support employees experiencing menopause.
                     </p>
                     <p class="govuk-body">
-                        To create their action plan, employers review a list of evidence-informed actions recommended by the government.
-                        They identify any they already routinely do (‘embedded actions’), and choose some new actions to focus on (‘planned actions’).
-                        They must choose at least 2 planned actions.
+                        This will be mandatory from spring 2027, subject to legislation.
+                    </p>
+                    <p class="govuk-body">
+                        To create an action plan, employers review a list of evidence-informed actions recommended by the government.
+                        They can identify any that are already an established part of their working practice (‘embedded actions’),
+                        and choose at least 2 new actions to focus on (‘planned actions’).
                     </p>
                     <p class="govuk-body">
                         You can
@@ -357,18 +363,12 @@
                            class="govuk-link">
                             guidance for employers on creating an action plan (opens in a new window)</a>.
                     </p>
-                    <p class="govuk-body">
-                        For more detail on the process, see the
-                        <a href="https://www.gov.uk/government/collections/gender-pay-gap-reporting-and-creating-an-action-plan-guidance-for-employers"
-                           target="_blank"
-                           class="govuk-link">
-                            gender pay gap and action plan guidance (opens in a new window)</a>.
-                    </p>
                 </div>
             </details>
             
             <p class="govuk-body">
-                @(Model.Organisation.OrganisationName) has committed to embedding these actions:
+                @(Model.Organisation.OrganisationName) added the following ‘planned’ actions to their action plan for
+                @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(latestActionPlan.ReportingYear)):
             </p>
             <ul class="govuk-list govuk-list--bullet">
                 @foreach (ActionInActionPlan action in latestActionPlan.GetNewOrInProgressActions())
@@ -383,7 +383,7 @@
             if (completedActions.Any())
             {
                 <h3 class="govuk-heading-s">
-                    Actions they have completed
+                    They indicated that the following ‘embedded’ actions are already an established part of their working practice:
                 </h3>
                 <ul class="govuk-list govuk-list--bullet">
                     @foreach (ActionInActionPlan action in completedActions)
@@ -398,15 +398,15 @@
             <p class="govuk-body">
                 <a href="@(Url.Action("ActionPlanForYear", "ViewReports", new {organisationId = Model.Organisation.OrganisationId, reportingYear = latestActionPlan.ReportingYear}))"
                    class="govuk-link">
-                    View the full Action plan
+                    View the full action plan
                 </a>
             </p>
         }
         
         <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible"/>
-        <h2 class="govuk-heading-m" id="previous-reports-and-action-plans">
+        <h2 class="govuk-heading-m" id="all-reports-and-action-plans">
             @(sectionNumberPreviousGpgReports).
-            @(previousGpgReportsTitle)
+            All gender pay gap reports and action plans
         </h2>
 
         <table class="govuk-table">
@@ -446,7 +446,7 @@
 
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__header" rowspan="@(numberOfRowsForThisYear)">
-                            @(ReportingYearsHelper.FormatYearAsReportingPeriod(reportingYear))
+                            @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
                         </th>
                         <th class="govuk-table__header govuk-!-font-weight-regular">
                             Gender pay gap report
@@ -534,12 +534,25 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    Nature of business (SIC code)
+                    Sector
                 </dt>
                 <dd class="govuk-summary-list__value">
                     @(Model.Organisation.GetSicSectorsString())
                 </dd>
             </div>
+            @if (latestSubmittedGpgReport != null)
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Employee headcount
+                        <br/>
+                        (on @(ReportingYearsHelper.GetAccountingStartDate(latestSubmittedGpgReport.Organisation.SectorType, latestSubmittedGpgReport.ReportingYear).ToString("d MMMM yyyy")))
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @(latestSubmittedGpgReport.OrganisationSize.GetDisplayName()) employees
+                    </dd>
+                </div>
+            }
         </dl>
 
     </div>

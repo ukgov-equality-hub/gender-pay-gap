@@ -354,8 +354,8 @@
             @{
                 string shareEmailUrl = Url.Action("CompareEmployersForYear", "CompareEmployers", new {year = Model.ReportingYear, employers = commaSeparatedListOfOrganisationIds}, "https");
                 
-                string emailSubject = "Compare employers' Gender Pay Gaps";
-                string emailBody = $"Hi,%0D%0DI used the Gender Pay Gap service on Gov.UK to compare these employers.%0D%0dThought you'd like to see the results...%0D{shareEmailUrl}%0D%0D";
+                string emailSubject = "Compare employers’ gender pay gaps";
+                string emailBody = $"Hi,%0D%0DI used the gender pay gap service on GOV.UK to compare these employers:%0D{shareEmailUrl}%0D%0D";
             }
             <a href="mailto:?subject=@(emailSubject)&body=@(emailBody)"
                class="govuk-link">
@@ -374,62 +374,63 @@
 
         <p class="govuk-body">
             The gender pay gap is calculated as the difference between the average hourly earnings of men and women,
-            as a proportion of the average hourly earnings of men. (Earnings do not include overtime.)
+            as a proportion of the average hourly earnings of men. Earnings do not include overtime.
         </p>
         <p class="govuk-body">
-            The gender pay gap is usually a positive or negative percentage.
-        </p>
-        <p class="govuk-body govuk-!-margin-bottom-1">
-            Positive percentage:
+            The gender pay gap is usually a positive or negative percentage:
         </p>
         <ul class="govuk-list govuk-list--bullet">
-            <li>women earn less than men in pay or bonuses</li>
-            <li>example: a 5% gender pay gap means women are paid 5% less than men</li>
-        </ul>
-        <p class="govuk-body govuk-!-margin-bottom-1">
-            Negative percentage:
-        </p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>women earn more than men in pay or bonuses</li>
-            <li>example: a -5% gender pay gap means women are paid 5% more than men</li>
+            <li>
+                a positive percentage shows that women earn less than men in pay or bonuses –
+                for example, a gap of 5% means women are paid 5% less than men
+            </li>
+            <li>
+                a negative percentage shows that women earn more than men –
+                for example, a gap of -7% means women are paid 7% more than men
+            </li>
         </ul>
 
         <h3 class="govuk-heading-m">
-            Mean and median
+            The median gender pay gap figure
         </h3>
         <p class="govuk-body">
-            The gender pay gap is shown as 2 types of average – median and mean.
+            This is the difference between the median hourly pay for men and the median hourly pay for women.
+            The median figure is the hourly pay of the man or woman in the middle of a list, ordered from highest to lowest paid.
         </p>
         <p class="govuk-body">
-            The mean is the total hourly pay of all employees divided by the number of people in the group.
-            The mean is more commonly used for considering averages.
+            If there is an even number of men or women, the median is the mean average of the 2 employees in the middle.
         </p>
         <p class="govuk-body">
-            The median is the middle figure when hourly pay is arranged in order from highest to lowest.
+            Medians are useful to indicate the ‘typical’ situation.
+            They are not distorted by very high or low hourly values.
+            But they may make some gender pay gap issues harder to identify – for example, if the issues
+            are most among the lowest paid or highest paid employees.
         </p>
-        <p class="govuk-body govuk-!-margin-bottom-1">
-            Median:
+
+        <h3 class="govuk-heading-m">
+            The mean (average) gender pay gap figure
+        </h3>
+        <p class="govuk-body">
+            To work out their mean gender pay gap, employers add together the hourly pay of all their male
+            employees and divide that figure by the number of men.
+            They repeat this for women.
         </p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>less distorted by very high or low figures</li>
-            <li>may hide imbalances in pay in very high or very low earnings</li>
-        </ul>
-        <p class="govuk-body govuk-!-margin-bottom-1">
-            Mean (average):
+        <p class="govuk-body">
+            Mean averages are useful because they place the same value on every number they use, giving a good
+            overall indication of the gender pay gap.
+            But very high or low hourly pay can ‘dominate’ and distort the figure.
         </p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>more weight is placed on earnings at the top and bottom ends</li>
-            <li>can be distorted by very high or low figures</li>
-            <li>can highlight imbalances in pay in very high or very low earnings</li>
-        </ul>
 
         <h3 class="govuk-heading-m">
             Pay quarters
         </h3>
 
         <p class="govuk-body">
-            Pay quarters show the percentage of men and women in 4 equally-sized groups based on their hourly pay.
-            They indicate how women are represented at different levels of the organisation.
+            Pay quarters give an indication of women's representation at different levels of the organisation.
+        </p>
+        <p class="govuk-body">
+            To make this calculation, employers have to list all their employees from highest to lowest hourly pay.
+            They then divide this list into 4 quarters, and work out the percentage of men and women in each quarter.
         </p>
 
     </div>

@@ -7,7 +7,7 @@
 @model GenderPayGap.Database.Return
 
 @{
-    string reportingYearFormatted = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    string reportingYearFormatted = ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(Model.ReportingYear);
     ViewBag.Title = $"{Model.Organisation.OrganisationName} gender pay gap report for {reportingYearFormatted} reporting year";
 }
 
@@ -61,7 +61,12 @@
         <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
             Contents
         </h2>
-        <ul class="govuk-list govuk-list--number">
+        <ol class="govuk-list govuk-list--number">
+            <li>
+                <a href="#overview" class="govuk-link">
+                    Overview
+                </a>
+            </li>
             <li>
                 <a href="#main-facts-and-figures" class="govuk-link">
                     Main facts and figures
@@ -87,12 +92,114 @@
                     About @(Model.Organisation.OrganisationName)
                 </a>
             </li>
-        </ul>
+        </ol>
 
         <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
         
+        <h2 class="govuk-heading-m" id="overview">
+            1. Overview
+        </h2>
+
+        <div class="headline-figures-boxes-container">
+            <a href="#hourly-pay"
+               class="govuk-button govuk-button--secondary headline-figures-box">
+                <div class="headline-figures-box--title">
+                    Women’s median hourly pay
+                </div>
+                <div class="headline-figures-box--value-row">
+                    <div class="headline-figures-box--value">
+                        @Math.Abs((double) Model.DiffMedianHourlyPercent).ToString("0.0")%
+                    </div>
+                    <div class="headline-figures-box--value-suffix">
+                        @(Model.DiffMedianHourlyPercent >= 0 ? "lower" : "higher")
+                    </div>
+                </div>
+                <div class="headline-figures-box--follow-on-text">
+                    Women earned
+                    @(ViewReportsHelper.FormatNumberAsPoundsOrPence((100 - Model.DiffMedianHourlyPercent) / 100))
+                    for every £1 that men earned
+                </div>
+                <dl class="headline-figures-box--bar-chart">
+                    <dt>Men</dt>
+                    <dd>
+                        <div class="headline-figures-box--bar-chart--bar"
+                             style="background-color: #12436D; width: calc((100% - 41px) * @(ViewReportsHelper.CalculateBarChartHeightForMen(Model.DiffMedianHourlyPercent)/100));">
+                        </div>
+                        £1
+                    </dd>
+                    <dt>Women</dt>
+                    <dd>
+                        <div class="headline-figures-box--bar-chart--bar"
+                             style="background-color: #28A197; width: calc((100% - 41px) * @(ViewReportsHelper.CalculateBarChartHeightForWomen(Model.DiffMedianHourlyPercent)/100));">
+                        </div>
+                        @(ViewReportsHelper.FormatNumberAsPoundsOrPence((100 - Model.DiffMedianHourlyPercent) / 100))
+                    </dd>
+                </dl>
+            </a>
+
+            @if (Model.FemaleUpperQuartilePayBand.HasValue && Model.FemaleLowerPayBand.HasValue)
+            {
+                <a href="#pay-quarters"
+                   class="govuk-button govuk-button--secondary headline-figures-box">
+                    <div class="headline-figures-box--title">
+                        Women made up
+                    </div>
+                    <div class="headline-figures-box--value-row" style="margin: 2px 0;">
+                        <div class="headline-figures-box--value">
+                            @(Model.FemaleUpperQuartilePayBand.Value.ToString("0.0"))%
+                        </div>
+                    </div>
+                    <div class="headline-figures-box--title" style="padding-bottom: 7px;">
+                        of employees in the highest paid quarter
+                    </div>
+                    <div class="headline-figures-box--follow-on-text">
+                        and
+                        @(Model.FemaleLowerPayBand.Value.ToString("0.0"))%
+                        of the lowest paid quarter
+                    </div>
+                </a>
+            }
+
+            @if (Model.HasBonusesPaid())
+            {
+                <a href="#bonus-pay"
+                   class="govuk-button govuk-button--secondary headline-figures-box">
+                    <div class="headline-figures-box--title">
+                        Women who received bonus pay
+                    </div>
+                    <div class="headline-figures-box--value-row">
+                        <div class="headline-figures-box--value">
+                            @(Model.FemaleMedianBonusPayPercent.ToString("0.0"))%
+                        </div>
+                    </div>
+                    <div class="headline-figures-box--follow-on-text">
+                        compared with @(Model.MaleMedianBonusPayPercent.ToString("0.0"))% of men
+                    </div>
+                    <dl class="headline-figures-box--bar-chart">
+                        <dt>Men</dt>
+                        <dd>
+                            <div class="headline-figures-box--bar-chart--bar"
+                                 style="background-color: #12436D; width: calc((100% - 41px) * @(Model.MaleMedianBonusPayPercent/100));">
+                            </div>
+                            @(Model.MaleMedianBonusPayPercent)%
+                        </dd>
+                        <dt>Women</dt>
+                        <dd>
+                            <div class="headline-figures-box--bar-chart--bar"
+                                 style="background-color: #28A197; width: calc((100% - 41px) * @(Model.FemaleMedianBonusPayPercent/100));">
+                            </div>
+                            @(Model.FemaleMedianBonusPayPercent)%
+                        </dd>
+                    </dl>
+                </a>
+            }
+        </div>
+        
+        
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+        
         <h2 class="govuk-heading-m" id="main-facts-and-figures">
-            1. Main gender pay gap figures
+            2. Main gender pay gap figures
         </h2>
             
         <p class="govuk-body">
@@ -136,7 +243,7 @@
         <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
         
         <h2 class="govuk-heading-m" id="hourly-pay">
-            2. Hourly pay
+            3. Hourly pay
         </h2>
             
         <p class="govuk-body">
@@ -174,36 +281,31 @@
                     The median gender pay gap figure
                 </h3>
                 <p class="govuk-body">
-                    This is the difference between the hourly pay of the median man and the hourly pay of the median woman.
-                    The median for each is the man or woman in the middle of a list of hourly pay, ordered from highest to lowest paid.
+                    This is the difference between the median hourly pay for men and the median hourly pay for women.
+                    The median figure is the hourly pay of the man or woman in the middle of a list, ordered from highest to lowest paid.
                 </p>
                 <p class="govuk-body">
-                    A median involves listing all of the numbers in numerical order.
-                    If there is an odd number of results, the median is the middle number.
-                    If there is an even number of results, the median will be the mean of the 2 central numbers.
+                    If there is an even number of men or women, the median is the mean average of the 2 employees in the middle.
                 </p>
                 <p class="govuk-body">
-                    Medians are useful to indicate what the &lsquo;typical&rsquo; situation is.
-                    They are not distorted by very high or low hourly pay, or bonuses.
-                    However, this means that not all gender pay gap issues will be picked up.
-                    They could also fail to pick up as effectively where the gender pay gap issues are most pronounced
-                    in the lowest paid or highest paid employees.
+                    Medians are useful to indicate the ‘typical’ situation.
+                    They are not distorted by very high or low hourly values.
+                    But they may make some gender pay gap issues harder to identify – for example, if the issues
+                    are most among the lowest paid or highest paid employees.
                 </p>
 
                 <h3 class="govuk-heading-s">
                     The mean (average) gender pay gap figure
                 </h3>
                 <p class="govuk-body">
-                    The mean gender pay gap figure uses hourly pay of all employees to calculate the difference between
-                    the mean hourly pay of men, and the mean hourly pay of women.
-                </p>
-                <p class="govuk-body">
-                    A mean involves adding up all of the numbers and dividing the result by how many numbers were in the list.
+                    To work out their mean gender pay gap, employers add together the hourly pay of all their male
+                    employees and divide that figure by the number of men.
+                    They repeat this for women.
                 </p>
                 <p class="govuk-body">
                     Mean averages are useful because they place the same value on every number they use, giving a good
                     overall indication of the gender pay gap.
-                    Very high or low hourly pay can &lsquo;dominate&rsquo; and distort the figure.
+                    But very high or low hourly pay can ‘dominate’ and distort the figure.
                 </p>
             </div>
         </details>
@@ -211,7 +313,7 @@
         <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
         
         <h2 class="govuk-heading-m" id="pay-quarters">
-            3. Pay quarters
+            4. Pay quarters
         </h2>
         
         @if (ReportingYearsHelper.IsReportingYearWithFurloughScheme(Model.ReportingYear) && Model.OptedOutOfReportingPayQuarters)
@@ -229,19 +331,19 @@
             <ul class="govuk-list govuk-list--bullet govuk-list--spaced">
                 <li>
                     @(Model.FemaleUpperQuartilePayBand.Value.ToString("0.0"))%
-                    of employees in the upper hourly pay quarter (highest paid jobs)
+                    of employees in the upper pay quarter (highest paid jobs)
                 </li>
                 <li>
                     @(Model.FemaleUpperPayBand.Value.ToString("0.0"))%
-                    of employees in the upper middle hourly pay quarter
+                    of employees in the upper middle pay quarter
                 </li>
                 <li>
                     @(Model.FemaleMiddlePayBand.Value.ToString("0.0"))%
-                    of employees in the lower middle hourly pay quarter
+                    of employees in the lower middle pay quarter
                 </li>
                 <li>
                     @(Model.FemaleLowerPayBand.Value.ToString("0.0"))%
-                    of employees in the lower hourly pay quarter (lowest paid jobs)
+                    of employees in the lower pay quarter (lowest paid jobs)
                 </li>
             </ul>
         }
@@ -379,10 +481,11 @@
             </summary>
             <div class="govuk-details__text">
                 <p class="govuk-body">
-                    Pay quarters show the percentage of men and women employees in 4 equally-sized groups based on their hourly pay.
+                    Pay quarters give an indication of women's representation at different levels of the organisation.
                 </p>
                 <p class="govuk-body">
-                    Pay quarters give an indication of women's representation at different levels of the organisation.
+                    To make this calculation, employers have to list all their employees from highest to lowest hourly pay.
+                    They then divide this list into 4 quarters, and work out the percentage of men and women in each quarter.
                 </p>
             </div>
         </details>
@@ -390,7 +493,7 @@
         <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
     
         <h2 class="govuk-heading-m" id="bonus-pay">
-            4. Bonus pay
+            5. Bonus pay
         </h2>
         
         <p class="govuk-body">
@@ -460,7 +563,7 @@
         <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
     
         <h2 class="govuk-heading-m" id="about-employer">
-            5. About @(Model.Organisation.OrganisationName)
+            6. About @(Model.Organisation.OrganisationName)
         </h2>
         
         <dl class="govuk-summary-list">
