@@ -104,16 +104,16 @@ public class ManageOrganisationViewModel
         {
             if (HasDraftGpgReport(reportingYear))
             {
-                return "Continue editing your submitted gender pay gap report";
+                return "Continue editing";
             }
             else
             {
-                return "Edit your gender pay gap report";
+                return "Edit";
             }
         }
         else if (HasDraftGpgReport(reportingYear))
         {
-            return "Continue creating your gender pay gap report";
+            return "Continue creating";
         }
         else
         {
@@ -159,7 +159,7 @@ public class ManageOrganisationViewModel
         {
             return new TagViewModel
             {
-                HtmlOrText = new("Draft created, not submitted"),
+                HtmlOrText = new("Draft created"),
                 Classes = ["govuk-tag--blue"],
                 Attributes = new() {{"style", "max-width: unset;"}},
             };
@@ -181,16 +181,16 @@ public class ManageOrganisationViewModel
         {
             if (Organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear).Status == ActionPlanStatus.Draft)
             {
-                return "Continue editing your submitted action plan";
+                return "Continue editing";
             }
             else
             {
-                return "Edit your action plan";
+                return "Edit";
             }
         }
         else if (Organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear) != null)
         {
-            return "Continue creating your action plan";
+            return "Continue creating";
         }
         else
         {

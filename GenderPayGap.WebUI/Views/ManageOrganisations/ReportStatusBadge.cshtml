@@ -11,7 +11,7 @@
     switch(Model.ReportStatusTag)
     {
         case ReportStatusTag.SubmittedVoluntarily:
-            reportTagHtml = @<text>Reported voluntarily@(Model.HasDraft ? ", draft amendments" : "")</text>;
+            reportTagHtml = @<text>Submitted voluntarily@(Model.HasDraft ? ", draft amendments" : "")</text>;
             reportTagColour = "govuk-tag--green";
             break;
             
@@ -31,7 +31,7 @@
             break;
             
         case ReportStatusTag.Submitted:
-            reportTagHtml = @<text>Reported@(Model.HasDraft ? ", draft amendments" : "")</text>;
+            reportTagHtml = @<text>Submitted@(Model.HasDraft ? ", draft amendments" : "")</text>;
             reportTagColour = "govuk-tag--green";
             break;
             
