@@ -210,22 +210,6 @@
                         @(ViewReportsHelper.FormatNumberAsPoundsOrPence((100 - latestSubmittedGpgReport.DiffMedianHourlyPercent) / 100))
                         for every £1 that men earned
                     </div>
-                    <dl class="headline-figures-box--bar-chart">
-                        <dt>Men</dt>
-                        <dd>
-                            <div class="headline-figures-box--bar-chart--bar"
-                                 style="background-color: #12436D; width: calc((100% - 41px) * @(ViewReportsHelper.CalculateBarChartHeightForMen(latestSubmittedGpgReport.DiffMedianHourlyPercent)/100));">
-                            </div>
-                            £1
-                        </dd>
-                        <dt>Women</dt>
-                        <dd>
-                            <div class="headline-figures-box--bar-chart--bar"
-                                 style="background-color: #28A197; width: calc((100% - 41px) * @(ViewReportsHelper.CalculateBarChartHeightForWomen(latestSubmittedGpgReport.DiffMedianHourlyPercent)/100));">
-                            </div>
-                            @(ViewReportsHelper.FormatNumberAsPoundsOrPence((100 - latestSubmittedGpgReport.DiffMedianHourlyPercent) / 100))
-                        </dd>
-                    </dl>
                 </a>
                 
                 @if (latestSubmittedGpgReport.FemaleUpperQuartilePayBand.HasValue && latestSubmittedGpgReport.FemaleLowerPayBand.HasValue)
@@ -266,22 +250,6 @@
                         <div class="headline-figures-box--follow-on-text">
                             compared with @(latestSubmittedGpgReport.MaleMedianBonusPayPercent.ToString("0.0"))% of men
                         </div>
-                        <dl class="headline-figures-box--bar-chart">
-                            <dt>Men</dt>
-                            <dd>
-                                <div class="headline-figures-box--bar-chart--bar"
-                                     style="background-color: #12436D; width: calc((100% - 41px) * @(latestSubmittedGpgReport.MaleMedianBonusPayPercent/100));">
-                                </div>
-                                @(latestSubmittedGpgReport.MaleMedianBonusPayPercent)%
-                            </dd>
-                            <dt>Women</dt>
-                            <dd>
-                                <div class="headline-figures-box--bar-chart--bar"
-                                     style="background-color: #28A197; width: calc((100% - 41px) * @(latestSubmittedGpgReport.FemaleMedianBonusPayPercent/100));">
-                                </div>
-                                @(latestSubmittedGpgReport.FemaleMedianBonusPayPercent)%
-                            </dd>
-                        </dl>
                     </a>
                 }
             </div>

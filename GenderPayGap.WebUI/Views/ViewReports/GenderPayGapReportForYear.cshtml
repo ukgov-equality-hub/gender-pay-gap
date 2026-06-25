@@ -119,22 +119,6 @@
                     @(ViewReportsHelper.FormatNumberAsPoundsOrPence((100 - Model.DiffMedianHourlyPercent) / 100))
                     for every £1 that men earned
                 </div>
-                <dl class="headline-figures-box--bar-chart">
-                    <dt>Men</dt>
-                    <dd>
-                        <div class="headline-figures-box--bar-chart--bar"
-                             style="background-color: #12436D; width: calc((100% - 41px) * @(ViewReportsHelper.CalculateBarChartHeightForMen(Model.DiffMedianHourlyPercent)/100));">
-                        </div>
-                        £1
-                    </dd>
-                    <dt>Women</dt>
-                    <dd>
-                        <div class="headline-figures-box--bar-chart--bar"
-                             style="background-color: #28A197; width: calc((100% - 41px) * @(ViewReportsHelper.CalculateBarChartHeightForWomen(Model.DiffMedianHourlyPercent)/100));">
-                        </div>
-                        @(ViewReportsHelper.FormatNumberAsPoundsOrPence((100 - Model.DiffMedianHourlyPercent) / 100))
-                    </dd>
-                </dl>
             </a>
 
             @if (Model.FemaleUpperQuartilePayBand.HasValue && Model.FemaleLowerPayBand.HasValue)
@@ -175,22 +159,6 @@
                     <div class="headline-figures-box--follow-on-text">
                         compared with @(Model.MaleMedianBonusPayPercent.ToString("0.0"))% of men
                     </div>
-                    <dl class="headline-figures-box--bar-chart">
-                        <dt>Men</dt>
-                        <dd>
-                            <div class="headline-figures-box--bar-chart--bar"
-                                 style="background-color: #12436D; width: calc((100% - 41px) * @(Model.MaleMedianBonusPayPercent/100));">
-                            </div>
-                            @(Model.MaleMedianBonusPayPercent)%
-                        </dd>
-                        <dt>Women</dt>
-                        <dd>
-                            <div class="headline-figures-box--bar-chart--bar"
-                                 style="background-color: #28A197; width: calc((100% - 41px) * @(Model.FemaleMedianBonusPayPercent/100));">
-                            </div>
-                            @(Model.FemaleMedianBonusPayPercent)%
-                        </dd>
-                    </dl>
                 </a>
             }
         </div>
