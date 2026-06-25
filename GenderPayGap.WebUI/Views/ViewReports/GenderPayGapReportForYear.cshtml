@@ -128,18 +128,21 @@
                     <div class="headline-figures-box--title">
                         Women made up
                     </div>
-                    <div class="headline-figures-box--value-row" style="margin: 2px 0;">
+                    <div class="headline-figures-box--value-row" style="margin: 7px 0 2px 0;">
                         <div class="headline-figures-box--value">
                             @(Model.FemaleUpperQuartilePayBand.Value.ToString("0.0"))%
                         </div>
                     </div>
-                    <div class="headline-figures-box--title" style="padding-bottom: 7px;">
+                    <div class="headline-figures-box--follow-on-text">
                         of employees in the highest paid quarter
                     </div>
+                    <div class="headline-figures-box--value-row" style="margin: 7px 0 2px 0;">
+                        <div class="headline-figures-box--value">
+                            @(Model.FemaleLowerPayBand.Value.ToString("0.0"))%
+                        </div>
+                    </div>
                     <div class="headline-figures-box--follow-on-text">
-                        and
-                        @(Model.FemaleLowerPayBand.Value.ToString("0.0"))%
-                        of the lowest paid quarter
+                        of employees in the lowest paid quarter
                     </div>
                 </a>
             }

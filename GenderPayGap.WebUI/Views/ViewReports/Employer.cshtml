@@ -219,18 +219,21 @@
                         <div class="headline-figures-box--title">
                             Women made up
                         </div>
-                        <div class="headline-figures-box--value-row" style="margin: 2px 0;">
+                        <div class="headline-figures-box--value-row" style="margin: 7px 0 2px 0;">
                             <div class="headline-figures-box--value">
                                 @(latestSubmittedGpgReport.FemaleUpperQuartilePayBand.Value.ToString("0.0"))%
                             </div>
                         </div>
-                        <div class="headline-figures-box--title" style="padding-bottom: 7px;">
+                        <div class="headline-figures-box--follow-on-text">
                             of employees in the highest paid quarter
                         </div>
+                        <div class="headline-figures-box--value-row" style="margin: 7px 0 2px 0;">
+                            <div class="headline-figures-box--value">
+                                @(latestSubmittedGpgReport.FemaleLowerPayBand.Value.ToString("0.0"))%
+                            </div>
+                        </div>
                         <div class="headline-figures-box--follow-on-text">
-                            and
-                            @(latestSubmittedGpgReport.FemaleLowerPayBand.Value.ToString("0.0"))%
-                            of those in the lowest paid quarter
+                            of employees in the lowest paid quarter
                         </div>
                     </a>
                 }
