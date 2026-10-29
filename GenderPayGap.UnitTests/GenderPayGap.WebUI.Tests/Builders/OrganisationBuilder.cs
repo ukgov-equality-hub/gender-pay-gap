@@ -53,7 +53,7 @@ namespace GenderPayGap.WebUI.Tests.Builders
 
         public Organisation Build()
         {
-            scope.SnapshotDate = sectorType.GetAccountingStartDate();
+            scope.ReportingYear = ReportingYearsHelper.GetCurrentReportingYear(sectorType);
             scopes.Add(scope);
             
             return new Organisation

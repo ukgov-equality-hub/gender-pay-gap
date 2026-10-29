@@ -108,7 +108,7 @@ namespace GenderPayGap.WebUI.Controllers.Admin
                     .Where(
                         o => o.OrganisationScopes
                             .Where(scope => scope.Status == ScopeRowStatuses.Active)
-                            .GroupBy(scope => scope.SnapshotDate)
+                            .GroupBy(scope => scope.ReportingYear)
                             .Any(grouping => grouping.Count() > 1))
                     .ToList();
 

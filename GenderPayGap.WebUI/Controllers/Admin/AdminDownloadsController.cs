@@ -73,9 +73,9 @@ namespace GenderPayGap.WebUI.Controllers
             List<Organisation> orphanOrganisations = dataRepository.GetAll<Organisation>()
                 .Where(org => org.Status == OrganisationStatuses.Active)
                 .Where(org =>
-                    org.OrganisationScopes.OrderByDescending(s => s.SnapshotDate).FirstOrDefault(s => s.Status == ScopeRowStatuses.Active) == null ||
-                    org.OrganisationScopes.OrderByDescending(s => s.SnapshotDate).FirstOrDefault(s => s.Status == ScopeRowStatuses.Active).ScopeStatus == ScopeStatuses.InScope ||
-                    org.OrganisationScopes.OrderByDescending(s => s.SnapshotDate).FirstOrDefault(s => s.Status == ScopeRowStatuses.Active).ScopeStatus == ScopeStatuses.PresumedInScope)
+                    org.OrganisationScopes.OrderByDescending(s => s.ReportingYear).FirstOrDefault(s => s.Status == ScopeRowStatuses.Active) == null ||
+                    org.OrganisationScopes.OrderByDescending(s => s.ReportingYear).FirstOrDefault(s => s.Status == ScopeRowStatuses.Active).ScopeStatus == ScopeStatuses.InScope ||
+                    org.OrganisationScopes.OrderByDescending(s => s.ReportingYear).FirstOrDefault(s => s.Status == ScopeRowStatuses.Active).ScopeStatus == ScopeStatuses.PresumedInScope)
                 // We need the AsEnumerable here because EF gets upset about method calls - so we get the list at this point and then can filter it using a method call
                 .AsEnumerable()
                 .Where(org => org.UserOrganisations == null ||
@@ -148,7 +148,7 @@ namespace GenderPayGap.WebUI.Controllers
         {
             List<Organisation> organisationsWithScopesForYear = dataRepository.GetAll<Organisation>()
                 .Where(org => org.Status == OrganisationStatuses.Active)
-                .Where(org => org.OrganisationScopes.Any(scope => scope.SnapshotDate.Year == year && scope.Status == ScopeRowStatuses.Active))
+                .Where(org => org.OrganisationScopes.Any(scope => scope.ReportingYear == year && scope.Status == ScopeRowStatuses.Active))
                 .Include(org => org.OrganisationScopes)
                 .ToList();
 
@@ -275,9 +275,9 @@ namespace GenderPayGap.WebUI.Controllers
             List<Organisation> organisationsWithLateReturns = dataRepository.GetAll<Organisation>()
                 .Where(org => org.Status == OrganisationStatuses.Active)
                 .Where(
-                    org => !org.OrganisationScopes.Any(s => s.SnapshotDate.Year == year) ||
+                    org => !org.OrganisationScopes.Any(s => s.ReportingYear == year) ||
                            org.OrganisationScopes.Any(
-                               s => s.SnapshotDate.Year == year &&
+                               s => s.ReportingYear == year &&
                                     (s.ScopeStatus == ScopeStatuses.InScope ||
                                      s.ScopeStatus == ScopeStatuses.PresumedInScope)))
 
@@ -550,9 +550,9 @@ namespace GenderPayGap.WebUI.Controllers
             return dataRepository.GetAll<Organisation>()
                 .Where(org => org.Status == OrganisationStatuses.Active)
                 .Where(
-                    org => !org.OrganisationScopes.Any(s => s.SnapshotDate.Year == year)
+                    org => !org.OrganisationScopes.Any(s => s.ReportingYear == year)
                            || org.OrganisationScopes.Any(
-                               s => s.SnapshotDate.Year == year
+                               s => s.ReportingYear == year
                                     && (s.ScopeStatus == ScopeStatuses.InScope || s.ScopeStatus == ScopeStatuses.PresumedInScope)
                                     && s.Status != ScopeRowStatuses.Retired))
                 .Where(org => !org.Returns.Any(r => r.AccountingDate.Year == year && r.Status == ReturnStatuses.Submitted))

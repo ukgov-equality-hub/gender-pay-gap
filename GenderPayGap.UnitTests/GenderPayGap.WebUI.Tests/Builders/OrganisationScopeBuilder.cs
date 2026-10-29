@@ -60,7 +60,7 @@ namespace GenderPayGap.WebUI.Tests.Builders
                 ScopeStatus = scopeStatus,
                 Reason = reason,
                 Status = status,
-                SnapshotDate = organisation.SectorType.GetAccountingStartDate(reportingYear)
+                ReportingYear = reportingYear
             };
         }
 
