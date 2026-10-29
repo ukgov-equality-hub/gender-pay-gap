@@ -688,6 +688,9 @@ namespace GenderPayGap.Database.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<int>("ReportingYear")
+                        .HasColumnType("integer");
+
                     b.Property<int>("ScopeStatus")
                         .HasColumnType("integer")
                         .HasColumnName("ScopeStatusId");
@@ -714,6 +717,8 @@ namespace GenderPayGap.Database.Migrations
                         .HasName("PK_dbo.OrganisationScopes");
 
                     b.HasIndex("OrganisationId");
+
+                    b.HasIndex("ReportingYear");
 
                     b.HasIndex("ScopeStatus");
 
