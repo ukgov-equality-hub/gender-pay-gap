@@ -55,7 +55,7 @@ namespace GenderPayGap.WebUI.Controllers.Admin
 
             string tbl_OrganisationScopes = dataRepository.GetTable<OrganisationScope>().Name;
             string os_OrganisationId = dataRepository.GetTable<OrganisationScope>().GetColumnName(os => os.OrganisationId);
-            string os_SnapshotDate = dataRepository.GetTable<OrganisationScope>().GetColumnName(os => os.SnapshotDate);
+            string os_ReportingYear = dataRepository.GetTable<OrganisationScope>().GetColumnName(os => os.ReportingYear);
             string os_ScopeStatusId = dataRepository.GetTable<OrganisationScope>().GetColumnName(os => os.ScopeStatus);
             string os_StatusId = dataRepository.GetTable<OrganisationScope>().GetColumnName(os => os.Status);
             
@@ -74,7 +74,7 @@ namespace GenderPayGap.WebUI.Controllers.Admin
                 ""LatestScopeStatus"" AS (
                     SELECT
                         ""{os_OrganisationId}"",
-                        ""{os_SnapshotDate}"",
+                        ""{os_ReportingYear}"",
                         ""{os_ScopeStatusId}""
                     FROM
                         ""{tbl_OrganisationScopes}""
@@ -84,7 +84,7 @@ namespace GenderPayGap.WebUI.Controllers.Admin
                 ""HasSubmittedReturn"" AS (
                     SELECT
                         ""{r_OrganisationId}"",
-                        ""{r_AccountingDate}"",
+                        EXTRACT(YEAR FROM ""{r_AccountingDate}"") AS ""ReportingYear"",
                         MAX(""{r_StatusId}"") AS ""ReturnStatusId""
                     FROM
                         ""{tbl_Returns}""
@@ -92,13 +92,13 @@ namespace GenderPayGap.WebUI.Controllers.Admin
                         ""{r_StatusId}"" = {(int)ReturnStatuses.Submitted}
                     GROUP BY
                         ""{r_OrganisationId}"",
-                        ""{r_AccountingDate}""
+                        EXTRACT(YEAR FROM ""{r_AccountingDate}"")
                 )
                 SELECT
                     Org.""{o_OrganisationId}"" AS ""{nameof(DataDashboardQueryRow.OrganisationId)}"",
                     Org.""{o_SectorTypeId}"" AS ""{nameof(DataDashboardQueryRow.SectorType)}"",
                     Org.""{o_statusId}"" AS ""{nameof(DataDashboardQueryRow.OrganisationStatus)}"",
-                    CAST(date_part('year', ""LatestScopeStatus"".""{os_SnapshotDate}"") AS INTEGER) AS ""{nameof(DataDashboardQueryRow.ReportingYear)}"",
+                    ""LatestScopeStatus"".""{os_ReportingYear}"" AS ""{nameof(DataDashboardQueryRow.ReportingYear)}"",
                     ""LatestScopeStatus"".""{os_ScopeStatusId}"" AS ""{nameof(DataDashboardQueryRow.ScopeStatus)}"",
                     ""HasSubmittedReturn"".""ReturnStatusId"" AS ""{nameof(DataDashboardQueryRow.ReturnStatus)}""
                 FROM
@@ -107,10 +107,10 @@ namespace GenderPayGap.WebUI.Controllers.Admin
                     ON Org.""{o_OrganisationId}"" = ""LatestScopeStatus"".""{os_OrganisationId}""
                 LEFT JOIN ""HasSubmittedReturn""
                     ON Org.""{o_OrganisationId}"" = ""HasSubmittedReturn"".""{r_OrganisationId}""
-                    AND ""HasSubmittedReturn"".""{r_AccountingDate}"" = ""LatestScopeStatus"".""{os_SnapshotDate}""
+                    AND ""HasSubmittedReturn"".""ReportingYear"" = ""LatestScopeStatus"".""{os_ReportingYear}""
                 ORDER BY
                     Org.""{o_OrganisationId}"",
-                    ""LatestScopeStatus"".""{os_SnapshotDate}""
+                    ""LatestScopeStatus"".""{os_ReportingYear}""
             ";
             
             List<DataDashboardQueryRow> allRows = dataRepository.SqlQueryRaw<DataDashboardQueryRow>(sql).ToList();

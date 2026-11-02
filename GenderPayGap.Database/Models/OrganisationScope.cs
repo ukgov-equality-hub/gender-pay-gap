@@ -43,7 +43,7 @@ namespace GenderPayGap.Database
             return ScopeStatus.IsScopeDeclared();
         }
         
-        public int ReportingYear => SnapshotDate.Year;
+        public int ReportingYear;
 
     }
 }

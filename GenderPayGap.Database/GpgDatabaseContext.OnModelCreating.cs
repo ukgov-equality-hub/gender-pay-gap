@@ -139,6 +139,7 @@ namespace GenderPayGap.Database
                     entity.HasIndex(e => e.ScopeStatus);
 
                     entity.HasIndex(e => e.SnapshotDate);
+                    entity.HasIndex(e => e.ReportingYear);
 
                     entity.HasIndex(e => e.Status);
 

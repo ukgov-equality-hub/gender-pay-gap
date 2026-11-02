@@ -163,7 +163,7 @@ namespace GenderPayGap.Database
             // Add new OrganisationScope
             var newOrganisationScope = new OrganisationScope {
                 OrganisationId = OrganisationId,
-                SnapshotDate = SectorType.GetAccountingStartDate(reportingYear),
+                ReportingYear = reportingYear,
                 ScopeStatus = newScope,
                 Status = ScopeRowStatuses.Active,
                 StatusDetails = statusDetails,
