@@ -2,46 +2,53 @@
 using GenderPayGap.Extensions;
 using Newtonsoft.Json;
 
-namespace GenderPayGap.Database
+namespace GenderPayGap.Database;
+
+[JsonObject(MemberSerialization.OptIn)]
+public class OrganisationScope
 {
-    [JsonObject(MemberSerialization.OptIn)]
-    public class OrganisationScope
+
+    #region IDs (to identify the row in the database)
+    [JsonProperty]
+    public long OrganisationScopeId { get; set; }
+    [JsonProperty]
+    public long OrganisationId { get; set; }
+    [JsonProperty]
+    public int ReportingYear;
+    #endregion
+
+    #region The status of this row in the database (and when it was created)
+    [JsonProperty]
+    public ScopeRowStatuses Status { get; set; }
+    [JsonProperty]
+    public DateTime ScopeStatusDate { get; set; } = VirtualDateTime.Now;
+    #endregion
+
+    #region Scope information (Scope Status, Read Guidance, Reason, Details)
+    [JsonProperty]
+    public ScopeStatuses ScopeStatus { get; set; }
+    [JsonProperty]
+    public bool? ReadGuidance { get; set; }
+    [JsonProperty]
+    public string Reason { get; set; }
+    [JsonProperty]
+    public string StatusDetails { get; set; }
+    #endregion
+        
+    public virtual Organisation Organisation { get; set; }
+
+    public bool IsInScopeVariant()
     {
-
-        [JsonProperty]
-        public long OrganisationScopeId { get; set; }
-        [JsonProperty]
-        public long OrganisationId { get; set; }
-        [JsonProperty]
-        public ScopeStatuses ScopeStatus { get; set; }
-        [JsonProperty]
-        public DateTime ScopeStatusDate { get; set; } = VirtualDateTime.Now;
-        [JsonProperty]
-        public bool? ReadGuidance { get; set; }
-        [JsonProperty]
-        public string Reason { get; set; }
-        [JsonProperty]
-        public ScopeRowStatuses Status { get; set; }
-        [JsonProperty]
-        public string StatusDetails { get; set; }
-        [JsonProperty]
-        public int ReportingYear;
-        
-        public virtual Organisation Organisation { get; set; }
-
-        public bool IsInScopeVariant()
-        {
-            return ScopeStatus.IsInScopeVariant();
-        }
-
-        public bool IsScopePresumed()
-        {
-            return ScopeStatus.IsScopePresumed();
-        }
-        public bool IsScopeDeclared()
-        {
-            return ScopeStatus.IsScopeDeclared();
-        }
-        
+        return ScopeStatus.IsInScopeVariant();
     }
+
+    public bool IsScopePresumed()
+    {
+        return ScopeStatus.IsScopePresumed();
+    }
+    public bool IsScopeDeclared()
+    {
+        return ScopeStatus.IsScopeDeclared();
+    }
+        
 }
