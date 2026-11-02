@@ -698,11 +698,6 @@ namespace GenderPayGap.Database.Migrations
                     b.Property<DateTime>("ScopeStatusDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("SnapshotDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("('1900-01-01T00:00:00.000')");
-
                     b.Property<byte>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("smallint")
@@ -723,8 +718,6 @@ namespace GenderPayGap.Database.Migrations
                     b.HasIndex("ScopeStatus");
 
                     b.HasIndex("ScopeStatusDate");
-
-                    b.HasIndex("SnapshotDate");
 
                     b.HasIndex("Status");
 
