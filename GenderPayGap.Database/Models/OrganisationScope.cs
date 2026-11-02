@@ -21,12 +21,12 @@ namespace GenderPayGap.Database
         [JsonProperty]
         public string Reason { get; set; }
         [JsonProperty]
-        public DateTime SnapshotDate { get; set; }
-        [JsonProperty]
         public ScopeRowStatuses Status { get; set; }
         [JsonProperty]
         public string StatusDetails { get; set; }
-
+        [JsonProperty]
+        public int ReportingYear;
+        
         public virtual Organisation Organisation { get; set; }
 
         public bool IsInScopeVariant()
@@ -43,7 +43,5 @@ namespace GenderPayGap.Database
             return ScopeStatus.IsScopeDeclared();
         }
         
-        public int ReportingYear;
-
     }
 }

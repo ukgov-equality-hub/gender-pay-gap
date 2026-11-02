@@ -138,7 +138,6 @@ namespace GenderPayGap.Database
 
                     entity.HasIndex(e => e.ScopeStatus);
 
-                    entity.HasIndex(e => e.SnapshotDate);
                     entity.HasIndex(e => e.ReportingYear);
 
                     entity.HasIndex(e => e.Status);
@@ -147,8 +146,6 @@ namespace GenderPayGap.Database
                     entity.Property(e => e.Status).HasColumnName("StatusId").HasDefaultValueSql("((0))");
 
                     entity.Property(e => e.Reason).HasMaxLength(1000);
-
-                    entity.Property(e => e.SnapshotDate).HasDefaultValueSql("('1900-01-01T00:00:00.000')");
 
                     entity.Property(e => e.StatusDetails).HasMaxLength(255);
 
