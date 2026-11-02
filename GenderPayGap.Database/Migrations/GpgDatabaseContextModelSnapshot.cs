@@ -698,6 +698,12 @@ namespace GenderPayGap.Database.Migrations
                     b.Property<DateTime>("ScopeStatusDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int?>("Sector")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SectorStatus")
+                        .HasColumnType("integer");
+
                     b.Property<byte>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("smallint")
