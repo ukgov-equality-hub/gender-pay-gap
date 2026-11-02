@@ -214,6 +214,32 @@ namespace GenderPayGap.Core
             return scopeStatus == ScopeStatuses.InScope || scopeStatus == ScopeStatuses.OutOfScope;
         }
     }
+
+    public enum Sectors
+    {
+        
+        ProfessionalAndConsultancyServices = 1,
+        RetailSalesAndConsumerServices = 2,
+        BusinessOperationsAndSupport = 3,
+        EducationAndTraining = 4,
+        ManufacturingAndProduction = 5,
+        ConstructionLogisticsAndEnergy = 6,
+        PublicSectorAndNonProfit = 7,
+        FinanceBankingAndRealEstate = 8,
+        HealthcareAndSocialCare = 9,
+        HospitalityLeisureAndCulture = 10,
+        TechMediaAndTelecommunications = 11
+
+    }
+    
+    public enum SectorStatuses
+    {
+        
+        Presumed = 0,
+        Declared = 1,
+        Skipped = 2
+
+    }
     
     public enum OrganisationSizes
     {

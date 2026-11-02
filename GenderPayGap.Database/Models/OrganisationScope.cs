@@ -34,7 +34,14 @@ public class OrganisationScope
     [JsonProperty]
     public string StatusDetails { get; set; }
     #endregion
-        
+
+    #region Sector information
+    [JsonProperty]
+    public Sectors? Sector { get; set; }
+    [JsonProperty]
+    public SectorStatuses SectorStatus { get; set; }
+    #endregion
+    
     public virtual Organisation Organisation { get; set; }
 
     public bool IsInScopeVariant()
