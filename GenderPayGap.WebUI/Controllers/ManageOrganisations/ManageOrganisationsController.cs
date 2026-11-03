@@ -1,5 +1,4 @@
-﻿using GenderPayGap.Core.Helpers;
-using GenderPayGap.Core.Interfaces;
+﻿using GenderPayGap.Core.Interfaces;
 using GenderPayGap.Database;
 using GenderPayGap.Database.Models;
 using GenderPayGap.WebUI.Helpers;
@@ -52,10 +51,6 @@ namespace GenderPayGap.WebUI.Controllers.ManageOrganisations
             ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
 
             var organisation = dataRepository.Get<Organisation>(organisationId);
-            if (OrganisationIsNewThisYearAndHasNotProvidedScopeForLastYear(organisation))
-            {
-                return RedirectToAction("DeclareScopeGet", "Scope", new { encryptedOrganisationId = encryptedOrganisationId }); 
-            }
 
             // build the view model
             List<DraftReturn> allDraftReturns =
@@ -65,25 +60,6 @@ namespace GenderPayGap.WebUI.Controllers.ManageOrganisations
             var viewModel = new ManageOrganisationViewModel(organisation, user, allDraftReturns);
 
             return View("ManageOrganisation", viewModel);
-        }
-
-        private static bool OrganisationIsNewThisYearAndHasNotProvidedScopeForLastYear(Organisation organisation)
-        {
-            DateTime currentYearSnapshotDate = organisation.SectorType.GetAccountingStartDate();
-            bool organisationCreatedInCurrentReportingYear = organisation.Created >= currentYearSnapshotDate;
-
-            if (organisationCreatedInCurrentReportingYear)
-            {
-                int previousReportingYear = currentYearSnapshotDate.AddYears(-1).Year;
-                OrganisationScope scope = organisation.GetScopeForYear(previousReportingYear);
-
-                if (scope.IsScopePresumed())
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
     }
