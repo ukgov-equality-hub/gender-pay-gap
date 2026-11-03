@@ -94,5 +94,9 @@
     <ProjectReference Include="..\GenderPayGap.Database\GenderPayGap.Database.csproj" />
     <PackageReference Include="CabinetOffice.GovUkDesignSystem" Version="2.0.2" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Shared\Patterns\ManageOrganisationBreadcrumbs.cshtml" />
+  </ItemGroup>
 
 </Project>
