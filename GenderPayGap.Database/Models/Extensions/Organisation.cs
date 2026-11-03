@@ -147,11 +147,6 @@ namespace GenderPayGap.Database
             return GetScopeForYear(accountingStartDate.Year);
         }
 
-        public bool GetIsInscope(int year)
-        {
-            return GetScopeStatusForYear(year).IsInScopeVariant();
-        }
-
         public void SetScopeForYear(int reportingYear, ScopeStatuses newScope, string statusDetails, string reasonForChange = null, bool? haveReadGuidance = null)
         {
             // Retire old OrganisationScopes
