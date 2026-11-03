@@ -3,7 +3,6 @@ using GenderPayGap.Core.Helpers;
 using GenderPayGap.Core.Interfaces;
 using GenderPayGap.Database;
 using GenderPayGap.WebUI.Helpers;
-using GenderPayGap.WebUI.Models.ManageOrganisations;
 using GenderPayGap.WebUI.Models.Scope;
 using GenderPayGap.WebUI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +18,7 @@ public class ScopeController : Controller
 
     private readonly EmailSendingService emailSendingService;
     private readonly IDataRepository dataRepository;
-        
+
     public ScopeController(EmailSendingService emailSendingService, IDataRepository dataRepository)
     {
         this.emailSendingService = emailSendingService;
@@ -68,7 +67,7 @@ public class ScopeController : Controller
             
         return View("DeclareScopeForYear", viewModel);
     }
-        
+
     [HttpPost("{encryptedOrganisationId}/reporting-year/{reportingYear}/declare-scope")]
     [ValidateAntiForgeryToken]
     public IActionResult DeclareScopeForYearPost(string encryptedOrganisationId, int reportingYear, DeclareScopeForYearViewModel viewModel)
@@ -120,129 +119,6 @@ public class ScopeController : Controller
         }
 
         return View("DeclaredScopeForYear", viewModel);
-    }
-
-    [HttpGet("{encryptedOrganisationId}/reporting-year/{reportingYear}/scope-declared")]
-    public IActionResult ScopeDeclared(string encryptedOrganisationId, int reportingYear)
-    {
-        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
-        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
-        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
-        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
-
-        // Get Organisation and OrganisationScope for reporting year
-        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
-        OrganisationScope organisationScope = organisation.GetScopeForYear(reportingYear);
-
-        var viewModel = new ScopeDeclaredViewModel
-        {
-            Organisation = organisation,
-            ReportingYear = organisationScope.ReportingYear,
-            ScopeStatus = organisationScope.ScopeStatus
-        };
-            
-        return View("ScopeDeclared", viewModel);
-    }
-        
-    [HttpGet("{encryptedOrganisationId}/declare-scope")]
-    [Authorize(Roles = LoginRoles.GpgEmployer)]
-    public IActionResult DeclareScopeGet(string encryptedOrganisationId)
-    {
-        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
-        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
-        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
-            
-        var organisation = dataRepository.Get<Organisation>(organisationId);
-        if (!OrganisationIsNewThisYearAndHasNotProvidedScopeForLastYear(organisation))
-        {
-            return RedirectToAction("ManageOrganisationGet", "ManageOrganisations", new { encryptedOrganisationId = encryptedOrganisationId });
-        }
-            
-        var viewModel = new DeclareScopeViewModel
-        {
-            Organisation = organisation,
-            PreviousReportingYear = organisation.SectorType.GetAccountingStartDate().AddYears(-1).Year
-        };
-
-        return View("DeclareScope", viewModel);
-    }
-
-    [HttpPost("{encryptedOrganisationId}/declare-scope")]
-    [ValidateAntiForgeryToken]
-    public IActionResult DeclareScopePost(string encryptedOrganisationId, DeclareScopeViewModel viewModel)
-    {
-        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
-        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
-        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
-            
-        var organisation = dataRepository.Get<Organisation>(organisationId);
-        if (!OrganisationIsNewThisYearAndHasNotProvidedScopeForLastYear(organisation))
-        {
-            return RedirectToAction("ManageOrganisationGet", "ManageOrganisations", new { encryptedOrganisationId = encryptedOrganisationId });
-        }
-
-        if (ModelState.IsValid)
-        {
-            int currentReportingYear = ReportingYearsHelper.GetCurrentReportingYear(organisation.SectorType);
-            int previousReportingYear = currentReportingYear - 1;
-
-            ScopeStatuses newStatus = viewModel.DeclareScopeRequiredToReport == DeclareScopeRequiredToReportOptions.Yes
-                ? ScopeStatuses.InScope
-                : ScopeStatuses.OutOfScope;
-                
-            RetireOldScopes(organisation, previousReportingYear);
-            
-            UpdateScopes(organisation, newStatus, previousReportingYear, null, null);
-            
-            dataRepository.SaveChanges();
-            
-            SendScopeChangeEmails(organisation, previousReportingYear, ScopeStatuses.InScope);
-
-            return RedirectToAction("ScopeDeclared", "Scope", new {encryptedOrganisationId = encryptedOrganisationId, reportingYear = previousReportingYear});
-        }
-
-        viewModel.Organisation = organisation;
-        viewModel.PreviousReportingYear = organisation.SectorType.GetAccountingStartDate().AddYears(-1).Year;
-
-        return View("DeclareScope", viewModel);
-    }
-
-    private static bool OrganisationIsNewThisYearAndHasNotProvidedScopeForLastYear(Organisation organisation)
-    {
-        DateTime currentYearSnapshotDate = organisation.SectorType.GetAccountingStartDate();
-        bool organisationCreatedInCurrentReportingYear = organisation.Created >= currentYearSnapshotDate;
-
-        if (organisationCreatedInCurrentReportingYear)
-        {
-            int previousReportingYear = currentYearSnapshotDate.AddYears(-1).Year;
-            OrganisationScope scope = organisation.GetScopeForYear(previousReportingYear);
-
-            if (scope.IsScopePresumed())
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public void RetireOldScopes(Organisation organisation, int reportingYear)
-    {
-        foreach (OrganisationScope s in organisation.OrganisationScopes.Where(o => o.ReportingYear == reportingYear))
-        {
-            s.Status = ScopeRowStatuses.Retired;
-        }
-    }
-
-    private void UpdateScopes(Organisation organisation, ScopeStatuses newStatus, int reportingYear, string reasonForChange, bool? haveReadGuidance)
-    {
-        organisation.SetScopeForYear(
-            reportingYear,
-            newStatus,
-            "Generated by the system",
-            reasonForChange,
-            haveReadGuidance
-        );
     }
 
     public void SendScopeChangeEmails(Organisation organisation, int reportingYear, ScopeStatuses newScope)
