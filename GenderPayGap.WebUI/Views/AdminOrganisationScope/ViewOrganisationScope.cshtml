@@ -1,4 +1,5 @@
-﻿@using GenderPayGap.Core.Helpers
+﻿@using GenderPayGap.Core
+@using GenderPayGap.Core.Helpers
 @using GenderPayGap.Database
 @using GenderPayGap.WebUI.Helpers
 @using GovUkDesignSystem
@@ -70,6 +71,8 @@ else
                 <th scope="col" class="govuk-table__header">Details</th>
                 <th scope="col" class="govuk-table__header">Reason</th>
                 <th scope="col" class="govuk-table__header">Read Guidance</th>
+                <th scope="col" class="govuk-table__header">Sector</th>
+                <th scope="col" class="govuk-table__header">Sector status</th>
                 <th scope="col" class="govuk-table__header">Changed on date</th>
                 <th scope="col" class="govuk-table__header">Status</th>
                 <th scope="col" class="govuk-table__header">Actions</th>
@@ -96,6 +99,8 @@ else
                     <td class="govuk-table__cell">
                         @(scope.ReadGuidance.HasValue ? scope.ReadGuidance.Value ? "Yes" : "No" : "-")
                     </td>
+                    <td class="govuk-table__cell">@(scope.Sector.HasValue ? scope.Sector.Value.GetDisplayName() : "none")</td>
+                    <td class="govuk-table__cell">@(scope.SectorStatus)</td>
                     <td class="govuk-table__cell">@(scope.ScopeStatusDate.ToString("d MMM yyyy"))</td>
                     <td class="govuk-table__cell">@(scope.Status)</td>
                     @if (scope.ReportingYear == previousReportingYear)

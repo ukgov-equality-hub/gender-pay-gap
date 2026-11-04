@@ -218,18 +218,41 @@ namespace GenderPayGap.Core
     public enum Sectors
     {
         
+        [Display(Name = "Professional and consultancy services")]
         ProfessionalAndConsultancyServices = 1,
+        [Display(Name = "Retail sales and consumer services")]
         RetailSalesAndConsumerServices = 2,
+        [Display(Name = "Business operations and support")]
         BusinessOperationsAndSupport = 3,
+        [Display(Name = "Education and training")]
         EducationAndTraining = 4,
+        [Display(Name = "Manufacturing and production")]
         ManufacturingAndProduction = 5,
+        [Display(Name = "Construction, logistics and energy")]
         ConstructionLogisticsAndEnergy = 6,
+        [Display(Name = "Public sector and non-profit")]
         PublicSectorAndNonProfit = 7,
+        [Display(Name = "Finance, banking and real estate")]
         FinanceBankingAndRealEstate = 8,
+        [Display(Name = "Healthcare and social care")]
         HealthcareAndSocialCare = 9,
+        [Display(Name = "Hospitality, leisure and culture")]
         HospitalityLeisureAndCulture = 10,
+        [Display(Name = "Technology, media and telecommunications")]
         TechMediaAndTelecommunications = 11
 
+    }
+    public static class SectorsExtensions
+    {
+        public static string GetDisplayName(this Sectors sector)
+        {
+            DisplayAttribute displayAttribute = sector.GetType()
+                .GetMember(sector.ToString())
+                .FirstOrDefault()
+                ?.GetCustomAttribute<DisplayAttribute>();
+                
+            return displayAttribute?.Name;
+        }
     }
     
     public enum SectorStatuses
