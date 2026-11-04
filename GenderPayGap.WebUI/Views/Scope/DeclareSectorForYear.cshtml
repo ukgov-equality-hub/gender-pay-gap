@@ -1,0 +1,356 @@
+@using GenderPayGap.Core
+@using GenderPayGap.Core.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.Scope.DeclareSectorForYearViewModel
+
+@{
+    string encryptedOrganisationId = Encryption.EncryptId(Model.Organisation.OrganisationId);
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
+    DateTime snapshotDate = Model.Organisation.SectorType.GetAccountingStartDate(Model.ReportingYear);
+    ViewBag.Title = $"Choose a sector for your organisation - Gender pay gap service";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new BreadcrumbsViewModel
+    {
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Manage Employers"),
+                Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Organisation.OrganisationName),
+                Href = Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})
+            },
+            new()
+            {
+                HtmlOrText = new($"Reporting year {formattedReportingYears}")
+            },
+            new()
+            {
+                HtmlOrText = new($"Choose a sector")
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        @(await Html.GovUkErrorSummaryIfNeeded())
+
+        <form method="post"
+              action="@Url.Action("DeclareSectorForYearPost", "Scope", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})">
+            @(Html.AntiForgeryToken())
+            
+            @await Html.GovUkRadiosFor(
+                m => m.Sector,
+                new RadiosViewModel
+                {
+                    Fieldset = new()
+                    {
+                        Legend = new()
+                        {
+                            HtmlOrText = new(@<text>
+                                                  <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">
+                                                      Choose a sector
+                                                      <br>
+                                                      <span class="govuk-!-font-size-27 govuk-!-margin-top-3" style="display: inline-block; line-height: 1.3 !important;">
+                                                          for @(Model.Organisation.OrganisationName)
+                                                          <br>
+                                                          for reporting year @(formattedReportingYears)
+                                                      </span>
+                                                  </h1>
+                                              </text>),
+                        },
+                    },
+                    Hint = new()
+                    {
+                        HtmlOrText = new("Choose the sector which most closely matches your organisation's main activities"),
+                        Classes = ["govuk-!-margin-bottom-3"]
+                    }
+                },
+                new Dictionary<Sectors, RadioItemViewModel>
+                {
+                    {
+                        Sectors.ProfessionalAndConsultancyServices, new()
+                        {
+                            Label = new() { HtmlOrText = new("Professional and consultancy services") },
+                            Hint = new()
+                            {
+                                HtmlOrText = new(
+                                    @<text>
+                                        <div class="govuk-!-margin-bottom-3">
+                                            Firms providing specialized knowledge, expert advice, or creative services
+                                            directly to businesses and individuals.
+                                        </div>
+                                        <div>
+                                            <b>Includes:</b>
+                                            Law firms, accounting practices, management consultancies, architectural
+                                            studios, design agencies, and scientific research labs.
+                                        </div>
+                                     </text>)
+                            }
+                        }
+                    },
+                    {
+                        Sectors.RetailSalesAndConsumerServices, new()
+                        {
+                            Label = new() {HtmlOrText = new("Retail, sales and consumer services")},
+                            Hint = new()
+                            {
+                                HtmlOrText = new(
+                                    @<text>
+                                         <div class="govuk-!-margin-bottom-3">
+                                             Businesses that sell physical products to consumers or trade
+                                             partners, along with personal day-to-day service providers.
+                                         </div>
+                                         <div>
+                                             <b>Includes:</b>
+                                             Shops, online retailers, wholesalers, car dealerships, repair
+                                             garages, hair and beauty salons, and dry cleaners.
+                                         </div>
+                                     </text>)
+                            }
+                        }
+                    },
+                    {
+                        Sectors.BusinessOperationsAndSupport, new()
+                        {
+                            Label = new() {HtmlOrText = new("Business operations and support")},
+                            Hint = new()
+                            {
+                                HtmlOrText = new(
+                                    @<text>
+                                         <div class="govuk-!-margin-bottom-3">
+                                             Companies that provide day-to-day operational support to keep other
+                                             businesses and facilities running smoothly.
+                                         </div>
+                                         <div>
+                                             <b>Includes:</b>
+                                             Recruitment agencies, security firms, commercial cleaning services,
+                                             call centers, equipment rental, and office administration.
+                                         </div>
+                                     </text>)
+                            }
+                        }
+                    },
+                    {
+                        Sectors.EducationAndTraining, new()
+                        {
+                            Label = new() {HtmlOrText = new("Education and training")},
+                            Hint = new()
+                            {
+                                HtmlOrText = new(
+                                    @<text>
+                                         <div class="govuk-!-margin-bottom-3">
+                                             Institutions and organizations focused on learning, skill
+                                             development, and academic research.
+                                         </div>
+                                         <div>
+                                             <b>Includes:</b>
+                                             Primary and secondary schools, universities, vocational colleges,
+                                             corporate training providers, and early childhood care.
+                                         </div>
+                                     </text>)
+                            }
+                        }
+                    },
+                    {
+                        Sectors.ManufacturingAndProduction, new()
+                        {
+                            Label = new() {HtmlOrText = new("Manufacturing and production")},
+                            Hint = new()
+                            {
+                                HtmlOrText = new(
+                                    @<text>
+                                         <div class="govuk-!-margin-bottom-3">
+                                             Businesses that turn raw materials or components into physical
+                                             products on an industrial scale.
+                                         </div>
+                                         <div>
+                                             <b>Includes:</b>
+                                             Food and beverage processing, pharmaceuticals, electronics,
+                                             textiles, machinery, and consumer goods manufacturing.
+                                         </div>
+                                     </text>)
+                            }
+                        }
+                    },
+                    {
+                        Sectors.ConstructionLogisticsAndEnergy, new()
+                        {
+                            Label = new() {HtmlOrText = new("Construction, logistics and energy")},
+                            Hint = new()
+                            {
+                                HtmlOrText = new(
+                                    @<text>
+                                         <div class="govuk-!-margin-bottom-3">
+                                             The core industries that build physical infrastructure, transport
+                                             goods, and supply vital essential resources.
+                                         </div>
+                                         <div>
+                                             <b>Includes:</b>
+                                             Builders, civil engineering, freight and warehousing, electricity
+                                             and gas supply, water treatment, mining, and agriculture.
+                                         </div>
+                                     </text>)
+                            }
+                        }
+                    },
+                    {
+                        Sectors.PublicSectorAndNonProfit, new()
+                        {
+                            Label = new() {HtmlOrText = new("Public sector and non-profit")},
+                            Hint = new()
+                            {
+                                HtmlOrText = new(
+                                    @<text>
+                                         <div class="govuk-!-margin-bottom-3">
+                                             Publicly funded bodies, civil administration, civic groups, and
+                                             international bodies serving the broader public interest.
+                                         </div>
+                                         <div>
+                                             <b>Includes:</b>
+                                             Local councils, emergency services, government agencies, defense
+                                             bodies, and international non-governmental organizations.
+                                         </div>
+                                     </text>)
+                            }
+                        }
+                    },
+                    {
+                        Sectors.FinanceBankingAndRealEstate, new()
+                        {
+                            Label = new() {HtmlOrText = new("Finance, banking and real estate")},
+                            Hint = new()
+                            {
+                                HtmlOrText = new(
+                                    @<text>
+                                         <div class="govuk-!-margin-bottom-3">
+                                             Organizations that manage money, financial investments, insurance,
+                                             and physical land or property assets.
+                                         </div>
+                                         <div>
+                                             <b>Includes:</b>
+                                             Commercial banks, insurance providers, investment funds, estate
+                                             agencies, property management companies, and mortgage brokers.
+                                         </div>
+                                     </text>)
+                            }
+                        }
+                    },
+                    {
+                        Sectors.HealthcareAndSocialCare, new()
+                        {
+                            Label = new() {HtmlOrText = new("Healthcare and social care")},
+                            Hint = new()
+                            {
+                                HtmlOrText = new(
+                                    @<text>
+                                         <div class="govuk-!-margin-bottom-3">
+                                             Providers of medical treatment, clinical care, and personal social
+                                             support for individuals and families.
+                                         </div>
+                                         <div>
+                                             <b>Includes:</b>
+                                             Hospitals, medical practices, dental clinics, residential care
+                                             homes, mental health services, and community support orgs.
+                                         </div>
+                                     </text>)
+                            }
+                        }
+                    },
+                    {
+                        Sectors.HospitalityLeisureAndCulture, new()
+                        {
+                            Label = new() {HtmlOrText = new("Hospitality, leisure and culture")},
+                            Hint = new()
+                            {
+                                HtmlOrText = new(
+                                    @<text>
+                                         <div class="govuk-!-margin-bottom-3">
+                                             Venues and services dedicated to travel, dining, recreation,
+                                             sports, entertainment, and the arts.
+                                         </div>
+                                         <div>
+                                             <b>Includes:</b>
+                                             Hotels, restaurants, bars, gyms, sports clubs, theaters, museums,
+                                             and event venues.
+                                         </div>
+                                     </text>)
+                            }
+                        }
+                    },
+                    {
+                        Sectors.TechMediaAndTelecommunications, new()
+                        {
+                            Label = new() {HtmlOrText = new("Tech, media and telecommunications")},
+                            Hint = new()
+                            {
+                                HtmlOrText = new(
+                                    @<text>
+                                         <div class="govuk-!-margin-bottom-3">
+                                             Organizations that create digital products, manage communications
+                                             infrastructure, or produce content and media.
+                                         </div>
+                                         <div>
+                                             <b>Includes:</b>
+                                             Software companies, IT support providers, telecom networks, digital
+                                             publishers, broadcasting, and film production.
+                                         </div>
+                                     </text>)
+                            }
+                        }
+                    }
+                }
+            )
+
+            @(await Html.GovUkButton(new ButtonViewModel
+            {
+                HtmlOrText = new("Save and continue"),
+                Classes = ["govuk-!-margin-bottom-3"],
+                PreventDoubleClick = true
+            }))
+
+            <p class="govuk-body">
+                <a class="govuk-link" href="@Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})">
+                    Return to @(Model.Organisation.OrganisationName)
+                </a>
+            </p>
+            
+        </form>
+        
+        <form method="post"
+              action="@Url.Action("DeclareSectorForYearPost", "Scope", new {encryptedOrganisationId, reportingYear = Model.ReportingYear})"
+              id="skip-question-form">
+            @(Html.AntiForgeryToken())
+            <input type="hidden" name="@(Html.NameFor(m => m.SkippedDeclaringSector))" value="True">
+            
+            <details class="govuk-details govuk-!-margin-top-9">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        Why do we ask for a sector
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    <p class="govuk-body">
+                        We use the sector to help users search for organisations.
+                    </p>
+                    <p class="govuk-body">
+                        We report aggregated data by sector and compare organisations within sectors
+                    </p>
+                    <p class="govuk-body">
+                        If you do not want to declare your sector, you can
+                        <a class="govuk-link" href="#" onclick="document.getElementById('skip-question-form').submit();">
+                            skip this question
+                        </a>
+                    </p>
+                </div>
+            </details>
+            
+        </form>
+        
+    </div>
+</div>
