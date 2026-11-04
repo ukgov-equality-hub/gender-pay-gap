@@ -19,6 +19,10 @@ public class AdminChangeScopeViewModel
     public bool? ReadGuidance { get; set; }
     public string StatusDetails { get; set; }
 
+    public Sectors? Sector { get; set; }
+    [GovUkValidateRequired(ErrorMessageIfMissing = "Please select a sector satus")]
+    public SectorStatuses? SectorStatus { get; set; }
+
     [GovUkValidateRequired(ErrorMessageIfMissing = "Please enter a reason for this change.")]
     [GovUkValidateCharacterCount(Limit = 250, Units = CharacterCountMaxLengthUnit.Characters, NameAtStartOfSentence = "Reason", NameWithinSentence = "Reason")]
     public string Reason { get; set; }

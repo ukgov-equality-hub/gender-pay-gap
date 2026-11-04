@@ -117,6 +117,45 @@
             
             <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
+            @await Html.GovUkRadios(new()
+                {
+                    Name = Html.NameFor(m => m.Sector),
+                    Fieldset = new()
+                    {
+                        Legend = new()
+                        {
+                            HtmlOrText = new("Sector"),
+                            Classes = ["govuk-fieldset__legend--m"]
+                        }
+                    },
+                    RadioItems = SectorHelper.SectorDefinitions.Select(
+                        sdKvp => new RadioItemViewModel
+                        {
+                            Value = sdKvp.Key.ToString(),
+                            Checked = Model.Sector == sdKvp.Key,
+                            Label = new() { HtmlOrText = new(sdKvp.Value.Name)}
+                        }
+                    ).ToList()
+                }
+            )
+
+            @await Html.GovUkRadiosFor(
+                m => m.SectorStatus,
+                new()
+                {
+                    Fieldset = new()
+                    {
+                        Legend = new()
+                        {
+                            HtmlOrText = new("Sector status"),
+                            Classes = ["govuk-fieldset__legend--m"]
+                        },
+                    }
+                }
+            )
+
+            <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
             @await Html.GovUkCharacterCountFor(
                 m => m.Reason,
                 new()

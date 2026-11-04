@@ -156,6 +156,9 @@ namespace GenderPayGap.WebUI.Controllers
                 ScopeStatus = organisationScope.ScopeStatus,
                 ReadGuidance = organisationScope.ReadGuidance,
                 StatusDetails = organisationScope.StatusDetails,
+                
+                Sector = organisationScope.Sector,
+                SectorStatus = organisationScope.SectorStatus,
             };
             
             return View("ChangeScope", viewModel);
@@ -182,6 +185,9 @@ namespace GenderPayGap.WebUI.Controllers
             newOrganisationScope.ScopeStatus = viewModel.ScopeStatus.Value;
             newOrganisationScope.ReadGuidance = viewModel.ReadGuidance;
             newOrganisationScope.StatusDetails = viewModel.StatusDetails;
+            
+            newOrganisationScope.Sector = viewModel.Sector;
+            newOrganisationScope.SectorStatus = viewModel.SectorStatus.Value;
             
             newOrganisationScope.Reason = viewModel.Reason;
             
