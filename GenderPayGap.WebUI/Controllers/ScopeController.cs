@@ -121,7 +121,111 @@ public class ScopeController : Controller
         return View("DeclaredScopeForYear", viewModel);
     }
 
-    public void SendScopeChangeEmails(Organisation organisation, int reportingYear, ScopeStatuses newScope)
+    [HttpGet("{encryptedOrganisationId}/reporting-year/{reportingYear}/declare-sector")]
+    public IActionResult DeclareSectorForYearGet(string encryptedOrganisationId, int reportingYear)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        OrganisationScope organisationScope = organisation.GetScopeForYear(reportingYear);
+
+        var viewModel = new DeclareSectorForYearViewModel
+        {
+            Organisation = organisation,
+            ReportingYear = reportingYear,
+            Sector = organisationScope.Sector
+        };
+            
+        return View("DeclareSectorForYear", viewModel);
+    }
+
+    [HttpPost("{encryptedOrganisationId}/reporting-year/{reportingYear}/declare-sector")]
+    [ValidateAntiForgeryToken]
+    public IActionResult DeclareSectorForYearPost(string encryptedOrganisationId, int reportingYear, DeclareSectorForYearViewModel viewModel)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        
+        if (!ModelState.IsValid)
+        {
+            viewModel.Organisation = organisation;
+            viewModel.ReportingYear = reportingYear;
+            return View("DeclareSectorForYear", viewModel);
+        }
+        
+        OrganisationScope currentOrganisationScope = organisation.GetScopeForYear(reportingYear);
+
+        if (AnySectorChangesToSave(currentOrganisationScope, viewModel))
+        {
+            OrganisationScope newOrganisationScope = organisation.CreateNewScopeForYear(reportingYear);
+        
+            if (viewModel.SkippedDeclaringSector)
+            {
+                newOrganisationScope.SectorStatus = SectorStatuses.Skipped;
+            }
+            else
+            {
+                newOrganisationScope.Sector = viewModel.Sector;
+                newOrganisationScope.SectorStatus = SectorStatuses.Declared;
+            }
+            
+            dataRepository.SaveChanges();
+        }
+
+        return RedirectToAction("DeclareScopeForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear});
+    }
+
+    private static bool AnySectorChangesToSave(OrganisationScope organisationScope, DeclareSectorForYearViewModel viewModel)
+    {
+        switch (organisationScope.SectorStatus)
+        {
+            case SectorStatuses.Presumed:
+                // The current Sector Status (as saved in the database) is Presumed.
+                // The user has taken an action (either choosing a Sector, or skipping).
+                // So there is a change to save.
+                return true;
+
+            case SectorStatuses.Skipped:
+                if (!viewModel.SkippedDeclaringSector)
+                {
+                    // The current Sector Status (as saved in the database) is SkippedDeclaringSector.
+                    // Now the user has chosen a Sector.
+                    // So there is a change to save.
+                    return true;
+                }
+                else
+                {
+                    // No change here
+                    return false;
+                }
+
+            case SectorStatuses.Declared:
+                if (viewModel.SkippedDeclaringSector)
+                {
+                    // The current Sector Status (as saved in the database) is Declared.
+                    // Now the user has skipped declaring their Sector.
+                    // So there is a change to save.
+                    return true;
+                }
+                else
+                {
+                    // Check if the Sector has changed
+                    return organisationScope.Sector != viewModel.Sector;
+                }
+
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void SendScopeChangeEmails(Organisation organisation, int reportingYear, ScopeStatuses newScope)
     {
         int currentReportingYear = ReportingYearsHelper.GetCurrentReportingYear(organisation.SectorType);
             

@@ -174,6 +174,7 @@ namespace GenderPayGap.Database
                 Status = ScopeRowStatuses.Active,
                 
                 ScopeStatus = ScopeStatuses.Unknown,
+                SectorStatus = SectorStatuses.Presumed,
             };
 
             if (currentScope != null)
@@ -182,6 +183,18 @@ namespace GenderPayGap.Database
                 newOrganisationScope.StatusDetails = currentScope.StatusDetails;
                 newOrganisationScope.Reason = currentScope.Reason;
                 newOrganisationScope.ReadGuidance = currentScope.ReadGuidance;
+                
+                newOrganisationScope.Sector = currentScope.Sector;
+                newOrganisationScope.SectorStatus = currentScope.SectorStatus;
+            }
+            else
+            {
+                OrganisationScope previousYearScope = GetScopeForYear(reportingYear - 1);
+                if (previousYearScope != null)
+                {
+                    newOrganisationScope.Sector = previousYearScope.Sector;
+                    newOrganisationScope.SectorStatus = SectorStatuses.Presumed;
+                }
             }
 
             OrganisationScopes.Add(newOrganisationScope);
