@@ -68,9 +68,10 @@
                         style="width: unset;">
                         @if (Model.ShowDeadline(reportingYear))
                         {
-                            <div class="govuk-summary-list__row">
+                            <div class="govuk-summary-list__row"
+                                 style="@(!Model.ShowScopeRow(reportingYear) ? "border: none;" : null)">
                                 <dt class="govuk-summary-list__key"
-                                    style="width: 170px;">
+                                    style="width: @(Model.ShowScopeRow(reportingYear) ? "170px" : "100px");">
                                     Deadline
                                 </dt>
                                 <dd class="govuk-summary-list__value">
@@ -84,25 +85,28 @@
                                 </dd>
                             </div>
                         }
-                        <div class="govuk-summary-list__row"
-                             style="border: none;">
-                            <dt class="govuk-summary-list__key"
-                                style="width: 170px;">
-                                Reporting status
-                            </dt>
-                            <dd class="govuk-summary-list__value"
-                                style="line-height: 1.5;">
-                                @(Model.GetScopeStatusText(reportingYear))
-                                @if (ReportingYearsHelper.CanChangeScope(Model.Organisation.SectorType, reportingYear))
-                                {
-                                    <br/>
-                                    <a href="@(Url.Action("DeclareScopeForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear}))"
-                                       class="govuk-link">
-                                        Think this is wrong?
-                                    </a>
-                                }
-                            </dd>
-                        </div>
+                        @if (Model.ShowScopeRow(reportingYear))
+                        {
+                            <div class="govuk-summary-list__row"
+                                 style="border: none;">
+                                <dt class="govuk-summary-list__key"
+                                    style="width: 170px;">
+                                    Reporting status
+                                </dt>
+                                <dd class="govuk-summary-list__value"
+                                    style="line-height: 1.5;">
+                                    @(Model.GetScopeStatusText(reportingYear))
+                                    @if (ReportingYearsHelper.CanChangeScope(Model.Organisation.SectorType, reportingYear))
+                                    {
+                                        <br/>
+                                        <a href="@(Url.Action("DeclareScopeForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear}))"
+                                           class="govuk-link">
+                                            Think this is wrong?
+                                        </a>
+                                    }
+                                </dd>
+                            </div>
+                        }
                     </dl>
                 </div>
 
@@ -121,6 +125,33 @@
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
+                        @if (Model.ShowUpdateBusinessInfoRow(reportingYear))
+                        {
+                            <tr class="govuk-table__row">
+                                <th scope="row"
+                                    class="govuk-table__header"
+                                    style="width: 33.33%">
+                                    Business information
+                                    <span class="govuk-visually-hidden">
+                                        for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
+                                    </span>
+                                </th>
+                                <td class="govuk-table__cell"
+                                    style="width: 33.33%">
+                                    @(await Html.GovUkTag(Model.UpdateBusinessInfoStatusTag(reportingYear)))
+                                </td>
+                                <td class="govuk-table__cell"
+                                    style="width: 33.33%">
+                                    <a href="@(Url.Action("DeclareSectorForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear}))"
+                                       class="govuk-link">
+                                        Update your business information
+                                        <span class="govuk-visually-hidden">
+                                            for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
                         <tr class="govuk-table__row">
                             <th scope="row"
                                 class="govuk-table__header"
@@ -152,14 +183,23 @@
                             </td>
                             <td class="govuk-table__cell"
                                 style="width: 33.33%">
-                                <a href="@(Url.Action("ReportingStart", "ReportStarting", new {encryptedOrganisationId, reportingYear = reportingYear}))"
-                                   class="govuk-link"
-                                   loadtest-id="create-report-@(reportingYear)">
-                                    @(Model.GenderPayGapLinkText(reportingYear))
-                                    <span class="govuk-visually-hidden">
-                                        gender pay gap report for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
+                                @if (Model.ForceUpdateBusinessInfo(reportingYear))
+                                {
+                                    <span>
+                                        Update your business information first
                                     </span>
-                                </a>
+                                }
+                                else
+                                {
+                                    <a href="@(Url.Action("ReportingStart", "ReportStarting", new {encryptedOrganisationId, reportingYear = reportingYear}))"
+                                       class="govuk-link"
+                                       loadtest-id="create-report-@(reportingYear)">
+                                        @(Model.GenderPayGapLinkText(reportingYear))
+                                        <span class="govuk-visually-hidden">
+                                            gender pay gap report for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
+                                        </span>
+                                    </a>
+                                }
                             </td>
                         </tr>
                         @if (Model.ShowActionPlanRow(reportingYear))
@@ -185,13 +225,22 @@
                                 </td>
                                 <td class="govuk-table__cell"
                                     style="width: 33.33%">
-                                    <a href="@(Url.Action("ActionPlanIntroGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = reportingYear}))"
-                                       class="govuk-link">
-                                        @(Model.ActionPlanLinkText(reportingYear))
-                                        <span class="govuk-visually-hidden">
-                                            action plan for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
+                                    @if (Model.ForceUpdateBusinessInfo(reportingYear))
+                                    {
+                                        <span>
+                                            Update your business information first
                                         </span>
-                                    </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@(Url.Action("ActionPlanIntroGet", "ActionPlan", new {encryptedOrganisationId, reportingYear = reportingYear}))"
+                                           class="govuk-link">
+                                            @(Model.ActionPlanLinkText(reportingYear))
+                                            <span class="govuk-visually-hidden">
+                                                action plan for reporting year @(ReportingYearsHelper.FormatYearAsReportingPeriodLongFormat(reportingYear))
+                                            </span>
+                                        </a>
+                                    }
                                 </td>
                             </tr>
                         }

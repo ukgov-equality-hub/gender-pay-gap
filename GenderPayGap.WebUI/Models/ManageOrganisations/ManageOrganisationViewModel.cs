@@ -1,4 +1,4 @@
-﻿using GenderPayGap.Core;
+using GenderPayGap.Core;
 using GenderPayGap.Core.Helpers;
 using GenderPayGap.Database;
 using GenderPayGap.Database.Models;
@@ -89,6 +89,11 @@ public class ManageOrganisationViewModel
     #endregion
 
     #region Reporting status
+    public bool ShowScopeRow(int reportingYear)
+    {
+        return reportingYear < Global.FirstReportingYearToUpdateBusinessInformation;
+    }
+    
     public bool OrganisationIsRequiredToSubmit(int reportingYear)
     {
         return OrganisationIsIsScope(reportingYear)
@@ -114,6 +119,63 @@ public class ManageOrganisationViewModel
     }
     #endregion
 
+    #region Update Business Information
+    public bool ShowUpdateBusinessInfoRow(int reportingYear)
+    {
+        return reportingYear >= Global.FirstReportingYearToUpdateBusinessInformation;
+    }
+    
+    public bool UpdateBusinessInfoIncomplete(int reportingYear)
+    {
+        OrganisationScope scopeForYear = Organisation.GetScopeForYear(reportingYear);
+    
+        return scopeForYear == null ||
+               scopeForYear.IsScopePresumed() ||
+               scopeForYear.SectorStatus == SectorStatuses.Presumed;
+    }
+    
+    public TagViewModel UpdateBusinessInfoStatusTag(int reportingYear)
+    {
+        OrganisationScope scopeForYear = Organisation.GetScopeForYear(reportingYear);
+        
+        if (scopeForYear == null ||
+            (scopeForYear.IsScopePresumed() && scopeForYear.SectorStatus == SectorStatuses.Presumed))
+        {
+            return new TagViewModel
+            {
+                HtmlOrText = new("Not started"),
+                Classes = ["govuk-tag--blue"],
+                Attributes = new() {{"style", "max-width: unset;"}},
+            };
+        }
+
+        if (scopeForYear.IsScopeDeclared() && scopeForYear.SectorStatus == SectorStatuses.Declared)
+        {
+            return new TagViewModel
+            {
+                HtmlOrText = new("Complete"),
+                Classes = ["govuk-tag--green"],
+                Attributes = new() {{"style", "max-width: unset;"}},
+            };
+        }
+        
+        return new TagViewModel
+        {
+            HtmlOrText = new("In progress"),
+            Classes = ["govuk-tag--blue"],
+            Attributes = new() {{"style", "max-width: unset;"}},
+        };
+    }
+
+    public bool ForceUpdateBusinessInfo(int reportingYear)
+    {
+        return ShowUpdateBusinessInfoRow(reportingYear) &&
+               UpdateBusinessInfoIncomplete(reportingYear) &&
+               GpgReportingNotStarted(reportingYear) &&
+               ActionPlanReportingNotStarted(reportingYear);
+    }
+    #endregion
+    
     #region Overall progress
     private bool AllReportingCompleteForYear(int reportingYear)
     {
@@ -170,6 +232,12 @@ public class ManageOrganisationViewModel
     private bool GpgReportingIncomplete(int reportingYear)
     {
         return !Organisation.HasSubmittedReturn(reportingYear);
+    }
+
+    private bool GpgReportingNotStarted(int reportingYear)
+    {
+        return !Organisation.HasSubmittedReturn(reportingYear) &&
+               !HasDraftGpgReport(reportingYear);
     }
     #endregion
 
@@ -258,6 +326,11 @@ public class ManageOrganisationViewModel
         }
 
         return Organisation.GetLatestSubmittedActionPlan(reportingYear) == null;
+    }
+
+    private bool ActionPlanReportingNotStarted(int reportingYear)
+    {
+        return Organisation.GetLatestSubmittedOrDraftActionPlan(reportingYear) == null;
     }
     #endregion
 
