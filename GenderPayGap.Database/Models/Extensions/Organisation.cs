@@ -149,6 +149,18 @@ namespace GenderPayGap.Database
 
         public void SetScopeForYear(int reportingYear, ScopeStatuses newScope, string statusDetails, string reasonForChange = null, bool? haveReadGuidance = null)
         {
+            OrganisationScope newOrganisationScope = CreateNewScopeForYear(reportingYear);
+            
+            newOrganisationScope.ScopeStatus = newScope;
+            newOrganisationScope.StatusDetails = statusDetails;
+            newOrganisationScope.Reason = reasonForChange;
+            newOrganisationScope.ReadGuidance = haveReadGuidance;
+        }
+
+        public OrganisationScope CreateNewScopeForYear(int reportingYear)
+        {
+            OrganisationScope currentScope = GetScopeForYear(reportingYear);
+            
             // Retire old OrganisationScopes
             foreach (OrganisationScope oldOrganisationScope in GetAllScopesForYear(reportingYear))
             {
@@ -159,14 +171,22 @@ namespace GenderPayGap.Database
             var newOrganisationScope = new OrganisationScope {
                 OrganisationId = OrganisationId,
                 ReportingYear = reportingYear,
-                ScopeStatus = newScope,
                 Status = ScopeRowStatuses.Active,
-                StatusDetails = statusDetails,
-                Reason = reasonForChange,
-                ReadGuidance = haveReadGuidance,
+                
+                ScopeStatus = ScopeStatuses.Unknown,
             };
 
+            if (currentScope != null)
+            {
+                newOrganisationScope.ScopeStatus = currentScope.ScopeStatus;
+                newOrganisationScope.StatusDetails = currentScope.StatusDetails;
+                newOrganisationScope.Reason = currentScope.Reason;
+                newOrganisationScope.ReadGuidance = currentScope.ReadGuidance;
+            }
+
             OrganisationScopes.Add(newOrganisationScope);
+
+            return newOrganisationScope;
         }
 
         #endregion
