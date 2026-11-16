@@ -41,6 +41,13 @@ public class OrganisationScope
     [JsonProperty]
     public SectorStatuses SectorStatus { get; set; }
     #endregion
+
+    #region Number of employees
+    [JsonProperty]
+    public int? NumberOfEmployees { get; set; }
+    [JsonProperty]
+    public bool NumberOfEmployeesSkipped { get; set; }
+    #endregion
     
     public virtual Organisation Organisation { get; set; }
 
