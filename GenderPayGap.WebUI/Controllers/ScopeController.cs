@@ -199,6 +199,69 @@ public class ScopeController : Controller
         }
     }
 
+    [HttpGet("{encryptedOrganisationId}/reporting-year/{reportingYear}/number-of-employees")]
+    public IActionResult NumberOfEmployeesForYearGet(string encryptedOrganisationId, int reportingYear)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        OrganisationScope organisationScope = organisation.GetScopeForYear(reportingYear);
+
+        var viewModel = new NumberOfEmployeesForYearViewModel
+        {
+            Organisation = organisation,
+            ReportingYear = reportingYear,
+            NumberOfEmployees = organisationScope.NumberOfEmployees
+        };
+        
+        return View("NumberOfEmployeesForYear", viewModel);
+    }
+
+    [HttpPost("{encryptedOrganisationId}/reporting-year/{reportingYear}/number-of-employees")]
+    [ValidateAntiForgeryToken]
+    public IActionResult NumberOfEmployeesForYearPost(string encryptedOrganisationId, int reportingYear, NumberOfEmployeesForYearViewModel viewModel)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        OrganisationScope currentOrganisationScope = organisation.GetScopeForYear(reportingYear);
+        
+        if (!ModelState.IsValid)
+        {
+            viewModel.Organisation = organisation;
+            viewModel.ReportingYear = reportingYear;
+            viewModel.NumberOfEmployees = currentOrganisationScope.NumberOfEmployees;
+            return View("NumberOfEmployeesForYear", viewModel);
+        }
+
+        if (viewModel.NumberOfEmployees != currentOrganisationScope.NumberOfEmployees ||
+            viewModel.SkippedNumberOfEmployees != currentOrganisationScope.NumberOfEmployeesSkipped)
+        {
+            OrganisationScope newOrganisationScope = organisation.CreateNewScopeForYear(reportingYear);
+
+            if (viewModel.SkippedNumberOfEmployees)
+            {
+                newOrganisationScope.NumberOfEmployees = null;
+                newOrganisationScope.NumberOfEmployeesSkipped = true;
+            }
+            else
+            {
+                newOrganisationScope.NumberOfEmployees = viewModel.NumberOfEmployees;
+                newOrganisationScope.NumberOfEmployeesSkipped = false;
+            }
+            
+            dataRepository.SaveChanges();
+        }
+        
+        return RedirectToAction("DeclareScopeForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear});
+    }
+
     [HttpGet("{encryptedOrganisationId}/reporting-year/{reportingYear}/declare-scope")]
     public IActionResult DeclareScopeForYearGet(string encryptedOrganisationId, int reportingYear)
     {

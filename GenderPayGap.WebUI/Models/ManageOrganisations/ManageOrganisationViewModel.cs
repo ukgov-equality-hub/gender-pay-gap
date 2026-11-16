@@ -131,7 +131,8 @@ public class ManageOrganisationViewModel
     
         return scopeForYear == null ||
                scopeForYear.IsScopePresumed() ||
-               scopeForYear.SectorStatus == SectorStatuses.Presumed;
+               scopeForYear.SectorStatus == SectorStatuses.Presumed ||
+               !scopeForYear.NumberOfEmployees.HasValue;
     }
     
     public TagViewModel UpdateBusinessInfoStatusTag(int reportingYear)
