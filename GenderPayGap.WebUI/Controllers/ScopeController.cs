@@ -25,6 +25,76 @@ public class ScopeController : Controller
         this.dataRepository = dataRepository;
     }
 
+    [HttpGet("{encryptedOrganisationId}/reporting-year/{reportingYear}/confirm-sector")]
+    public IActionResult ConfirmSectorForYearGet(string encryptedOrganisationId, int reportingYear)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        OrganisationScope organisationScope = organisation.GetScopeForYear(reportingYear);
+        OrganisationScope initialOrganisationScope = organisation.GetInitialScopeForYear(reportingYear);
+
+        if (organisationScope.Sector == null // There is no Presumed Sector
+            || organisationScope.Sector != initialOrganisationScope.Sector) // The organisation has already chosen a different Sector, so don't ask if they're happy with the original one
+        {
+            return RedirectToAction("DeclareSectorForYearGet", "Scope", new { encryptedOrganisationId, reportingYear = reportingYear});
+        }
+
+        var viewModel = new ConfirmSectorForYearViewModel
+        {
+            Organisation = organisation,
+            ReportingYear = reportingYear,
+            Sector = organisationScope.Sector
+        };
+        
+        if (organisationScope.SectorStatus == SectorStatuses.Declared && organisationScope.Sector == initialOrganisationScope.Sector)
+        {
+            viewModel.ConfirmYesNo = ConfirmSectorForYearYesNoEnum.Yes;
+        }
+
+        return View("ConfirmSectorForYear", viewModel);
+    }
+
+    [HttpPost("{encryptedOrganisationId}/reporting-year/{reportingYear}/confirm-sector")]
+    [ValidateAntiForgeryToken]
+    public IActionResult ConfirmSectorForYearPost(string encryptedOrganisationId, int reportingYear, ConfirmSectorForYearViewModel viewModel)
+    {
+        long organisationId = ControllerHelper.DecryptOrganisationIdOrThrow404(encryptedOrganisationId);
+        ControllerHelper.ThrowIfUserAccountRetiredOrEmailNotVerified(User, dataRepository);
+        ControllerHelper.ThrowIfUserDoesNotHavePermissionsForGivenOrganisation(User, dataRepository, organisationId);
+        ControllerHelper.ThrowIfReportingYearIsOutsideOfRange(reportingYear, organisationId, dataRepository);
+        
+        Organisation organisation = dataRepository.Get<Organisation>(organisationId);
+        OrganisationScope currentOrganisationScope = organisation.GetScopeForYear(reportingYear);
+        
+        if (!ModelState.IsValid)
+        {
+            viewModel.Organisation = organisation;
+            viewModel.ReportingYear = reportingYear;
+            viewModel.Sector = currentOrganisationScope.Sector;
+            return View("ConfirmSectorForYear", viewModel);
+        }
+
+        if (viewModel.ConfirmYesNo == ConfirmSectorForYearYesNoEnum.Yes)
+        {
+            if (currentOrganisationScope.SectorStatus != SectorStatuses.Declared)
+            {
+                OrganisationScope newOrganisationScope = organisation.CreateNewScopeForYear(reportingYear);
+                newOrganisationScope.SectorStatus = SectorStatuses.Declared;
+                dataRepository.SaveChanges();
+            }
+
+            return RedirectToAction("DeclareScopeForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear});
+        }
+        else
+        {
+            return RedirectToAction("DeclareSectorForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear});
+        }
+    }
+
     [HttpGet("{encryptedOrganisationId}/reporting-year/{reportingYear}/declare-sector")]
     public IActionResult DeclareSectorForYearGet(string encryptedOrganisationId, int reportingYear)
     {

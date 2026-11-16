@@ -128,6 +128,13 @@ namespace GenderPayGap.Database
                 .FirstOrDefault();
         }
 
+        public OrganisationScope GetInitialScopeForYear(int reportingYear)
+        {
+            return GetAllScopesForYear(reportingYear)
+                .OrderBy(s => s.ScopeStatusDate)
+                .FirstOrDefault();
+        }
+
         public ScopeStatuses GetScopeStatusForYear(int reportingYear)
         {
             OrganisationScope scope = GetScopeForYear(reportingYear);
