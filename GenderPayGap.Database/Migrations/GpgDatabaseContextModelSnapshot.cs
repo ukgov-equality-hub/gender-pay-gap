@@ -678,6 +678,12 @@ namespace GenderPayGap.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("OrganisationScopeId"));
 
+                    b.Property<int?>("NumberOfEmployees")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("NumberOfEmployeesSkipped")
+                        .HasColumnType("boolean");
+
                     b.Property<long>("OrganisationId")
                         .HasColumnType("bigint");
 
