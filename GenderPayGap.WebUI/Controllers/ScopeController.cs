@@ -87,7 +87,7 @@ public class ScopeController : Controller
                 dataRepository.SaveChanges();
             }
 
-            return RedirectToAction("DeclareScopeForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear});
+            return RedirectToAction("NumberOfEmployeesForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear});
         }
         else
         {
@@ -153,7 +153,7 @@ public class ScopeController : Controller
             dataRepository.SaveChanges();
         }
 
-        return RedirectToAction("DeclareScopeForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear});
+        return RedirectToAction("NumberOfEmployeesForYearGet", "Scope", new {encryptedOrganisationId, reportingYear = reportingYear});
     }
 
     private static bool AnySectorChangesToSave(OrganisationScope organisationScope, DeclareSectorForYearViewModel viewModel)
