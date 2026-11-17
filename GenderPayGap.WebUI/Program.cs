@@ -16,6 +16,7 @@ using GenderPayGap.WebUI.Helpers;
 using GenderPayGap.WebUI.Repositories;
 using GenderPayGap.WebUI.Search;
 using GenderPayGap.WebUI.Services;
+using GovUkDesignSystemDotNet;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -120,6 +121,7 @@ namespace GenderPayGap.WebUI
                         AddStringTrimmingProvider(options); //Add modelstate binder to trim input 
                         options.ModelMetadataDetailsProviders.Add(
                             new TrimModelBinder()); //Set DisplayMetadata to input empty strings as null
+                        options.ModelMetadataDetailsProviders.Add(new GovUkDataBindingErrorTextProvider());
                         options.Filters.Add<ErrorHandlingFilter>();
                     })
                 .AddControllersAsServices() // Add controllers as services so attribute filters be resolved in contructors.
