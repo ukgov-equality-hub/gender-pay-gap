@@ -159,6 +159,9 @@ namespace GenderPayGap.WebUI.Controllers
                 
                 Sector = organisationScope.Sector,
                 SectorStatus = organisationScope.SectorStatus,
+                
+                NumberOfEmployees = organisationScope.NumberOfEmployees,
+                NumberOfEmployeesSkipped = organisationScope.NumberOfEmployeesSkipped,
             };
             
             return View("ChangeScope", viewModel);
@@ -189,6 +192,8 @@ namespace GenderPayGap.WebUI.Controllers
             newOrganisationScope.Sector = viewModel.Sector;
             newOrganisationScope.SectorStatus = viewModel.SectorStatus.Value;
             
+            newOrganisationScope.NumberOfEmployees = viewModel.NumberOfEmployees;
+            newOrganisationScope.NumberOfEmployeesSkipped = viewModel.NumberOfEmployeesSkipped;
             newOrganisationScope.Reason = viewModel.Reason;
             
             dataRepository.SaveChanges();

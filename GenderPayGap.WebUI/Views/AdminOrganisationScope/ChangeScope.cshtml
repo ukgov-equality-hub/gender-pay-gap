@@ -156,6 +156,31 @@
 
             <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
+            @await Html.GovUkTextInputFor(
+                m => m.NumberOfEmployees,
+                new()
+                {
+                    Label = new()
+                    {
+                        HtmlOrText = new("Number of employees"),
+                        Classes = ["govuk-label--width-10"]
+                    }
+                }
+            )
+
+            @await Html.GovUkCheckboxItemFor(
+                m => m.NumberOfEmployeesSkipped,
+                new()
+                {
+                    Label = new()
+                    {
+                        HtmlOrText = new("Number of employees question skipped"),
+                    }
+                }
+            )
+
+            <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
             @await Html.GovUkCharacterCountFor(
                 m => m.Reason,
                 new()

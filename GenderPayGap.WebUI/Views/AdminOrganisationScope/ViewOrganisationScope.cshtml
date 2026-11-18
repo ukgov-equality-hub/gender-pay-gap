@@ -73,6 +73,7 @@ else
                 <th scope="col" class="govuk-table__header">Read Guidance</th>
                 <th scope="col" class="govuk-table__header">Sector</th>
                 <th scope="col" class="govuk-table__header">Sector status</th>
+                <th scope="col" class="govuk-table__header">Number of employees</th>
                 <th scope="col" class="govuk-table__header">Changed on date</th>
                 <th scope="col" class="govuk-table__header">Status</th>
                 <th scope="col" class="govuk-table__header">Actions</th>
@@ -101,6 +102,7 @@ else
                     </td>
                     <td class="govuk-table__cell">@(scope.Sector.HasValue ? scope.Sector.Value.GetDisplayName() : "none")</td>
                     <td class="govuk-table__cell">@(scope.SectorStatus)</td>
+                    <td class="govuk-table__cell">@(scope.NumberOfEmployees) @(scope.NumberOfEmployeesSkipped ? "skipped" : null)</td>
                     <td class="govuk-table__cell">@(scope.ScopeStatusDate.ToString("d MMM yyyy"))</td>
                     <td class="govuk-table__cell">@(scope.Status)</td>
                     @if (scope.ReportingYear == previousReportingYear)
