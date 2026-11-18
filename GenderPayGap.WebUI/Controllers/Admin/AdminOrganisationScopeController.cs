@@ -145,15 +145,17 @@ namespace GenderPayGap.WebUI.Controllers
         [Authorize(Roles = LoginRoles.GpgAdmin)]
         public IActionResult ChangeScopeForYearGet(long id, int year)
         {
-            var organisation = dataRepository.Get<Organisation>(id);
-            var currentScopeStatus = organisation.GetScopeStatusForYear(year);
+            Organisation organisation = dataRepository.Get<Organisation>(id);
+            OrganisationScope organisationScope = organisation.GetScopeForYear(year);
 
             var viewModel = new AdminChangeScopeViewModel {
                 OrganisationName = organisation.OrganisationName,
                 OrganisationId = organisation.OrganisationId,
                 ReportingYear = year,
-                CurrentScopeStatus = currentScopeStatus,
-                NewScopeStatus = GetNewScopeStatus(currentScopeStatus)
+                
+                ScopeStatus = organisationScope.ScopeStatus,
+                ReadGuidance = organisationScope.ReadGuidance,
+                StatusDetails = organisationScope.StatusDetails,
             };
             
             return View("ChangeScope", viewModel);
@@ -168,20 +170,20 @@ namespace GenderPayGap.WebUI.Controllers
             var currentOrganisationScope = organisation.GetScopeForYear(year);
             if (!ModelState.IsValid)
             {
-                // If there are any errors, return the user back to the same page to correct the mistakes
-                var currentScopeStatus = organisation.GetScopeStatusForYear(year);
-
                 viewModel.OrganisationName = organisation.OrganisationName;
                 viewModel.OrganisationId = organisation.OrganisationId;
                 viewModel.ReportingYear = year;
-                viewModel.CurrentScopeStatus = currentScopeStatus;
 
                 return View("ChangeScope", viewModel);
             }
             
-            ScopeStatuses newScope = ConvertNewScopeStatusToScopeStatus(viewModel.NewScopeStatus);
-
-            organisation.SetScopeForYear(year, newScope, viewModel.Reason);
+            OrganisationScope newOrganisationScope = organisation.CreateNewScopeForYear(year);
+            
+            newOrganisationScope.ScopeStatus = viewModel.ScopeStatus.Value;
+            newOrganisationScope.ReadGuidance = viewModel.ReadGuidance;
+            newOrganisationScope.StatusDetails = viewModel.StatusDetails;
+            
+            newOrganisationScope.Reason = viewModel.Reason;
             
             dataRepository.SaveChanges();
 
@@ -190,7 +192,7 @@ namespace GenderPayGap.WebUI.Controllers
                 organisation,
                 new {
                     PreviousScope = currentOrganisationScope.ScopeStatus.ToString(),
-                    NewScope = newScope.ToString(),
+                    NewScope = newOrganisationScope.ScopeStatus.ToString(),
                     Reason = viewModel.Reason
                 },
                 User);

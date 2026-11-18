@@ -1,11 +1,12 @@
 @using GenderPayGap.Core
 @using GenderPayGap.Core.Helpers
-@using GenderPayGap.WebUI.Models.Admin
+@using GenderPayGap.WebUI.Helpers
 @using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.Admin.AdminChangeScopeViewModel
 
 @{
     ViewBag.Title = "Change scope - Administration - Gender pay gap service";
+    string formattedReportingYears = ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear);
 }
 
 @section BeforeMain {
@@ -44,104 +45,103 @@
             <br />
             <span class="govuk-!-font-size-27">
                 for @(Model.OrganisationName)
+                <br>
+                for reporting year @(formattedReportingYears)
             </span>
         </h1>
 
         <form method="POST" action="@Url.Action("ChangeScopeForYearPost", "AdminOrganisationScope", new { id = Model.OrganisationId, year = Model.ReportingYear })">
             @(Html.AntiForgeryToken())
 
-            @(await Html.GovUkErrorSummaryIfNeeded([
-                nameof(AdminChangeScopeViewModel.NewScopeStatus),
-                nameof(AdminChangeScopeViewModel.Reason)
-            ]))
+            @(await Html.GovUkErrorSummaryIfNeeded())
 
-            <table class="govuk-table">
-                <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">Organisation name</th>
-                        <td class="govuk-table__cell">@(Model.OrganisationName)</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">Reporting year</th>
-                        <td class="govuk-table__cell">@(ReportingYearsHelper.FormatYearAsReportingPeriod(Model.ReportingYear))</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">Current scope</th>
-                        <td class="govuk-table__cell">@(Model.CurrentScopeStatus)</td>
-                    </tr>
-                    @if (Model.CurrentScopeStatus == ScopeStatuses.InScope)
-                    {
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">New scope</th>
-                            <td class="govuk-table__cell">@(ScopeStatuses.OutOfScope)</td>
-                        </tr>
-                    }
-                    @if (Model.CurrentScopeStatus == ScopeStatuses.OutOfScope)
-                    {
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">New scope</th>
-                            <td class="govuk-table__cell">@(ScopeStatuses.InScope)</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-
-            <div class="govuk-form-group">
-
-                @if (Model.CurrentScopeStatus != ScopeStatuses.InScope && Model.CurrentScopeStatus != ScopeStatuses.OutOfScope)
+            @await Html.GovUkRadiosFor(
+                m => m.ScopeStatus,
+                new()
                 {
-                    @await Html.GovUkRadiosFor(
-                        m => m.NewScopeStatus,
-                        new()
+                    Fieldset = new()
+                    {
+                        Legend = new()
                         {
-                            Fieldset = new()
-                            {
-                                Legend = new()
-                                {
-                                    HtmlOrText = new("Please select a new scope"),
-                                    Classes = ["govuk-fieldset__legend--m"]
-                                },
-                                Classes = ["govuk-!-margin-top-6"]
-                            }
-                        }
-                    )
+                            HtmlOrText = new("New scope"),
+                            Classes = ["govuk-fieldset__legend--m"]
+                        },
+                    }
                 }
-                else
+            )
+            
+            @await Html.GovUkRadios(new()
+            {
+                Name = Html.NameFor(m => m.ReadGuidance),
+                Fieldset = new()
                 {
-                    @(Html.HiddenFor(m => m.NewScopeStatus))
-                }
-
-                @await Html.GovUkCharacterCountFor(
-                    m => m.Reason,
+                    Legend = new()
+                    {
+                        HtmlOrText = new("Has the user read the guidance?"),
+                        Classes = ["govuk-fieldset__legend--m"]
+                    }
+                },
+                RadioItems = [
                     new()
                     {
-                        Label = new()
-                        {
-                            HtmlOrText = new("What is the reason for this change?"),
-                            Classes = ["govuk-label--m"]
-                        },
-                        FormGroup = new()
-                        {
-                            Classes = ["govuk-!-margin-top-6"]
-                        }
-                    }
-                )
-
-                @(await Html.GovUkButton(new()
+                        Value = "True",
+                        Label = new() { HtmlOrText = new("Yes")},
+                        Checked = Model.ReadGuidance == true
+                    },
+                    new()
+                    {
+                        Value = "False",
+                        Label = new() { HtmlOrText = new("No")},
+                        Checked = Model.ReadGuidance == false
+                    },
+                    new()
+                    {
+                        Value = "",
+                        Label = new() { HtmlOrText = new("Unset")},
+                        Checked = Model.ReadGuidance == null
+                    },
+                ]
+            })
+            
+            @await Html.GovUkTextInputFor(
+                m => m.StatusDetails,
+                new()
                 {
-                    HtmlOrText = new("Confirm"),
-                    Classes = ["govuk-!-margin-bottom-4"],
-                    PreventDoubleClick = true
-                }))
+                    Label = new()
+                    {
+                        HtmlOrText = new("Status details"),
+                        Classes = ["govuk-label--m"]
+                    }
+                }
+            )
+            
+            <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
-                <p class="govuk-body">
-                    <a href="@Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.OrganisationId})"
-                       class="govuk-link">
-                        Cancel and return to organisation page
-                    </a>
-                </p>
+            @await Html.GovUkCharacterCountFor(
+                m => m.Reason,
+                new()
+                {
+                    Label = new()
+                    {
+                        HtmlOrText = new("What is the reason for this change?"),
+                        Classes = ["govuk-label--m"]
+                    },
+                }
+            )
+            
+            @(await Html.GovUkButton(new()
+            {
+                HtmlOrText = new("Confirm"),
+                Classes = ["govuk-!-margin-bottom-4"],
+                PreventDoubleClick = true
+            }))
 
-            </div>
+            <p class="govuk-body">
+                <a href="@Url.Action("ViewOrganisation", "AdminViewOrganisation", new {id = Model.OrganisationId})"
+                   class="govuk-link">
+                    Cancel and return to organisation page
+                </a>
+            </p>
         </form>
         
     </div>
