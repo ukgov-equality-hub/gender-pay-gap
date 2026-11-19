@@ -256,6 +256,13 @@ public class ScopeController : Controller
                 newOrganisationScope.NumberOfEmployeesSkipped = false;
             }
             
+            if (newOrganisationScope.ScopeStatus == ScopeStatuses.PresumedOutOfScope &&
+                newOrganisationScope.NumberOfEmployees.HasValue &&
+                newOrganisationScope.NumberOfEmployees >= 250)
+            {
+                newOrganisationScope.ScopeStatus = ScopeStatuses.PresumedInScope;
+            }
+            
             dataRepository.SaveChanges();
         }
         
