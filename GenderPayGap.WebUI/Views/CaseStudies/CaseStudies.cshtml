@@ -1,0 +1,235 @@
+@using GenderPayGap.Core
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.CaseStudies.CaseStudiesViewModel
+
+@{
+    ViewBag.Title = "Case studies";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Homepage"),
+                Href = Url.Action("Index", "Homepage")
+            },
+            new()
+            {
+                HtmlOrText = new("Case studies"),
+            }
+        ]
+    })
+}
+
+<partial name="../ViewReports/ComparisonBasketNew"/>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">
+            Case studies
+        </h1>
+        <p class="govuk-body">
+            Case studies are real world examples of how employers have implemented actions to address their gender pay gap.
+        </p>
+        <p class="govuk-body">
+            These case studies are shared by employers to demonstrate best practice, show what employers can achieve and help other employers to understand what actions their peers are taking.
+        </p>
+        <div class="govuk-inset-text">
+            You can also see a full list of suggested actions for employers to address their gender pay gap.
+        </div>
+        <p class="govuk-body">
+            Case studies are grouped under actions designed to address employers' Gender Pay Gap or to address Menopause
+        </p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+                <a href="#gender-pay-gap"
+                   class="govuk-link govuk-link--no-visited-state">
+                    Gender pay gap
+                </a>
+            </li>
+            <li>
+                <a href="#menopause"
+                   class="govuk-link govuk-link--no-visited-state">
+                    Menopause
+                </a>
+            </li>
+        </ul>
+        
+    </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-top-9">
+    <div class="govuk-grid-column-one-third-from-desktop">
+        
+        <h2 class="govuk-heading-m">
+            Filter results
+        </h2>
+        <p class="govuk-body govuk-!-margin-bottom-1">
+            Filter results relevant to you:
+        </p>
+        <div id="filter-summary-hint"
+             class="govuk-hint govuk-!-font-size-16">
+            12 case studies in total
+            <br/>
+            12 match your filter
+        </div>
+
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    Category
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                @await Html.GovUkCheckboxes(new()
+                {
+                    Name = "category",
+                    Classes = ["govuk-checkboxes--small"],
+                    Fieldset = new()
+                    {
+                        Legend = new()
+                        {
+                            HtmlOrText = new("Category"),
+                            Classes = ["govuk-visually-hidden"],
+                        },
+                    },
+                    CheckboxItems = [
+                        new()
+                        {
+                            Value = "gender-pay-gap",
+                            Label = new() { HtmlOrText = new("Gender pay gap") },
+                            Hint = new() { HtmlOrText = new("2 case studies"), Classes = ["govuk-!-font-size-16"] },
+                        },
+                        new()
+                        {
+                            Value = "menopause",
+                            Label = new() { HtmlOrText = new("Menopause") },
+                            Hint = new() { HtmlOrText = new("6 case studies"), Classes = ["govuk-!-font-size-16"] },
+                        },
+                    ],
+                })
+            </div>
+        </details>
+
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    Sector
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                TODO
+            </div>
+        </details>
+
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    Number of employees
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                @await Html.GovUkCheckboxes(new()
+                {
+                    Name = "number-of-employees",
+                    Classes = ["govuk-checkboxes--small"],
+                    Fieldset = new()
+                    {
+                        Legend = new()
+                        {
+                            HtmlOrText = new("Number of employees"),
+                            Classes = ["govuk-visually-hidden"],
+                        },
+                    },
+                    CheckboxItems = Enum.GetValues<OrganisationSizes>()
+                        .Except([OrganisationSizes.NotProvided])
+                        .Select(e => new CheckboxItemViewModel
+                        {
+                            Value = e.GetDisplayName().Replace(",", "").Replace(" ", "-"),
+                            Label = new() { HtmlOrText = new(e.GetDisplayName()) },
+                            Hint = new() { HtmlOrText = new("2 case studies"), Classes = ["govuk-!-font-size-16"] },
+                        }).ToList(),
+                })
+            </div>
+        </details>
+        
+    </div>
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+        
+        <h2 id="gender-pay-gap"
+            class="govuk-heading-l">
+            Gender pay gap
+        </h2>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+
+        <h2 id="menopause"
+            class="govuk-heading-l">
+            Menopause
+        </h2>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        <p class="govuk-body">Placeholder content</p>
+        
+    </div>
+</div>
