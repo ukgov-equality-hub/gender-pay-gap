@@ -140,7 +140,9 @@ public class ManageOrganisationViewModel
         OrganisationScope scopeForYear = Organisation.GetScopeForYear(reportingYear);
         
         if (scopeForYear == null ||
-            (scopeForYear.IsScopePresumed() && scopeForYear.SectorStatus == SectorStatuses.Presumed))
+            (scopeForYear.IsScopePresumed() &&
+             !scopeForYear.NumberOfEmployees.HasValue && !scopeForYear.NumberOfEmployeesSkipped &&
+             scopeForYear.SectorStatus == SectorStatuses.Presumed))
         {
             return new TagViewModel
             {
@@ -150,7 +152,9 @@ public class ManageOrganisationViewModel
             };
         }
 
-        if (scopeForYear.IsScopeDeclared() && (scopeForYear.SectorStatus == SectorStatuses.Declared || scopeForYear.SectorStatus == SectorStatuses.Skipped))
+        if (scopeForYear.IsScopeDeclared() &&
+            (scopeForYear.NumberOfEmployees.HasValue || scopeForYear.NumberOfEmployeesSkipped) &&
+            (scopeForYear.SectorStatus == SectorStatuses.Declared || scopeForYear.SectorStatus == SectorStatuses.Skipped))
         {
             return new TagViewModel
             {
