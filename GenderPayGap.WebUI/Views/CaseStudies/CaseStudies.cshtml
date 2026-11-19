@@ -1,4 +1,5 @@
 @using GenderPayGap.Core
+@using GenderPayGap.WebUI.Helpers
 @using GovUkDesignSystemDotNet
 @model GenderPayGap.WebUI.Models.CaseStudies.CaseStudiesViewModel
 
@@ -73,9 +74,6 @@
         </p>
         <div id="filter-summary-hint"
              class="govuk-hint govuk-!-font-size-16">
-            12 case studies in total
-            <br/>
-            12 match your filter
         </div>
 
         <details class="govuk-details">
@@ -122,7 +120,27 @@
                 </span>
             </summary>
             <div class="govuk-details__text">
-                TODO
+                @await Html.GovUkCheckboxes(new()
+                {
+                    Name = "sector",
+                    Classes = ["govuk-checkboxes--small"],
+                    Fieldset = new()
+                    {
+                        Legend = new()
+                        {
+                            HtmlOrText = new("Sector"),
+                            Classes = ["govuk-visually-hidden"],
+                        },
+                    },
+                    CheckboxItems = SectorHelper.SectorDefinitions.Select(
+                        sdKvp => new CheckboxItemViewModel
+                        {
+                            Value = sdKvp.Key.ToString(),
+                            Label = new() { HtmlOrText = new(sdKvp.Value.Name)},
+                            Hint = new() { HtmlOrText = new("2 case studies"), Classes = ["govuk-!-font-size-16"] },
+                        }
+                    ).ToList(),
+                })
             </div>
         </details>
 
@@ -160,77 +178,210 @@
     </div>
     <div class="govuk-grid-column-two-thirds-from-desktop">
         
-        <h2 id="gender-pay-gap"
-            class="govuk-heading-l">
-            Gender pay gap
-        </h2>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
+        <!-- Category 1: Menopause -->
+        <section class="case-study-section">
+            <h2 id="menopause"
+                class="govuk-heading-l govuk-!-margin-top-9">
+                Menopause
+            </h2>
 
-        <h2 id="menopause"
-            class="govuk-heading-l">
-            Menopause
-        </h2>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
-        <p class="govuk-body">Placeholder content</p>
+            <div data-filter data-filter-category="menopause" data-filter-size="20000-or-more" data-filter-sector="public">
+                <p class="govuk-body-l govuk-!-margin-bottom-2">
+                    <a class="govuk-link" href="/case-studies/case-study-tvp">TVP: Maintaining workplace dignity for a Crime Scene Investigator (CSI) who needed reasonable adjustments for menopause symptoms.</a>
+                </p>
+                <p class="govuk-body-m">
+                    The CSI accessed tailored reasonable adjustments to manage menopause symptoms. This enabled her to remain in the job she loved and continue performing effectively.
+                </p>
+
+                <p class="govuk-body-s">Employees: <strong>More than 20,000</strong></p>
+                <p class="govuk-body-s">Sector: <strong>Public Sector</strong></p>
+
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+            </div>
+
+            <div data-filter data-filter-category="menopause" data-filter-size="20000-or-more" data-filter-sector="consultancy">
+                <p class="govuk-body-l govuk-!-margin-bottom-2">
+                    <a class="govuk-link" href="/case-studies/case-study-bain-menopause">Bain: Taking action to help with menopause</a>
+                </p>
+                <p class="govuk-body-m">
+                    Bain & Company UK introduced a standalone menopause policy and comprehensive practical support, creating an environment where employees can seek help with confidence.
+                </p>
+
+                <p class="govuk-body-s">Employees: <strong>More than 20,000</strong></p>
+                <p class="govuk-body-s">Sector: <strong>Consultancy</strong></p>
+
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+            </div>
+
+            <div data-filter data-filter-category="menopause" data-filter-size="5000-to-19999" data-filter-sector="education">
+                <p class="govuk-body-l govuk-!-margin-bottom-2">
+                    <a class="govuk-link" href="/case-studies/case-study-middlesex">Middlesex University: Raising awareness of menopause symptoms and reducing workplace taboo</a>
+                </p>
+                <p class="govuk-body-m">
+                    Middlesex University ran a poster campaign and peer support sessions, resulting in more people of all genders being open to workplace conversations about menopause.
+                </p>
+
+                <p class="govuk-body-s">Employees: <strong>5,000-19,999</strong></p>
+                <p class="govuk-body-s">Sector: <strong>Education</strong></p>
+
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+            </div>
+
+            <div data-filter data-filter-category="menopause" data-filter-size="500-to-999" data-filter-sector="public">
+                <p class="govuk-body-l govuk-!-margin-bottom-2">
+                    <a class="govuk-link" href="/case-studies/case-study-cambridgeshire-council">Cambridgeshire County Council: How Cambridgeshire became a ‘Menopause Friendly’ employer </a>
+                </p>
+                <p class="govuk-body-m">
+                    Cambridgeshire County Council developed and enhanced their support for colleagues experiencing menopause, culminating
+                    in recognition as a Menopause Friendly employer.
+                </p>
+
+                <p class="govuk-body-s">Employees: <strong>500-999</strong></p>
+                <p class="govuk-body-s">Sector: <strong>Local authority</strong></p>
+
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+            </div>
+
+            <div data-filter data-filter-category="menopause" data-filter-size="1000-to-4999" data-filter-sector="housing">
+                <p class="govuk-body-l govuk-!-margin-bottom-2">
+                    <a class="govuk-link" href="/case-studies/case-study-LQ">L&Q: Using training, specialist care and ‘champions’ to improve menopause support</a>
+                </p>
+                <p class="govuk-body-m">
+                    L&Q has created meaningful cultural change around menopause awareness and support. They have done this through safe spaces for talking, specialist GP advice, and menopause ‘champions’.
+                </p>
+
+                <p class="govuk-body-s">Employees: <strong>1,000-4,999</strong></p>
+                <p class="govuk-body-s">Sector: <strong>Housing</strong></p>
+
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+            </div>
+
+            <div data-filter data-filter-category="menopause" data-filter-size="1000-to-4999" data-filter-sector="education">
+                <p class="govuk-body-l govuk-!-margin-bottom-2">
+                    <a class="govuk-link" href="/case-studies/case-study-greenwich">University of Greenwich: How University of Greenwich embedded menopause awareness and support for staff </a>
+                </p>
+                <p class="govuk-body">
+                    The University of Greenwich (UoG) created a culture where conversations about menopause were normalised by providing
+                    menopause awareness and support for staff.
+                </p>
+
+                <p class="govuk-body-s">Employees: <strong>1,000-4,999</strong></p>
+                <p class="govuk-body-s">Sector: <strong>Education</strong></p>
+
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+            </div>
+
+            <div data-filter data-filter-category="menopause" data-filter-size="250-to-499" data-filter-sector="not-for-profit">
+                <p class="govuk-body-l govuk-!-margin-bottom-2">
+                    <a class="govuk-link" href="/case-studies/case-study-OG">Opportunity Green: Reviewing existing policies to ensure they reflect the needs of those going through menopause</a>
+                </p>
+                <p class="govuk-body-m">
+                    Opportunity Green helped to create a supportive working environment for employees experiencing menopausal symptoms, problematic periods or menstrual ill health.
+                </p>
+                <p class="govuk-body-s">Employees: <strong>250-499</strong></p>
+                <p class="govuk-body-s">Sector: <strong>Charity</strong></p>
+
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+            </div>
+        </section>
+
+        <!-- Category 2: Gender Pay Gap -->
+        <section class="case-study-section">
+            <h2 id="gender-pay-gap"
+                class="govuk-heading-l govuk-!-margin-top-9">
+                Gender Pay Gap
+            </h2>
+
+            <div data-filter data-filter-category="gender-pay-gap" data-filter-size="20000-or-more" data-filter-sector="banking and finance">
+                <p class="govuk-body-l govuk-!-margin-bottom-2">
+                    <a class="govuk-link" href="/case-studies/case-study-barclays-paternity">Barclays: Parental policy</a>
+                </p>
+                <p class="govuk-body-m">
+                    This is a longer paragraph that explains in one or two sentences what actions the employer took as well as a bit of background information about the case.
+                </p>
+                <p class="govuk-body-s">Employees: <strong>More than 20,000</strong></p>
+                <p class="govuk-body-s">Sector: <strong>Banking/Finance</strong></p>
+
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+            </div>
+
+            <div data-filter data-filter-category="gender-pay-gap" data-filter-size="20000-or-more" data-filter-sector="consultancy">
+                <p class="govuk-body-l govuk-!-margin-bottom-2">
+                    <a class="govuk-link" href="/case-studies/case-study-bain-flexible-leave">Bain: How Bain enhanced its family leave policies to support parents and carers</a>
+                </p>
+                <p class="govuk-body-m">
+                    Bain & Company UK made support equal for all types of parents and carers, helping them navigate the transition before, during and after leave.
+                </p>
+                <p class="govuk-body-s">Employees: <strong>More than 20,000</strong></p>
+                <p class="govuk-body-s">Sector: <strong>Consultancy</strong></p>
+
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+            </div>
+        </section>
         
     </div>
 </div>
+
+<script>
+    (function () {
+        const categoryCheckboxes = document.querySelectorAll('input[name="category"]');
+        const sectorCheckboxes = document.querySelectorAll('input[name="sector"]');
+        const sizeCheckboxes = document.querySelectorAll('input[name="number-of-employees"]');
+        const sections = document.querySelectorAll('.case-study-section');
+
+        function getSelectedValues(checkboxes) {
+            return Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+        }
+
+        function applyFilters() {
+            const selectedCategories = getSelectedValues(categoryCheckboxes);
+            const selectedSectors = getSelectedValues(sectorCheckboxes);
+            const selectedSizes = getSelectedValues(sizeCheckboxes);
+
+            const isAnyFilterActive = selectedCategories.length > 0 || selectedSectors.length > 0 || selectedSizes.length > 0;
+
+            const allFilterElements = document.querySelectorAll('[data-filter]');
+            let visibleItemsInTotal = 0;
+            
+            sections.forEach(section => {
+                const filterElements = section.querySelectorAll('[data-filter]');
+                let visibleItemsInSection = 0;
+
+                filterElements.forEach(element => {
+                    const elementCategory = element.getAttribute('data-filter-category');
+                    const elementSector = element.getAttribute('data-filter-sector');
+                    const elementSize = element.getAttribute('data-filter-size');
+
+                    const categoryMatches = selectedCategories.length === 0 || selectedCategories.includes(elementCategory);
+                    const sectorMatches = selectedSectors.length === 0 || selectedSectors.includes(elementSector);
+                    const sizeMatches = selectedSizes.length === 0 || selectedSizes.includes(elementSize);
+
+                    if (categoryMatches && sectorMatches && sizeMatches) {
+                        element.style.display = '';
+                        visibleItemsInSection++;
+                        visibleItemsInTotal++;
+                    } else {
+                        element.style.display = 'none';
+                    }
+                });
+
+                // Hide section heading if filters are active and no items match under it
+                if (isAnyFilterActive && visibleItemsInSection === 0) {
+                    section.style.display = 'none';
+                } else {
+                    section.style.display = '';
+                }
+            });
+            
+            document.getElementById('filter-summary-hint').innerText = `Showing ${visibleItemsInTotal} of ${allFilterElements.length} case studies`;
+        }
+
+        categoryCheckboxes.forEach(cb => cb.addEventListener('change', applyFilters));
+        sectorCheckboxes.forEach(cb => cb.addEventListener('change', applyFilters));
+        sizeCheckboxes.forEach(cb => cb.addEventListener('change', applyFilters));
+
+        applyFilters();
+    })();
+</script>
