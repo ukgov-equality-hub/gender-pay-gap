@@ -87,6 +87,13 @@
                class="govuk-link">
                 see the full guidance for this action</a>.
         </p>
+        <p class="govuk-body">
+            See
+            <a href="@(Url.Action("CaseStudies", "CaseStudies"))"
+               class="govuk-link">
+                case studies</a>
+            of how employers have implemented this action.
+        </p>
         
         @if (Model.ActionDetails.Tags.Contains(ActionTag.GenderPayGap) && Model.ActionDetails.Tags.Contains(ActionTag.Menopause))
         {

@@ -33,7 +33,7 @@
 }
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-two-thirds govuk-!-margin-bottom-9">
         
         <h1 class="govuk-heading-xl">
             Create your action plan
@@ -105,7 +105,22 @@
         </p>
         <p class="govuk-body">
             <a class="govuk-link" href="@Url.Action("ManageOrganisationGet", "ManageOrganisations", new {encryptedOrganisationId})">
-               Cancel and return to @(Model.Organisation.OrganisationName)
+                Cancel and return to @(Model.Organisation.OrganisationName)
+            </a>
+        </p>
+    </div>
+
+    <div class="govuk-grid-column-one-third"
+         style="position: sticky; top: 20px;">
+        <h2 class="govuk-heading-s govuk-!-margin-bottom-2">
+            Related Content
+        </h2>
+        <p class="govuk-body">
+            <a href="@(Url.Action("CaseStudies", "CaseStudies"))"
+               target="_blank"
+               class="govuk-link">
+                Case studies: real examples of how employers have implemented different actions
+                (opens in a new tab)
             </a>
         </p>
     </div>
