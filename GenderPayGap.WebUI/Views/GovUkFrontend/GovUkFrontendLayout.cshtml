@@ -63,6 +63,11 @@
                     HtmlOrText = new("Guidance"),
                     Href = "https://www.gov.uk/government/collections/gender-pay-gap-reporting-and-creating-an-action-plan-guidance-for-employers"
                 },
+                new()
+                {
+                    HtmlOrText = new("Case studies"),
+                    Href = Url.Action("CaseStudies", "CaseStudies")
+                },
             ]);
 
             if (User.IsInRole(LoginRoles.GpgAdmin))

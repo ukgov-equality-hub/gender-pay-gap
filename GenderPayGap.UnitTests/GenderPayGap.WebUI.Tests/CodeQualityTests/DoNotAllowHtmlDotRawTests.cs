@@ -14,6 +14,7 @@ namespace GenderPayGap.WebUI.Tests.CodeQualityTests
                 Path.Combine("GenderPayGap.UnitTests", "GenderPayGap.WebUI.Tests", "CodeQualityTests", "DoNotAllowHtmlDotRawTests.cs"), // This file!
                 Path.Combine("GenderPayGap.WebUI", "bin"), // Output folder
                 Path.Combine("GenderPayGap.WebUI", "obj"), // Output folder
+                Path.Combine("GenderPayGap.WebUI", "Views", "CaseStudies", "CaseStudy.cshtml"), // The case study page takes Markdown content and converts it to HTML. We own the Markdown content, so we know it is safe
             };
 
             // Arrange

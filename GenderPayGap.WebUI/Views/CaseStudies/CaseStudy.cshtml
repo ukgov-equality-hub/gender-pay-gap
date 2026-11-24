@@ -1,0 +1,111 @@
+@using GenderPayGap.Core
+@using GenderPayGap.WebUI.Helpers
+@using GovUkDesignSystemDotNet
+@model GenderPayGap.WebUI.Models.CaseStudies.CaseStudyViewModel
+
+@{
+    ViewBag.Title = $"{Model.Employer} - case study";
+}
+
+@section BeforeMain {
+    @await Html.GovUkBreadcrumbs(new()
+    {
+        Crumbs = [
+            new()
+            {
+                HtmlOrText = new("Homepage"),
+                Href = Url.Action("Index", "Homepage")
+            },
+            new()
+            {
+                HtmlOrText = new("Case studies"),
+                Href = Url.Action("CaseStudies", "CaseStudies")
+            },
+            new()
+            {
+                HtmlOrText = new(Model.Employer),
+            }
+        ]
+    })
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        <h1 class="govuk-heading-xl">
+            @(Model.Employer): @(Model.Title)
+        </h1>
+        
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+
+        <table class="govuk-table">
+            <caption class="govuk-table__caption govuk-table__caption--l">
+                At a glance
+            </caption>
+
+            <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">
+                    Employer name
+                </th>
+                <td class="govuk-table__cell">
+                    @(Model.Employer)
+                </td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">
+                    Employer sector
+                </th>
+                <td class="govuk-table__cell">
+                    @(SectorHelper.SectorDefinitions[Model.Sector].Name)
+                </td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">
+                    Number of employees
+                </th>
+                <td class="govuk-table__cell">
+                    @(Model.NumberOfEmployeesParsed.GetDisplayName())
+                </td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">
+                    Action category
+                </th>
+                <td class="govuk-table__cell">
+                    @(Model.ActionCategoryParsed)
+                </td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">
+                    Summary of action and implementation
+                </th>
+                <td class="govuk-table__cell">
+                    @(Model.LongSummary)
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        
+        <h2 class="govuk-heading-l">
+            Summary
+        </h2>
+        <p class="govuk-body">
+            @(Model.ShortSummary)
+        </p>
+        
+        @Html.Raw(Model.Html)
+
+        <p class="govuk-body govuk-!-margin-top-9">
+            <a href="@Url.Action("CaseStudies", "CaseStudies")"
+               class="govuk-link">
+                Return to case studies
+            </a>
+        </p>
+        
+    </div>
+</div>

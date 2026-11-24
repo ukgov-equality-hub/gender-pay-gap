@@ -300,12 +300,30 @@ namespace GenderPayGap.Core
             return displayAttribute?.Name;
         }
         
+        public static string GetDisplayNameKebabCase(this OrganisationSizes organisationSize)
+        {
+            return GetDisplayName(organisationSize).Replace(",", "").Replace(" ", "-");
+        }
+        
         public static RangeAttribute GetRange(this OrganisationSizes organisationSize)
         {
             return organisationSize.GetType()
                 .GetMember(organisationSize.ToString())
                 .FirstOrDefault()
                 ?.GetCustomAttribute<RangeAttribute>();
+        }
+        
+        public static OrganisationSizes TryParseFromDisplayNameKebabCase(string displayNameWithHyphens)
+        {
+            foreach (OrganisationSizes organisationSize in Enum.GetValues(typeof(OrganisationSizes)))
+            {
+                if (organisationSize.GetDisplayNameKebabCase() == displayNameWithHyphens)
+                {
+                    return organisationSize;
+                }
+            }
+
+            return OrganisationSizes.NotProvided;
         }
     }
 
