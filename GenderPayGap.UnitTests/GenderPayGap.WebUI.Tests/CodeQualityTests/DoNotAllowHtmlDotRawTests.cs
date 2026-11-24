@@ -14,9 +14,6 @@ namespace GenderPayGap.WebUI.Tests.CodeQualityTests
                 Path.Combine("GenderPayGap.UnitTests", "GenderPayGap.WebUI.Tests", "CodeQualityTests", "DoNotAllowHtmlDotRawTests.cs"), // This file!
                 Path.Combine("GenderPayGap.WebUI", "bin"), // Output folder
                 Path.Combine("GenderPayGap.WebUI", "obj"), // Output folder
-                Path.Combine("GenderPayGap.WebUI", "Views", "Shared", "CustomError.cshtml"), // We can change this once we have moved all the pages across to the new Design System
-                Path.Combine("GenderPayGap.WebUI", "Views", "Shared", "Error.cshtml"), // We can change this once we have moved all the pages across to the new Design System
-                Path.Combine("GovUkDesignSystem") // This uses Html.Raw for Attributes - TODO we should try to work out a better way of doing this
             };
 
             // Arrange
