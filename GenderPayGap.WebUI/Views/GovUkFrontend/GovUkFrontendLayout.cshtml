@@ -47,53 +47,54 @@
         List<ServiceNavigationItemViewModel> headerNavigationLinks = [];
         if (ViewBag.ServiceUnavailable != true)
         {
-            headerNavigationLinks.Add(new ServiceNavigationItemViewModel
-            {
-                HtmlOrText = new HtmlOrText("Search and compare"),
-                Href = Url.Action("SearchPage", "Search")
-            });
-            headerNavigationLinks.Add(new ServiceNavigationItemViewModel
-            {
-                HtmlOrText = new HtmlOrText("Download"),
-                Href = Url.Action("Download", "Download")
-            });
-            headerNavigationLinks.Add(new ServiceNavigationItemViewModel
-            {
-                HtmlOrText = new HtmlOrText("Guidance for employers"),
-                Href = "https://www.gov.uk/government/collections/gender-pay-gap-reporting-and-creating-an-action-plan-guidance-for-employers"
-            });
+            headerNavigationLinks.AddRange([
+                new()
+                {
+                    HtmlOrText = new("Search and compare"),
+                    Href = Url.Action("SearchPage", "Search")
+                },
+                new()
+                {
+                    HtmlOrText = new("Download"),
+                    Href = Url.Action("Download", "Download")
+                },
+                new()
+                {
+                    HtmlOrText = new("Guidance"),
+                    Href = "https://www.gov.uk/government/collections/gender-pay-gap-reporting-and-creating-an-action-plan-guidance-for-employers"
+                },
+            ]);
 
             if (User.IsInRole(LoginRoles.GpgAdmin))
             {
-                headerNavigationLinks.Add(new ServiceNavigationItemViewModel
+                headerNavigationLinks.Add(new()
                 {
-                    HtmlOrText = new HtmlOrText("Admin"),
+                    HtmlOrText = new("Admin"),
                     Href = Url.Action("AdminHomePage", "AdminHomepage")
                 });
             }
 
             if (User.Identity.IsAuthenticated)
             {
-                headerNavigationLinks.Add(new ServiceNavigationItemViewModel
+                headerNavigationLinks.Add(new()
                 {
-                    HtmlOrText = new HtmlOrText("Sign out"),
+                    HtmlOrText = new("Sign out"),
                     Href = Url.Action("Logout", "Login"),
                     Attributes = new() {{ "class", "sign-out-link" }}
                 });
             }
             else
             {
-                headerNavigationLinks.Add(new ServiceNavigationItemViewModel
+                headerNavigationLinks.Add(new()
                 {
-                    HtmlOrText = new HtmlOrText("Sign in"),
+                    HtmlOrText = new("Sign in"),
                     Href = Url.Action("ManageOrganisationsGet", "ManageOrganisations"),
                     Attributes = new() {{ "class", "sign-out-link" }}
                 });
             }
         }
         
-        @await Html.GovUkServiceNavigation(
-            new ServiceNavigationViewModel
+        @await Html.GovUkServiceNavigation(new()
             {
                 ServiceName = "Gender pay gap service",
                 ServiceUrl = Url.Action("Index", "Homepage"),
@@ -106,13 +107,13 @@
         
         @if (ViewBag.ServiceUnavailable != true)
         {
-            @(await Html.GovUkPhaseBanner(new PhaseBannerViewModel
+            @(await Html.GovUkPhaseBanner(new()
             {
-                Tag = new TagViewModel
+                Tag = new()
                 {
-                    HtmlOrText = new HtmlOrText("Beta")
+                    HtmlOrText = new("Beta")
                 },
-                HtmlOrText = new HtmlOrText(
+                HtmlOrText = new(
                     @<text>
                          This is a new service – your
                          <a class="govuk-link" href="@Url.Action("SendFeedbackGet", "Feedback")">
@@ -129,32 +130,32 @@
         </main>
     </div>
 
-    @(await Html.GovUkFooter(new FooterViewModel
+    @(await Html.GovUkFooter(new()
     {
-        Meta = new FooterMetaViewModel
+        Meta = new()
         {
             Items = [
-                new FooterItemViewModel
+                new()
                 {
                     Text = "Contact Us",
                     Href = Url.Action("ContactUs", "StaticPages")
                 },
-                new FooterItemViewModel
+                new()
                 {
                     Text = "Cookies",
                     Href = Url.Action("CookieSettingsGet", "Cookie")
                 },
-                new FooterItemViewModel
+                new()
                 {
                     Text = "Privacy Policy",
                     Href = Url.Action("PrivacyPolicyGet", "PrivacyPolicy")
                 },
-                new FooterItemViewModel
+                new()
                 {
                     Text = "Report Concerns",
                     Href = Url.Action("ReportConcerns", "StaticPages")
                 },
-                new FooterItemViewModel
+                new()
                 {
                     Text = "Accessibility Statement",
                     Href = Url.Action("AccessibilityStatement", "StaticPages")
